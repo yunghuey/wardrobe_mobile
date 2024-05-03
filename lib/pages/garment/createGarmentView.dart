@@ -65,7 +65,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
         } else if (state is CreateGarmentSuccessState){
           final snackBar = SnackBar(content: Text("success"));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          Navigator.pushAndRemoveUntil();
+          Navigator.pushAndRemoveUntil(  );
         } else if (state is CreateGarmentFailState){
           final snackBar = SnackBar(content: Text("fail"));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
