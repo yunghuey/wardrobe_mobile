@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:wardrobe_mobile/bloc/creategarment_bloc.dart';
-import 'package:wardrobe_mobile/bloc/creategarment_event.dart';
-import 'package:wardrobe_mobile/bloc/creategarment_state.dart';
+import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.dart';
+import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_event.dart';
+import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
+import 'package:wardrobe_mobile/pages/homeView.dart';
 
 class CreateGarmentView extends StatefulWidget {
   final GarmentModel garment;
@@ -25,9 +26,9 @@ class CreateGarmentView extends StatefulWidget {
 
 class _CreateGarmentViewState extends State<CreateGarmentView> {
   // constant array
-  static const List<String> SIZES = ['2XS','XS', 'S', 'M', 'L', 'XL', 'XXL'];
-  static const List<String> COUNTRY =  ['CHINA', 'MALAYSIA','PHILIPPINES', 'INDIA', 'INDONESIA', 'CAMBODIA', 'BANGLADESH', 'LAOS', 'TURKEY', 'MOROCCO', 'PAKISTAN','VIETNAM', 'THAILAND', 'HONGKONG', 'SRILANKA'];
-  static const List<String> BRANDS_NAME = ['SKECHERS', 'ADIDAS', 'UNIQLO', 'ZARA','NIKE', 'COTTON ON', 'JORDAN','ASICS','NEW BALANCE',' TOMMYHILFIGER'];
+  static const List<String> SIZES = ['Select Size','2XS','XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  static const List<String> COUNTRY =  ['Select Country','CHINA', 'MALAYSIA','PHILIPPINES', 'INDIA', 'INDONESIA', 'CAMBODIA', 'BANGLADESH', 'LAOS', 'TURKEY', 'MOROCCO', 'PAKISTAN','VIETNAM', 'THAILAND', 'HONGKONG', 'SRILANKA'];
+  static const List<String> BRANDS_NAME = ['Select Brand','SKECHERS', 'ADIDAS', 'UNIQLO', 'ZARA','NIKE', 'COTTON ON', 'JORDAN','ASICS','NEW BALANCE',' TOMMYHILFIGER'];
  
   late GarmentModel garmentResult;
   late File imageResult;
@@ -47,7 +48,6 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
     garmentResult = widget.garment;
     imageResult = widget.image;
     createBloc =  BlocProvider.of<CreateGarmentBloc>(context);
-    // createBloc.add(CreateGarmentInitEvent());
     _selectedCountry = garmentResult.country;
     _selectedSize = garmentResult.size;
     _selectedBrand = garmentResult.brand;
@@ -65,7 +65,14 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
         } else if (state is CreateGarmentSuccessState){
           final snackBar = SnackBar(content: Text("success"));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          Navigator.pushAndRemoveUntil(  );
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(),
+                fullscreenDialog: false,
+              ),
+              (route) => false,
+            );
         } else if (state is CreateGarmentFailState){
           final snackBar = SnackBar(content: Text("fail"));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -100,8 +107,8 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
   Widget _garmentSubmit(){
     return ElevatedButton(
       onPressed: (){
-        if(_formKey.currentState!.validate() && _selectedCountry != '' 
-        && _selectedBrand != '' && _selectedSize != '' && nameController.text != null){
+        if(_formKey.currentState!.validate() && _selectedCountry != COUNTRY[0] 
+        && _selectedBrand != BRANDS_NAME[0] && _selectedSize != SIZES[0] && nameController.text != null){
           // is to check garment name
           String colorString = _colorNotifier.value.toString(); // Color(0xffcca2ae)
           String hexColor = '#' + colorString.split('(0xff')[1].split(')')[0]; // cca2ae
@@ -116,6 +123,9 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
           );
 
           createBloc.add(CreateButtonPressed(garment: garmentObj));
+        } else{
+          final snackBar = SnackBar(content: Text('form not complete'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
         // image
       }, 

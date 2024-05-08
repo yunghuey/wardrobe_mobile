@@ -65,4 +65,50 @@ class GarmentRepository{
         return null;
       }
   }
+
+  Future<List<GarmentModel>> getAllGarment() async{
+    try{
+      var url = Uri.parse(APIConstant.getAllGarmentsURL);
+      print(url);
+      var header = {
+          "Content-Type": "application/json",
+      };
+      var response = await http.get(url, headers: header);
+      if (response.statusCode == 200){
+        print(jsonDecode(response.body));
+        List<dynamic> result = jsonDecode(response.body)['garments'];
+        return result.map((e) => GarmentModel.fromJson(e)).toList();
+      } else {
+        print(response.body);
+        return [];
+      }
+    } catch (e) {
+      print("error: " + e.toString());
+      return [];
+    }
+  }
+
+  Future<bool> deleteGarment(String id) async{
+    try{
+      var url = Uri.parse(APIConstant.deleteGarmentURL);
+      print(id);
+      var body = json.encode({
+        "id" : id,
+      });
+      var header = {
+        "Content-Type": "application/json",
+      };
+      var response = await http.delete(url, headers: header, body:body);
+
+      if (response.statusCode == 200){
+        return true;
+      }
+      return false;
+    } catch(e){
+      print(e.toString());
+      return false;
+    }
+
+  }
+
 }

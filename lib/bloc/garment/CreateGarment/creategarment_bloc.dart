@@ -1,8 +1,8 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wardrobe_mobile/bloc/creategarment_event.dart';
-import 'package:wardrobe_mobile/bloc/creategarment_state.dart';
+import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_event.dart';
+import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
 import 'package:wardrobe_mobile/repository/garment_repo.dart';
 
@@ -37,9 +37,6 @@ class CreateGarmentBloc extends Bloc<CreateGarmentEvent,CreateGarmentState>{
         emit(DetectGarmentFailState(message: "Unable to detect image. Do you want to fill in yourself or retake?"));
       }
     });
-  
-    on<CreateGarmentInitEvent>((event, emit) {
-      emit(CreateGarmentInitState());
-    });
+
   }
 }

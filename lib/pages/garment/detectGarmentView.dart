@@ -8,9 +8,9 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:wardrobe_mobile/bloc/creategarment_bloc.dart';
-import 'package:wardrobe_mobile/bloc/creategarment_event.dart';
-import 'package:wardrobe_mobile/bloc/creategarment_state.dart';
+import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.dart';
+import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_event.dart';
+import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/pages/garment/createGarmentView.dart'; 
 
 class CaptureImageView extends StatefulWidget {

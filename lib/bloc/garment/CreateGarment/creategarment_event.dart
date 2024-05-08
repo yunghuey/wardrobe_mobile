@@ -8,8 +8,6 @@ class CreateGarmentEvent extends Equatable{
   List<Object> get props => []; 
 }
 
-class CreateGarmentInitEvent extends CreateGarmentEvent {}
-
 class SubmitImageEvent extends CreateGarmentEvent{
   String imageBytes;
   SubmitImageEvent({required this.imageBytes});

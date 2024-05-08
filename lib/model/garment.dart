@@ -8,7 +8,9 @@ class GarmentModel{
   String colour;
   String size;
   File? image;
+  String? imageURL;
   bool? status;
+  String? created_date;
 
   GarmentModel({
     this.id,
@@ -18,7 +20,9 @@ class GarmentModel{
     required this.colour,
     required this.size,
     this.status,
-    this.image
+    this.imageURL,
+    this.image,
+    this.created_date,
   });
 
   factory GarmentModel.fromJson(Map<String, dynamic> json){
@@ -30,16 +34,17 @@ class GarmentModel{
       colour: json["colour"],
       size: json["size"],
       status: json["status"],
-      image: json["image"]
+      imageURL: json["image_url"],
+      created_date: json["created_date"]
     );
   }
 
   factory GarmentModel.imageResult(Map<String, dynamic> json){
     return GarmentModel(
-      country: json["country"] ?? '',
-      brand: json["brand"] ?? '',
-      colour: json["colour"] ?? '',
-      size: json["size"] ?? '',
+      country: json["country"] ?? 'Select Country',
+      brand: json["brand"] ?? 'Select Brand',
+      colour: json["colour"] ?? '#000000',
+      size: json["size"] ?? 'Select Size',
     );
   }
   // to view GarmentModel instance to Json Object
