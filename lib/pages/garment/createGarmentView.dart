@@ -9,6 +9,7 @@ import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_event.d
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
 import 'package:wardrobe_mobile/pages/homeView.dart';
+import 'package:wardrobe_mobile/pages/ValueConstant.dart';
 
 class CreateGarmentView extends StatefulWidget {
   final GarmentModel garment;
@@ -25,19 +26,17 @@ class CreateGarmentView extends StatefulWidget {
 }
 
 class _CreateGarmentViewState extends State<CreateGarmentView> {
-  // constant array
-  static const List<String> SIZES = ['Select Size','2XS','XS', 'S', 'M', 'L', 'XL', 'XXL'];
-  static const List<String> COUNTRY =  ['Select Country','CHINA', 'MALAYSIA','PHILIPPINES', 'INDIA', 'INDONESIA', 'CAMBODIA', 'BANGLADESH', 'LAOS', 'TURKEY', 'MOROCCO', 'PAKISTAN','VIETNAM', 'THAILAND', 'HONGKONG', 'SRILANKA'];
-  static const List<String> BRANDS_NAME = ['Select Brand','SKECHERS', 'ADIDAS', 'UNIQLO', 'ZARA','NIKE', 'COTTON ON', 'JORDAN','ASICS','NEW BALANCE',' TOMMYHILFIGER'];
- 
   late GarmentModel garmentResult;
   late File imageResult;
   final _formKey = GlobalKey<FormState>();
   late CreateGarmentBloc createBloc;
 
+  bool colourChanged = false;
+
   String? _selectedCountry;
   String? _selectedSize;
   String? _selectedBrand;
+  String? _selectedColour;
   late ValueNotifier<Color> _colorNotifier;
   TextEditingController nameController = TextEditingController();
 
@@ -60,27 +59,27 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
      BlocListener<CreateGarmentBloc, CreateGarmentState>(
       listener: (context, state) {
         if (state is CreateGarmentLoadingState){
-          final snackBar = SnackBar(content: Text("loading"));
+          final snackBar = const SnackBar(content: Text("loading"));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else if (state is CreateGarmentSuccessState){
-          final snackBar = SnackBar(content: Text("success"));
+          final snackBar = const SnackBar(content: Text("success"));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => HomePage(),
+                builder: (context) => const HomePage(),
                 fullscreenDialog: false,
               ),
               (route) => false,
             );
         } else if (state is CreateGarmentFailState){
-          final snackBar = SnackBar(content: Text("fail"));
+          final snackBar = const SnackBar(content: Text("fail"));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
       },
       child: 
       Scaffold(
-        appBar: AppBar(title: Text('Create garment form')),
+        appBar: AppBar(title: const Text('Create garment form')),
         body: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -93,7 +92,8 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
                   _garmentCountry(),
                   _garmentBrand(),
                   _garmentSize(),
-                  _garmentColor(),
+                  _garmentColour(),
+                  // _garmentColorCode(),
                   _garmentSubmit(),
                 ]
               ),  
@@ -103,36 +103,60 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
       ),
     );
   }
+  
+  // set default colorcode for color changed
+  Widget _garmentColour(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Garment Colour:'), // Label
+      DropdownButton<String>(
+      value: _selectedColour,
+      onChanged: (String? newValue){
+        setState((){
+          _selectedColour = newValue; 
+          colourChanged = true;
+        });
+      },
+      items: ValueConstant.COLOUR_NAME.map<DropdownMenuItem<String>>((String value){
+        return DropdownMenuItem<String>(value: value, child: Text(value));
+      }).toList(),
+    ),
+    ],
+  ); 
+  }
 
   Widget _garmentSubmit(){
     return ElevatedButton(
       onPressed: (){
-        if(_formKey.currentState!.validate() && _selectedCountry != COUNTRY[0] 
-        && _selectedBrand != BRANDS_NAME[0] && _selectedSize != SIZES[0] && nameController.text != null){
+        if(_formKey.currentState!.validate() && _selectedCountry != ValueConstant.COUNTRY[0] 
+        && _selectedBrand != ValueConstant.BRANDS_NAME[0] && _selectedSize != ValueConstant.SIZES[0] && _selectedColour != ValueConstant.COLOUR_NAME[0]
+        && nameController.text != ''){
           // is to check garment name
           String colorString = _colorNotifier.value.toString(); // Color(0xffcca2ae)
-          String hexColor = '#' + colorString.split('(0xff')[1].split(')')[0]; // cca2ae
+          String hexColor = '#${colorString.split('(0xff')[1].split(')')[0]}'; // cca2ae
 
           GarmentModel garmentObj = GarmentModel(
             brand:_selectedBrand ?? '',
             colour: hexColor,
             country:_selectedCountry ?? '',
             size: _selectedSize ?? '',
+            colour_name: _selectedColour ?? 'WHITE',
             name:nameController.text.trim(),
             image: imageResult
           );
 
           createBloc.add(CreateButtonPressed(garment: garmentObj));
         } else{
-          final snackBar = SnackBar(content: Text('form not complete'));
+          const snackBar = SnackBar(content: Text('form not complete'));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
         // image
       }, 
-      child: Text("submit"));
+      child: const Text("submit"));
   }
 
-   Widget _garmentColor(){
+   Widget _garmentColorCode(){
     // can make into InkWell to detect press and display showDialog
     return Padding(
       padding: const EdgeInsets.all(40),
@@ -154,7 +178,7 @@ Widget _garmentSize(){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Garment Size:'), // Label
+        const Text('Garment Size:'), // Label
       DropdownButton<String>(
       value: _selectedSize,
       onChanged: (String? newValue){
@@ -162,7 +186,7 @@ Widget _garmentSize(){
           _selectedSize = newValue; // Corrected the variable name
         });
       },
-      items: SIZES.map<DropdownMenuItem<String>>((String value){
+      items: ValueConstant.SIZES.map<DropdownMenuItem<String>>((String value){
         return DropdownMenuItem<String>(value: value, child: Text(value));
       }).toList(),
     ),
@@ -174,7 +198,7 @@ Widget _garmentSize(){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Garment Brand:'), // Label
+        const Text('Garment Brand:'), // Label
       DropdownButton<String>(
       value: _selectedBrand,
       onChanged: (String? newValue){
@@ -182,7 +206,7 @@ Widget _garmentSize(){
           _selectedBrand = newValue; // Corrected the variable name
         });
       },
-      items: BRANDS_NAME.map<DropdownMenuItem<String>>((String value){
+      items: ValueConstant.BRANDS_NAME.map<DropdownMenuItem<String>>((String value){
         return DropdownMenuItem<String>(value: value, child: Text(value));
       }).toList(),
     ),
@@ -194,7 +218,7 @@ Widget _garmentCountry(){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Garment Country:'), // Label
+        const Text('Garment Country:'), // Label
       DropdownButton<String>(
       value: _selectedCountry,
       onChanged: (String? newValue){
@@ -202,7 +226,7 @@ Widget _garmentCountry(){
           _selectedCountry = newValue; // Corrected the variable name
         });
       },
-      items: COUNTRY.map<DropdownMenuItem<String>>((String value){
+      items: ValueConstant.COUNTRY.map<DropdownMenuItem<String>>((String value){
         return DropdownMenuItem<String>(value: value, child: Text(value));
       }).toList(),
     ),

@@ -4,8 +4,12 @@ import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.da
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_state.dart';
+import 'package:wardrobe_mobile/bloc/garment/ReadGarment/onegarment_bloc.dart';
+import 'package:wardrobe_mobile/bloc/garment/ReadGarment/onegarment_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/ReadGarment/readgarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/ReadGarment/readgarment_state.dart';
+import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_bloc.dart';
+import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_state.dart';
 import 'package:wardrobe_mobile/pages/homeView.dart';
 import 'package:wardrobe_mobile/repository/garment_repo.dart';
 
@@ -23,13 +27,16 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<CreateGarmentBloc>(create: (context) => CreateGarmentBloc(CreateGarmentInitState(), GarmentRepository())),
         BlocProvider<ReadGarmentBloc>(create: (context) => ReadGarmentBloc(ReadGarmentInitState(), GarmentRepository())),
+        BlocProvider<ReadOneGarmentBloc>(create: (context) => ReadOneGarmentBloc(ReadOneGarmentInitState(), GarmentRepository())),
         BlocProvider<DeleteGarmentBloc>(create: (context) => DeleteGarmentBloc(DeleteGarmentInitState(), GarmentRepository())),
+        BlocProvider<UpdateGarmentBloc>(create: (context) => UpdateGarmentBloc(UpdateGarmentInitState(), GarmentRepository())),
+
       ],
       child: MaterialApp(
         title: 'Yourdrobe',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 88, 73, 115)),
           useMaterial3: true,
         ),
         home: IntroPage(),

@@ -6,7 +6,7 @@ class APIConstant{
   static String get addGarmentURL => "${APIConstant.ipaddress}/garment/add/";
   static String get processImageURL => "${APIConstant.ipaddress}/garment/submitImage";
   static String get getAllGarmentsURL => "${APIConstant.ipaddress}/garment/getAll/";
+  static String get getOneGarmentURL => "${APIConstant.ipaddress}/garment/getGarment/";
   static String get deleteGarmentURL => "${APIConstant.ipaddress}/garment/delete/";
   static String get updateGarmentURL => "${APIConstant.ipaddress}/garment/update/";
-
 } 

@@ -10,6 +10,7 @@ import 'package:wardrobe_mobile/bloc/garment/ReadGarment/readgarment_event.dart'
 import 'package:wardrobe_mobile/bloc/garment/ReadGarment/readgarment_state.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
 import 'package:wardrobe_mobile/pages/garment/detectGarmentView.dart';
+import 'package:wardrobe_mobile/pages/garment/viewGarmentDetails.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -45,6 +46,7 @@ class _HomePageState extends State<HomePage> {
             listener: (context, state){
               if (state is DeleteGarmentSuccess){
                 final snackBar = SnackBar(content: Text('garment deleted'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 refreshPage();
               }
               else if (state is DeleteGarmentFail){
@@ -96,19 +98,28 @@ class _HomePageState extends State<HomePage> {
                         Text("Brand: ${garment.brand}"),
                         Text("Size: ${garment.size}"),
                         Text("Name: ${garment.name!}"),
-                        Text("Id: ${garment.id!}"),
-                        Text("Color: ${garment.colour}"),
-                        Text("Status: ${garment.status}"),
-                        Image.network(garment.imageURL!),
-                        Text("Image: ${garment.imageURL!}"),
-                        Text("Country: ${garment.country}"),
-                        Text("Created date:${garment.created_date}"),
+                        // Text("Id: ${garment.id!}"),
+                        // Text("Color: ${garment.colour}"),
+                        // Text("Status: ${garment.status}"),
+                        // Image.network(garment.imageURL!),
+                        // Text("Image: ${garment.imageURL!}"),
+                        // Text("Country: ${garment.country}"),
+                        // Text("Created date:${garment.created_date}"),
                         ElevatedButton.icon(
                           onPressed: (){
                             deleteBloc.add(DeleteButtonPressed(garmentID:garment.id!));
                           }, 
                           icon: const Icon(Icons.remove), 
-                          label: const Text("remove"),),
+                          label: const Text("remove"),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewGarmentDetails(garmentID: garment.id!)));
+                          }, 
+                          icon: const Icon(Icons.details), 
+                          label: const Text("detail"),
+                        ),
+
                       ],
                     ),
                   ),
@@ -137,7 +148,7 @@ class _HomePageState extends State<HomePage> {
   Widget _floatingButton(){
     return FloatingActionButton(
       onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=> CaptureImageView())),
-      child: Icon(Icons.add),
+      child: const Icon(Icons.add),
     );
   }
 

@@ -6,3 +6,4 @@ class ReadGarmentEvent extends Equatable{
 }
 
 class GetAllGarmentEvent extends ReadGarmentEvent{}
+

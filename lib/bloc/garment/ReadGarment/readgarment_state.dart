@@ -5,6 +5,7 @@ class ReadGarmentState extends Equatable{
   @override
   List<Object> get props => [];
 }
+
 class ReadGarmentInitState extends ReadGarmentState {}
 
 class ReadAllGarmentLoading extends ReadGarmentState {}
@@ -14,4 +15,4 @@ class ReadAllGarmentSuccess extends ReadGarmentState{
   ReadAllGarmentSuccess({required this.garmentss});
 }
 
-class ReadAllGarmentEmpty extends ReadGarmentState{ }
+class ReadAllGarmentEmpty extends ReadGarmentState{}

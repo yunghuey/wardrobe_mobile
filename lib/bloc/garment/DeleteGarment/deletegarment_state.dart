@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:wardrobe_mobile/model/garment.dart';
 
 class DeleteGarmentState extends Equatable{
   @override

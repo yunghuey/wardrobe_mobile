@@ -11,6 +11,7 @@ class GarmentModel{
   String? imageURL;
   bool? status;
   String? created_date;
+  String? colour_name;
 
   GarmentModel({
     this.id,
@@ -23,6 +24,7 @@ class GarmentModel{
     this.imageURL,
     this.image,
     this.created_date,
+    this.colour_name,
   });
 
   factory GarmentModel.fromJson(Map<String, dynamic> json){
@@ -32,10 +34,11 @@ class GarmentModel{
       country: json["country"],
       brand: json["brand"],
       colour: json["colour"],
+      colour_name: json["colour_name"],
       size: json["size"],
       status: json["status"],
       imageURL: json["image_url"],
-      created_date: json["created_date"]
+      created_date: json["created_date"],
     );
   }
 
@@ -44,6 +47,7 @@ class GarmentModel{
       country: json["country"] ?? 'Select Country',
       brand: json["brand"] ?? 'Select Brand',
       colour: json["colour"] ?? '#000000',
+      colour_name: json["colour_name"] ?? 'NONE',
       size: json["size"] ?? 'Select Size',
     );
   }
@@ -54,6 +58,7 @@ class GarmentModel{
       'brand': brand,
       'size': size,
       'colour': colour,
+      'colour_name': colour_name
     };
   }
 }

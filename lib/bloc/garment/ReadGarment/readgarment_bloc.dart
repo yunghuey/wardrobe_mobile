@@ -10,7 +10,7 @@ class ReadGarmentBloc extends Bloc<ReadGarmentEvent,ReadGarmentState>{
     on<GetAllGarmentEvent>((event, emit) async {
       emit(ReadAllGarmentLoading());
       List<GarmentModel> garments = await repo.getAllGarment();
-      if (garments.length > 0){
+      if (garments.isNotEmpty){
         emit(ReadAllGarmentSuccess(garmentss: garments));
       }
       else {
@@ -18,5 +18,7 @@ class ReadGarmentBloc extends Bloc<ReadGarmentEvent,ReadGarmentState>{
         emit(ReadAllGarmentEmpty());
       }
     });
+
+    
   }
 }
