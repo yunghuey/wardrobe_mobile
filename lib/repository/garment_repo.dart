@@ -15,9 +15,9 @@ class GarmentRepository{
           "country": shirt.country,
           "size": shirt.size,
           "colour": shirt.colour,
+          "colour_name" : shirt.colour_name,
           "status": true,
           "image": await _convertImageToBase64(shirt.image!),
-          // "image": shirt.image,
         });
         print(body);
         var header = {

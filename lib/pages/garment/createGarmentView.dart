@@ -50,6 +50,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
     _selectedCountry = garmentResult.country;
     _selectedSize = garmentResult.size;
     _selectedBrand = garmentResult.brand;
+    _selectedColour = garmentResult.colour_name;
     _colorNotifier = ValueNotifier<Color>(HexColor(garmentResult.colour));
   }
 
@@ -214,7 +215,8 @@ Widget _garmentSize(){
   );
 
   }
-Widget _garmentCountry(){
+  
+  Widget _garmentCountry(){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
