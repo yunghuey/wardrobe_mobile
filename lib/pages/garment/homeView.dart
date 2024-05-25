@@ -63,10 +63,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      
-      
       floatingActionButton: _floatingButton(),
-      drawer: _drawerMenu(),
     );
   }
 
@@ -152,34 +149,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _drawerMenu(){
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          const DrawerHeader(child: Text('drawer header')),
-          ListTile(
-            title: const Text('Home Page'),
-            onTap: () => Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const HomePage(),
-                fullscreenDialog: false,
-              ),
-              (route) => false,
-            ),
-          ),
-          ListTile(
-            title: const Text('item 2'),
-            onTap: (){},
-          ),
-          ListTile(
-            title: const Text('item 3'),
-            onTap: (){},
-          ),
-        ],
-      )
-    );
-  }
-
+  
 }

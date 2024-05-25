@@ -10,8 +10,12 @@ import 'package:wardrobe_mobile/bloc/garment/ReadGarment/readgarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/ReadGarment/readgarment_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_state.dart';
-import 'package:wardrobe_mobile/pages/homeView.dart';
+import 'package:wardrobe_mobile/bloc/user/Authentication/Login/login_bloc.dart';
+import 'package:wardrobe_mobile/bloc/user/Authentication/Login/login_state.dart';
+import 'package:wardrobe_mobile/pages/auth/splashScreen.dart';
+import 'package:wardrobe_mobile/pages/garment/homeView.dart';
 import 'package:wardrobe_mobile/repository/garment_repo.dart';
+import 'package:wardrobe_mobile/repository/user_repo.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,7 +34,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<ReadOneGarmentBloc>(create: (context) => ReadOneGarmentBloc(ReadOneGarmentInitState(), GarmentRepository())),
         BlocProvider<DeleteGarmentBloc>(create: (context) => DeleteGarmentBloc(DeleteGarmentInitState(), GarmentRepository())),
         BlocProvider<UpdateGarmentBloc>(create: (context) => UpdateGarmentBloc(UpdateGarmentInitState(), GarmentRepository())),
-
+        BlocProvider<LoginBloc>(create: (context) => LoginBloc(LoginInitState(), UserRepository())),
       ],
       child: MaterialApp(
         title: 'Yourdrobe',
@@ -55,6 +59,6 @@ class IntroPage extends StatefulWidget {
 class _IntroPageState extends State<IntroPage> {
   @override
   Widget build(BuildContext context) {
-    return HomePage();
+    return SplashScreen();
   }
 }

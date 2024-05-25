@@ -8,7 +8,7 @@ import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.da
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_event.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
-import 'package:wardrobe_mobile/pages/homeView.dart';
+import 'package:wardrobe_mobile/pages/garment/homeView.dart';
 import 'package:wardrobe_mobile/pages/ValueConstant.dart';
 
 class CreateGarmentView extends StatefulWidget {

@@ -4,7 +4,7 @@ import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_bloc.da
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_event.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_state.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
-import 'package:wardrobe_mobile/pages/homeView.dart';
+import 'package:wardrobe_mobile/pages/garment/homeView.dart';
 import 'package:wardrobe_mobile/pages/valueConstant.dart';
 
 class EditGarmentView extends StatefulWidget {

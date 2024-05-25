@@ -1,12 +1,22 @@
 class APIConstant{
-  // static const String ipaddress = "http://192.168.0.157:8000"; // klang home
-  // static const String ipaddress = "http://10.131.74.132:8000"; // utem
-  static const String ipaddress = "http://192.168.0.6:8000"; // melaka home
+  static const String ipaddress = "http://192.168.0.20:8000"; // melaka home
+  //  10.131.76.224
   
+  static var header = { "Content-Type": "application/json", };
+
+  // garment repo
   static String get addGarmentURL => "${APIConstant.ipaddress}/garment/add/";
   static String get processImageURL => "${APIConstant.ipaddress}/garment/submitImage";
   static String get getAllGarmentsURL => "${APIConstant.ipaddress}/garment/getAll/";
   static String get getOneGarmentURL => "${APIConstant.ipaddress}/garment/getGarment/";
   static String get deleteGarmentURL => "${APIConstant.ipaddress}/garment/delete/";
   static String get updateGarmentURL => "${APIConstant.ipaddress}/garment/update/";
+
+  // user repo
+  static String get loginURL => "${APIConstant.ipaddress}/account/login/";
+  static String get logoutURL => "${APIConstant.ipaddress}/account/login/";
+  static String get registerURL => "${APIConstant.ipaddress}/account/login/";
+  static String get refreshToken => "${APIConstant.ipaddress}/account/login/";
+  static String get getOneUser => "${APIConstant.ipaddress}/account/login/";
+  static String get updateUser => "${APIConstant.ipaddress}/account/login/";
 } 
