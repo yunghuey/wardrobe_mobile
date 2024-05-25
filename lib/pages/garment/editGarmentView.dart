@@ -4,6 +4,7 @@ import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_bloc.da
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_event.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_state.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
+import 'package:wardrobe_mobile/pages/RoutePage.dart';
 import 'package:wardrobe_mobile/pages/garment/homeView.dart';
 import 'package:wardrobe_mobile/pages/valueConstant.dart';
 
@@ -63,7 +64,7 @@ class _EditGarmentViewState extends State<EditGarmentView> {
           if (state is UpdateGarmentSuccess){
             const snackBar = SnackBar(content: Text('Updated successfully!'));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()), (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => RoutePage()), (route) => false);
           }
           else if (state is UpdateGarmentFail){
             const snackBar = SnackBar(content: Text(''));

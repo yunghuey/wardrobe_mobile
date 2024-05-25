@@ -16,9 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   
   Future<String?> checkLogged() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.remove('isLogged');
     return prefs.getString('token') ?? null;
-
   }
 
   @override

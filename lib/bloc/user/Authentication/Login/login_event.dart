@@ -10,3 +10,5 @@ class LoginButtonPressed extends LoginEvent{
   UserModel user;
   LoginButtonPressed({required this.user});
 }
+
+class LoginButtonReset extends LoginEvent{}

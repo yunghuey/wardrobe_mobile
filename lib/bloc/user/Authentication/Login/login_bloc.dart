@@ -22,6 +22,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState>{
         emit(LoginErrorState(message: "Login fail"));
       }
     });
+
+    on<LoginButtonReset>((event, emit){
+      emit(LoginInitState());
+    });
   }
 
 

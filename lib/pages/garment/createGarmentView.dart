@@ -8,6 +8,7 @@ import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.da
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_event.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
+import 'package:wardrobe_mobile/pages/RoutePage.dart';
 import 'package:wardrobe_mobile/pages/garment/homeView.dart';
 import 'package:wardrobe_mobile/pages/ValueConstant.dart';
 
@@ -68,7 +69,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => const HomePage(),
+                builder: (context) => const RoutePage(),
                 fullscreenDialog: false,
               ),
               (route) => false,

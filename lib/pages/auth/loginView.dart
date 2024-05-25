@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Login/login_bloc.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Login/login_event.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Login/login_state.dart';
 import 'package:wardrobe_mobile/model/user.dart';
 import 'package:wardrobe_mobile/pages/RoutePage.dart';
 import 'package:wardrobe_mobile/pages/auth/registerView.dart';
-import 'package:wardrobe_mobile/pages/garment/homeView.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -37,6 +35,13 @@ class _LoginViewState extends State<LoginView> {
     passwordController.text = "";
   }
 
+  final load = BlocBuilder<LoginBloc, LoginState>(builder: (context, state){
+    if (state is LoginLoading){
+      return CircularProgressIndicator();
+    }
+    return Container();
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +49,8 @@ class _LoginViewState extends State<LoginView> {
       body: BlocListener<LoginBloc, LoginState>(
         listener: (context, state){
           if (state is LoginSuccessState){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()), (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => RoutePage()), (route) => false);
+            bloc.add(LoginButtonReset());
           }
           else if (state is UsernameErrorState){
             SnackBar snackbar = SnackBar(content: Text(state.message));
@@ -76,6 +82,7 @@ class _LoginViewState extends State<LoginView> {
                   const SizedBox(height: 7.0),
                   _passwordField(),
                   const SizedBox(height: 7.0),
+                  load,
                   _submitButton(),
                   _signupLink(),
                 ]
@@ -151,13 +158,6 @@ class _LoginViewState extends State<LoginView> {
               );
               bloc.add(LoginButtonPressed(user: user));
               // rmb shared preference
-              var pref = await SharedPreferences.getInstance();
-              pref.setBool('isLogged', true);
-              Navigator.pushAndRemoveUntil(
-                context, 
-                MaterialPageRoute(builder: (context) => const RoutePage()),
-                (Route<dynamic> route) => false
-              );
             }
           },
           style: ButtonStyle(
