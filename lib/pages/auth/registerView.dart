@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wardrobe_mobile/bloc/user/Authentication/Register/register_bloc.dart';
+import 'package:wardrobe_mobile/bloc/user/Authentication/Register/register_event.dart';
+import 'package:wardrobe_mobile/bloc/user/Authentication/Register/register_state.dart';
+import 'package:wardrobe_mobile/model/user.dart';
 import 'package:wardrobe_mobile/pages/RoutePage.dart';
 
 class RegisterView extends StatefulWidget {
@@ -20,30 +25,67 @@ class _RegisterViewState extends State<RegisterView> {
   TextEditingController lastnameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
 
+  late RegisterBloc registerbloc;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    registerbloc = BlocProvider.of<RegisterBloc>(context);
+  }
+
+  final load = BlocBuilder<RegisterBloc, RegisterState>(builder: (context, state){
+    if (state is RegisterLoading){
+      return CircularProgressIndicator();
+    }
+    return Container();
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: HexColor("#ece6f7"),
       appBar: AppBar(title: Text('Register an account')),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Form(
-            child: Column(
-              children: [
-                _usernameField(),
-                const SizedBox(height: 7.0),
-                _emailField(),
-                const SizedBox(height: 7.0),
-                _firstnameField(),
-                const SizedBox(height: 7.0),
-                _lastnameField(),
-                const SizedBox(height: 7.0),
-                _passwordField(),
-                const SizedBox(height: 7.0),
-                _confirmPasswordField(),
-                const SizedBox(height: 7.0),
-                _submitButton(),
-              ],
+      body: BlocListener<RegisterBloc, RegisterState>(
+        listener: (context, state){
+          if (state is RegisterSuccess){
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => RoutePage(),), (route) => false);
+          }
+          else if (state is EmailFailState){
+            final snackbar = SnackBar(content: Text('Email is already exist'));
+            ScaffoldMessenger.of(context).showSnackBar(snackbar);
+          }
+          else if (state is UsernameFailState){
+            final snackbar = SnackBar(content: Text('Username is already exist'));
+            ScaffoldMessenger.of(context).showSnackBar(snackbar);
+          }
+          else if(state is RegisterFailState){
+            final snackbar = SnackBar(content: Text(state.message));
+            ScaffoldMessenger.of(context).showSnackBar(snackbar);
+          }
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(30),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  _usernameField(),
+                  const SizedBox(height: 7.0),
+                  _emailField(),
+                  const SizedBox(height: 7.0),
+                  _firstnameField(),
+                  const SizedBox(height: 7.0),
+                  _lastnameField(),
+                  const SizedBox(height: 7.0),
+                  _passwordField(),
+                  const SizedBox(height: 7.0),
+                  _confirmPasswordField(),
+                  const SizedBox(height: 7.0),
+                  load,
+                  _submitButton(),
+                ],
+              ),
             ),
           ),
         ),
@@ -76,10 +118,11 @@ class _RegisterViewState extends State<RegisterView> {
 
   Widget _emailField(){
     return TextFormField(
+      keyboardType: TextInputType.emailAddress,
       controller: emailController,
       validator: (value){
         if(value == null || value.isEmpty){
-          return "Please enter username";
+          return "Please enter email";
         }
         if (!value.trim().contains('@')){
             return 'Email is not completed';
@@ -117,7 +160,7 @@ class _RegisterViewState extends State<RegisterView> {
       controller: lastnameController,
       validator: (value){
         if(value == null || value.isEmpty){
-          return "Please enter first name";
+          return "Please enter last name";
         }
       },
       decoration: InputDecoration(
@@ -163,7 +206,7 @@ class _RegisterViewState extends State<RegisterView> {
         }
       },
       decoration: InputDecoration(
-        hintText: 'Password',
+        hintText: 'Confirm password',
         focusColor: HexColor("#272360"),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
@@ -179,10 +222,14 @@ class _RegisterViewState extends State<RegisterView> {
         child: ElevatedButton(
           onPressed: () async {
             if (_formKey.currentState!.validate()){
-              // add bloc event.
-              var pref = await SharedPreferences.getInstance();
-              pref.setBool('isLogged', true);
-              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => RoutePage(),), (route) => false);
+              UserModel user = UserModel(
+                username: usernameController.text.trim(),
+                email: emailController.text.trim(),
+                firstname: firstnameController.text.trim(),
+                lastname: lastnameController.text.trim(),
+                password: password1Controller.text.trim()
+              );
+              registerbloc.add(RegisterButtonPressed(user: user));
             }
           },
           child: Text('Register')

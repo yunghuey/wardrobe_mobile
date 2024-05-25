@@ -62,7 +62,7 @@ class UserRepository{
     }
   }
 
-  Future<bool> registerUser(UserModel user) async {
+  Future<int> registerUser(UserModel user) async {
     try{
       var url = Uri.parse(APIConstant.registerURL);
       var body = json.encode({
@@ -78,11 +78,18 @@ class UserRepository{
         SharedPreferences pref = await SharedPreferences.getInstance();
         dynamic jsonValue = json.decode(response.body)['token'];
         pref.setString('token', jsonValue);
-        return true;
+        return 1;
       }
-      return false;
+      else if ((response.statusCode == 400 && json.decode(response.body)['error'][0] == 'E')){
+        return 2;
+      }
+      else if (response.statusCode == 400 && json.decode(response.body)['error'][0] == 'U'){
+        return 3;
+      }
+      return 4;
     } catch (e) {
-      return false;
+      print(e.toString());
+      return 4;
     }
   }
 }

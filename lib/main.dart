@@ -14,6 +14,8 @@ import 'package:wardrobe_mobile/bloc/user/Authentication/Login/login_bloc.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Login/login_state.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Logout/logout_bloc.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Logout/logout_state.dart';
+import 'package:wardrobe_mobile/bloc/user/Authentication/Register/register_bloc.dart';
+import 'package:wardrobe_mobile/bloc/user/Authentication/Register/register_state.dart';
 import 'package:wardrobe_mobile/pages/auth/splashScreen.dart';
 import 'package:wardrobe_mobile/repository/garment_repo.dart';
 import 'package:wardrobe_mobile/repository/user_repo.dart';
@@ -37,6 +39,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<UpdateGarmentBloc>(create: (context) => UpdateGarmentBloc(UpdateGarmentInitState(), GarmentRepository())),
         BlocProvider<LoginBloc>(create: (context) => LoginBloc(LoginInitState(), UserRepository())),
         BlocProvider<LogoutBloc>(create: (context) => LogoutBloc(LogoutInitState(), UserRepository())),
+        BlocProvider<RegisterBloc>(create: (context) => RegisterBloc(RegisterInitState(), UserRepository())),
 
       ],
       child: MaterialApp(

@@ -16,8 +16,8 @@ class APIConstant {
   // user repo
   static String get loginURL => "${APIConstant.ipaddress}/account/login/";
   static String get logoutURL => "${APIConstant.ipaddress}/account/logout/";
-  static String get registerURL => "${APIConstant.ipaddress}/account/login/";
-  static String get refreshToken => "${APIConstant.ipaddress}/account/login/";
-  static String get getOneUser => "${APIConstant.ipaddress}/account/login/";
-  static String get updateUser => "${APIConstant.ipaddress}/account/login/";
+  static String get registerURL => "${APIConstant.ipaddress}/account/add/";
+  static String get refreshToken => "${APIConstant.ipaddress}/account/refreshToken/";
+  static String get getOneUser => "${APIConstant.ipaddress}/account/";
+  static String get updateUser => "${APIConstant.ipaddress}/account/update/";
 } 

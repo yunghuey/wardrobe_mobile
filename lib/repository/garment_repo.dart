@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
 import 'package:wardrobe_mobile/repository/APIConstant.dart';
 
@@ -68,19 +69,25 @@ class GarmentRepository{
 
   Future<List<GarmentModel>> getAllGarment() async{
     try{
-      var url = Uri.parse(APIConstant.getAllGarmentsURL);
-      print(url);
-      var header = {
-          "Content-Type": "application/json",
-      };
-      var response = await http.get(url, headers: header);
-      if (response.statusCode == 200){
-        List<dynamic> result = jsonDecode(response.body)['garments'];
-        return result.map((e) => GarmentModel.fromJson(e)).toList();
-      } else {
-        print(response.body);
-        return [];
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString('token') ;
+      if (token != null){
+        var url = Uri.parse(APIConstant.getAllGarmentsURL);
+        print(url);
+        var header = {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token"
+        };
+        var response = await http.get(url, headers: header);
+        if (response.statusCode == 200){
+          List<dynamic> result = jsonDecode(response.body)['garments'];
+          return result.map((e) => GarmentModel.fromJson(e)).toList();
+        } else {
+          print(response.body);
+          return [];
+        }
       }
+      return [];
     } catch (e) {
       print("error: " + e.toString());
       return [];
