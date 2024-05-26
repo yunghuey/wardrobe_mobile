@@ -64,27 +64,29 @@ class _EditGarmentViewState extends State<EditGarmentView> {
           if (state is UpdateGarmentSuccess){
             const snackBar = SnackBar(content: Text('Updated successfully!'));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => RoutePage()), (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => RoutePage(page: 1,)), (route) => false);
           }
           else if (state is UpdateGarmentFail){
             const snackBar = SnackBar(content: Text(''));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         },
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _nameTextField(),
-              _countryField(),
-              _sizeField(),
-              _brandField(),
-              _colourField(),
-              loadingWidget,
-              _submitButton(),
-              // future enhancement : add delete button here
-          ]
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _nameTextField(),
+                _countryField(),
+                _sizeField(),
+                _brandField(),
+                _colourField(),
+                loadingWidget,
+                _submitButton(),
+                // future enhancement : add delete button here
+            ]
+            ),
           ),
         ),
       ),

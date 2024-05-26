@@ -13,7 +13,10 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Home page')),
-      body: Container(child: Text('BRB')),
+      body: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Container(child: Text('BRB')),
+      ),
     );
   }
 }

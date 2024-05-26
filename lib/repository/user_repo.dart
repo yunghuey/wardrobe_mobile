@@ -92,4 +92,9 @@ class UserRepository{
       return 4;
     }
   }
+
+  // refresh token
+  // get user
+  // update user
+  // reset password
 }

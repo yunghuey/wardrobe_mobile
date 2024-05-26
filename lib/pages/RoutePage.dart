@@ -4,8 +4,8 @@ import 'package:wardrobe_mobile/pages/garment/garmentListView.dart';
 import 'package:wardrobe_mobile/pages/garment/homeView.dart';
 
 class RoutePage extends StatefulWidget {
-  const RoutePage({super.key});
-
+  final int? page;
+  const RoutePage({Key? key, this.page}) : super(key: key);
   @override
   State<RoutePage> createState() => _RoutePageState();
 }
@@ -18,7 +18,12 @@ class _RoutePageState extends State<RoutePage> {
     GarmentListView(),
     ProfileView(),
   ];
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _currentIndex = widget.page ?? 0;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

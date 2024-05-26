@@ -38,7 +38,7 @@ class _GarmentListViewState extends State<GarmentListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('GarmentListView')),
+      appBar: AppBar(title: Text('Garment List')),
       body: 
       MultiBlocListener(
         listeners: [
@@ -67,6 +67,13 @@ class _GarmentListViewState extends State<GarmentListView> {
     );
   }
 
+  Color getTextColor(String hexColor) {
+    print(hexColor);
+    int colorValue = int.parse(hexColor.replaceAll('#', ''), radix: 16);
+    // If the color value is less than the threshold, return white; otherwise, return black.
+    return colorValue < 0x666666 ? Colors.white : Colors.black;
+  }
+
   
   Widget _garmentList(){
     return BlocBuilder<ReadGarmentBloc, ReadGarmentState>(
@@ -92,9 +99,9 @@ class _GarmentListViewState extends State<GarmentListView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Brand: ${garment.brand}"),
-                        Text("Size: ${garment.size}"),
-                        Text("Name: ${garment.name!}"),
+                        Text("Brand: ${garment.brand}", style: TextStyle(color: getTextColor(garment.colour)),),
+                        Text("Size: ${garment.size}", style: TextStyle(color: getTextColor(garment.colour)),),
+                        Text("Name: ${garment.name!}", style: TextStyle(color: getTextColor(garment.colour)),),
                         // Text("Id: ${garment.id!}"),
                         // Text("Color: ${garment.colour}"),
                         // Text("Status: ${garment.status}"),
@@ -104,7 +111,18 @@ class _GarmentListViewState extends State<GarmentListView> {
                         // Text("Created date:${garment.created_date}"),
                         ElevatedButton.icon(
                           onPressed: (){
-                            deleteBloc.add(DeleteButtonPressed(garmentID:garment.id!));
+                            showDialog(
+                              context: context, 
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text('Delete garmnet'),
+                                content: const Text('Are you sure to delete this garment?'),
+                                actions: [
+                                  TextButton(onPressed:() => Navigator.pop(context), child: Text("No")),
+                                  TextButton(onPressed: () =>deleteBloc.add(DeleteButtonPressed(garmentID:garment.id!)), child: Text("Yes"),)
+                                ],
+                              ) 
+                            );
+                            
                           }, 
                           icon: const Icon(Icons.remove), 
                           label: const Text("remove"),
