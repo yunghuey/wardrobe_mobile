@@ -1,5 +1,3 @@
-import 'package:shared_preferences/shared_preferences.dart';
-
 class APIConstant {
   static const String ipaddress = "http://192.168.0.20:8000"; // melaka home
   //  10.131.76.224
@@ -17,7 +15,7 @@ class APIConstant {
   static String get loginURL => "${APIConstant.ipaddress}/account/login/";
   static String get logoutURL => "${APIConstant.ipaddress}/account/logout/";
   static String get registerURL => "${APIConstant.ipaddress}/account/add/";
-  static String get refreshToken => "${APIConstant.ipaddress}/account/refreshToken/";
-  static String get getOneUser => "${APIConstant.ipaddress}/account/";
   static String get updateUser => "${APIConstant.ipaddress}/account/update/";
+  static String get refreshToken => "${APIConstant.ipaddress}/account/refreshToken/";
+  static String get getOneUserURL => "${APIConstant.ipaddress}/account/get/";
 } 

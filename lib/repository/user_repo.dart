@@ -94,7 +94,59 @@ class UserRepository{
   }
 
   // refresh token
-  // get user
   // update user
+  Future<bool> updateUser(UserModel user) async {
+    try{
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString("token");
+      if (token!.isNotEmpty) {
+        var url = Uri.parse(APIConstant.updateUser);
+        var header = {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${token}",
+        };
+
+        var body = json.encode({
+          "email": user.email,
+          "username": user.username,
+          "first_name" : user.firstname,
+          "last_name": user.lastname
+        });
+        var response = await http.put(url, headers: header, body: body);
+        if(response.statusCode == 200){
+          return true;
+        }
+      }
+      return false;
+    } catch (e){
+      return false;
+    }
+  }
+  // get user
+  Future<UserModel?> getUser() async {
+    try{
+      dynamic user_data;
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString("token");
+      if (token!.isNotEmpty) {
+        var url = Uri.parse(APIConstant.getOneUserURL);
+        print(url);
+        var header = {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${token}",
+        };
+        var response = await http.get(url, headers: header);
+        if (response.statusCode == 200){
+          var value = json.decode(response.body)['user'];
+          print(value);
+          user_data = UserModel.fromJsonOneUser(value);
+          return user_data;
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
   // reset password
 }

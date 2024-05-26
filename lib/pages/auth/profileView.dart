@@ -5,6 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Logout/logout_bloc.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Logout/logout_event.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Logout/logout_state.dart';
+import 'package:wardrobe_mobile/bloc/user/GetUserDetails/getuser_bloc.dart';
+import 'package:wardrobe_mobile/bloc/user/GetUserDetails/getuser_event.dart';
+import 'package:wardrobe_mobile/bloc/user/GetUserDetails/getuser_state.dart';
+import 'package:wardrobe_mobile/model/user.dart';
 import 'package:wardrobe_mobile/pages/auth/splashScreen.dart';
 
 class ProfileView extends StatefulWidget {
@@ -15,18 +19,22 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-
+  late UserProfileBloc userBloc;
   late LogoutBloc logoutbloc;
 
+  late UserModel user;
   @override
   void initState() {
     super.initState();
     logoutbloc = BlocProvider.of<LogoutBloc>(context);
+    userBloc = BlocProvider.of<UserProfileBloc>(context);
+
     refreshPage();
   }
 
   Future<void> refreshPage() async {
     logoutbloc.add(LogoutResetEvent());
+    userBloc.add(StartLoadProfile());
   }
 
   @override
@@ -71,7 +79,19 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Widget _displayUser(){
-    return Text("Hello Tong Yung Huey");
+    return BlocBuilder<UserProfileBloc, UserProfileState>(builder: (context, state) {
+      if(state is UserProfileLoadingState){
+        return Center(child: CircularProgressIndicator(),);
+      }
+      else if (state is UserProfileLoadedState){
+        user = state.user;
+         return Text("Hello ${user.firstname} ${user.lastname}");
+      } else if(state is UserProfileErrorState){
+        final snackBar = SnackBar(content: Text(state.message));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+      return Container();
+    },);
   }
 
   Widget _logoutButton(){

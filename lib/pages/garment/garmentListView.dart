@@ -68,7 +68,7 @@ class _GarmentListViewState extends State<GarmentListView> {
   }
 
   Color getTextColor(String hexColor) {
-    print(hexColor);
+    // print(hexColor);
     int colorValue = int.parse(hexColor.replaceAll('#', ''), radix: 16);
     // If the color value is less than the threshold, return white; otherwise, return black.
     return colorValue < 0x666666 ? Colors.white : Colors.black;
