@@ -81,7 +81,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
       },
       child: 
       Scaffold(
-        appBar: AppBar(title: const Text('Create garment form')),
+        appBar: AppBar(),
         body: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -108,24 +108,26 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
   
   // set default colorcode for color changed
   Widget _garmentColour(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Garment Colour:'), // Label
-      DropdownButton<String>(
-      value: _selectedColour,
-      onChanged: (String? newValue){
-        setState((){
-          _selectedColour = newValue; 
-          colourChanged = true;
-        });
-      },
-      items: ValueConstant.COLOUR_NAME.map<DropdownMenuItem<String>>((String value){
-        return DropdownMenuItem<String>(value: value, child: Text(value));
-      }).toList(),
-    ),
-    ],
-  ); 
+    return Padding(
+    padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text('Garment Colour:'), // Label
+        DropdownButton<String>(
+        value: _selectedColour,
+        onChanged: (String? newValue){
+          setState((){
+            _selectedColour = newValue; 
+          });
+        },
+        items: ValueConstant.COLOUR_NAME.map<DropdownMenuItem<String>>((String value){
+          return DropdownMenuItem<String>(value: value, child: Text(value));
+        }).toList(),
+      ),
+      ],
+      ),
+    );
   }
 
   Widget _garmentSubmit(){
@@ -150,7 +152,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
 
           createBloc.add(CreateButtonPressed(garment: garmentObj));
         } else{
-          const snackBar = SnackBar(content: Text('form not complete'));
+          const snackBar = SnackBar(content: Text('Please complete the form'));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
         // image
@@ -177,78 +179,86 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
   }
 
 Widget _garmentSize(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Garment Size:'), // Label
-      DropdownButton<String>(
-      value: _selectedSize,
-      onChanged: (String? newValue){
-        setState((){
-          _selectedSize = newValue; // Corrected the variable name
-        });
-      },
-      items: ValueConstant.SIZES.map<DropdownMenuItem<String>>((String value){
-        return DropdownMenuItem<String>(value: value, child: Text(value));
-      }).toList(),
-    ),
-    ],
-  );
+   return Padding(
+    padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text('Garment Size:'), // Label
+        DropdownButton<String>(
+        value: _selectedSize,
+        onChanged: (String? newValue){
+          setState((){
+            _selectedSize = newValue; // Corrected the variable name
+          });
+        },
+        items: ValueConstant.SIZES.map<DropdownMenuItem<String>>((String value){
+          return DropdownMenuItem<String>(value: value, child: Text(value));
+        }).toList(),
+      ),
+      ],
+      ),
+    );
   }
 
   Widget _garmentBrand(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Garment Brand:'), // Label
-      DropdownButton<String>(
-      value: _selectedBrand,
-      onChanged: (String? newValue){
-        setState((){
-          _selectedBrand = newValue; // Corrected the variable name
-        });
-      },
-      items: ValueConstant.BRANDS_NAME.map<DropdownMenuItem<String>>((String value){
-        return DropdownMenuItem<String>(value: value, child: Text(value));
-      }).toList(),
-    ),
-    ],
-  );
+    return Padding(
+    padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text('Garment Brand:'), // Label
+        DropdownButton<String>(
+        value: _selectedBrand,
+        onChanged: (String? newValue){
+          setState((){
+            _selectedBrand = newValue; // Corrected the variable name
+          });
+        },
+        items: ValueConstant.BRANDS_NAME.map<DropdownMenuItem<String>>((String value){
+          return DropdownMenuItem<String>(value: value, child: Text(value));
+        }).toList(),
+      ),
+      ],
+      ),
+    );
 
   }
   
   Widget _garmentCountry(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+    padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch, // Align children to the left
       children: [
         const Text('Garment Country:'), // Label
-      DropdownButton<String>(
-      value: _selectedCountry,
-      onChanged: (String? newValue){
-        setState((){
-          _selectedCountry = newValue; // Corrected the variable name
-        });
-      },
-      items: ValueConstant.COUNTRY.map<DropdownMenuItem<String>>((String value){
-        return DropdownMenuItem<String>(value: value, child: Text(value));
-      }).toList(),
+        DropdownButton<String>(
+          value: _selectedCountry,
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedCountry = newValue; // Corrected the variable name
+            });
+          },
+          items: ValueConstant.COUNTRY.map<DropdownMenuItem<String>>((String value){
+            return DropdownMenuItem<String>(value: value, child: Text(value));
+          }).toList(),
+        ),
+      ],
     ),
-    ],
   );
   }
 
   Widget _garmentName(){
     return Padding(
-      padding: const EdgeInsets.all(5),
+    padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
       child: TextFormField(
         controller: nameController,
         decoration: const InputDecoration(
           labelText: 'Garment Name',
           hintText: 'Enter garment name',
         ),
-        
       ),
-    );
+    ); 
   }
 
   Widget _garmentImage(){

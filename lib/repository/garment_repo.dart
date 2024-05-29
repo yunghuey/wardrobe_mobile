@@ -165,6 +165,7 @@ class GarmentRepository{
           "brand": gmt.brand,
           "name": gmt.name,
           "colour": gmt.colour,
+          "colour_name": gmt.colour_name,
           "country": gmt.country,
           "size" : gmt.size,
           "status": true,

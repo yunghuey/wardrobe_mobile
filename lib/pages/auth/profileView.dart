@@ -67,7 +67,7 @@ class _ProfileViewState extends State<ProfileView> {
               child: Column(
                 children: [
                   _displayUser(),
-                  _logoutButton()
+                  _generalTab(),
                 ]
               ),
             ),
@@ -81,11 +81,29 @@ class _ProfileViewState extends State<ProfileView> {
   Widget _displayUser(){
     return BlocBuilder<UserProfileBloc, UserProfileState>(builder: (context, state) {
       if(state is UserProfileLoadingState){
-        return Center(child: CircularProgressIndicator(),);
+        return Center(child: const CircularProgressIndicator(),);
       }
       else if (state is UserProfileLoadedState){
         user = state.user;
-         return Text("Hello ${user.firstname} ${user.lastname}");
+        return Padding(
+          padding: const EdgeInsets.only(top: 10, left: 20,right: 20,bottom: 10),
+          child: Card(
+            color: HexColor("#272360"),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(28.0),
+                child: Text(
+                  "Hello ${user.firstname} ${user.lastname}", 
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 18.0,
+                    ),
+                ),
+              )
+            )
+          ),
+        );
       } else if(state is UserProfileErrorState){
         final snackBar = SnackBar(content: Text(state.message));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -94,14 +112,84 @@ class _ProfileViewState extends State<ProfileView> {
     },);
   }
 
-  Widget _logoutButton(){
-    return ElevatedButton(
-      onPressed: () {
-        // bloc to update status in db
-        logoutbloc.add(LogoutButtonPressed());
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> SplashScreen()), (route) => false);
-      }, 
-      child: Text('Logout')
+  Widget _generalTab(){
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, left: 20,right: 20,bottom: 10),
+      child: Column(
+        children: <Widget>[
+          Text("GENERAL", 
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: HexColor("#7E7D80"),
+              fontSize: 16
+            )
+          ), 
+          SizedBox(height: 10.0,),
+          Container(
+            margin: EdgeInsets.all(5.0),
+            decoration: BoxDecoration(
+              color: HexColor("#EEE9FA"),
+              borderRadius: BorderRadius.circular(15.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0,3),
+                )
+              ]
+            ),
+            child: ListTile(
+              title: Text("Profile Settings"),
+              subtitle: Text("Update and modify your profile"),
+              trailing: Icon(Icons.chevron_right),
+            ),
+          ),
+          SizedBox(height: 15),
+          Container(
+            margin: EdgeInsets.all(5.0),
+            decoration: BoxDecoration(
+              color: HexColor("#EEE9FA"),
+              borderRadius: BorderRadius.circular(15.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0,3),
+                )
+              ]
+            ),
+            child: ListTile(
+              title: Text("Privacy"),
+              subtitle: Text("Change your password"),
+              trailing: Icon(Icons.chevron_right),
+              ),
+            ),
+            SizedBox(height: 15),
+            Container(
+              margin: EdgeInsets.all(5.0),
+              decoration: BoxDecoration(
+                color: HexColor("#EEE9FA"),
+                borderRadius: BorderRadius.circular(15.0),
+                boxShadow: [
+                  BoxShadow(color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0,3),
+                  )
+                ]
+              ),
+              child: ListTile(
+                title: Text("Logout"),
+                onTap: (){
+                  logoutbloc.add(LogoutButtonPressed());
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> SplashScreen()), (route) => false);
+                },
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

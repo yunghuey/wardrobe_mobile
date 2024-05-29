@@ -122,18 +122,21 @@ class _CaptureImageViewState extends State<CaptureImageView> {
 
 
   Widget _captureButton(){
-    return ElevatedButton(
-      onPressed: () async {
-        // if got image
-        if (image != null){
-          Uint8List? imageData = await _getImageBytes(image!);
-          if (imageData != null){
-            String base64String = base64Encode(Uint8List.fromList(imageData));
-            createBloc.add(SubmitImageEvent(imageBytes: base64String));
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[ElevatedButton(
+        onPressed: () async {
+          // if got image
+          if (image != null){
+            Uint8List? imageData = await _getImageBytes(image!);
+            if (imageData != null){
+              String base64String = base64Encode(Uint8List.fromList(imageData));
+              createBloc.add(SubmitImageEvent(imageBytes: base64String));
+            }
           }
-        }
-      },
-      child: const Text('Submit'),
+        },
+        child: const Text('Submit'),
+      ),],
     );
   }
 
@@ -149,8 +152,8 @@ class _CaptureImageViewState extends State<CaptureImageView> {
                 );
               },
               child: Container(
-                width: 250, // Set your desired width for the square box
-                height: 250, // Set your desired height for the square box
+                width: 300,
+                height: 550,
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: HexColor("#3c1e08"),
@@ -164,11 +167,10 @@ class _CaptureImageViewState extends State<CaptureImageView> {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done &&
                           snapshot.hasData) {
-                        // Navigator.pop(context);
                         return Image.memory(
                           snapshot.data!,
-                          width: 250,
-                          height: 250,
+                          width: 300,
+                          height: 550,
                           fit: BoxFit.cover,
                         );
                       } else {
@@ -204,8 +206,14 @@ class _CaptureImageViewState extends State<CaptureImageView> {
     }
 
   Widget _captureText(){
-    return const Center(
-      child: Text("Click the button below to capture an image")
+    return Container(
+      margin: const EdgeInsets.only(left: 7.0),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: const Center(
+          child: Text("Click the item above to submit an image.")
+        ),
+      ),
     );
   }
 
