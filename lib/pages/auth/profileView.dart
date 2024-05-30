@@ -10,6 +10,7 @@ import 'package:wardrobe_mobile/bloc/user/GetUserDetails/getuser_event.dart';
 import 'package:wardrobe_mobile/bloc/user/GetUserDetails/getuser_state.dart';
 import 'package:wardrobe_mobile/model/user.dart';
 import 'package:wardrobe_mobile/pages/auth/splashScreen.dart';
+import 'package:wardrobe_mobile/pages/auth/userUpdateView.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -143,6 +144,15 @@ class _ProfileViewState extends State<ProfileView> {
               title: Text("Profile Settings"),
               subtitle: Text("Update and modify your profile"),
               trailing: Icon(Icons.chevron_right),
+              onTap: (){
+                print('clicked');
+                Navigator.push(context, MaterialPageRoute(builder: (context) => UserUpdateView())).
+                then((result){
+                  if (result == true){
+                    refreshPage();
+                  }
+                });
+              },
             ),
           ),
           SizedBox(height: 15),

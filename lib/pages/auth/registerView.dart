@@ -234,7 +234,6 @@ class _RegisterViewState extends State<RegisterView> {
           },
           child: Text('Register')
         ),
-
       ),
     );
   }
