@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wardrobe_mobile/bloc/analysis/analysis_bloc.dart';
+import 'package:wardrobe_mobile/bloc/analysis/analysis_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_bloc.dart';
@@ -19,6 +21,7 @@ import 'package:wardrobe_mobile/bloc/user/Authentication/Register/register_state
 import 'package:wardrobe_mobile/bloc/user/GetUserDetails/getuser_bloc.dart';
 import 'package:wardrobe_mobile/bloc/user/GetUserDetails/getuser_state.dart';
 import 'package:wardrobe_mobile/pages/auth/splashScreen.dart';
+import 'package:wardrobe_mobile/repository/analysis_repo.dart';
 import 'package:wardrobe_mobile/repository/garment_repo.dart';
 import 'package:wardrobe_mobile/repository/user_repo.dart';
 
@@ -43,6 +46,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<LogoutBloc>(create: (context) => LogoutBloc(LogoutInitState(), UserRepository())),
         BlocProvider<RegisterBloc>(create: (context) => RegisterBloc(RegisterInitState(), UserRepository())),
         BlocProvider<UserProfileBloc>(create: (context) => UserProfileBloc(UserProfileInitState(), UserRepository())),
+        BlocProvider<DisplayAnalysisBloc>(create: (context) => DisplayAnalysisBloc(DisplayAnalysisInitState(), AnalysisRepository())),
 
       ],
       child: MaterialApp(

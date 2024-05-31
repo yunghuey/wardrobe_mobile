@@ -18,4 +18,7 @@ class APIConstant {
   static String get updateUser => "${APIConstant.ipaddress}/account/update/";
   static String get refreshToken => "${APIConstant.ipaddress}/account/refreshToken/";
   static String get getOneUserURL => "${APIConstant.ipaddress}/account/get/";
+
+  // analysis repo
+  static String get totalGarmentURL => "${APIConstant.ipaddress}/garment/getInfo";
 } 

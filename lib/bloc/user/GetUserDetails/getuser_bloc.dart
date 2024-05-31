@@ -11,7 +11,6 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState>{
         emit(UserProfileLoadingState());
         UserModel? isFound = await repo.getUser();
         if (isFound != null){
-          print('success bloc');
           emit(UserProfileLoadedState(user: isFound));
         }
         else {
