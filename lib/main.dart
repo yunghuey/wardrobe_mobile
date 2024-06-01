@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wardrobe_mobile/bloc/analysis/analysis_bloc.dart';
+import 'package:wardrobe_mobile/bloc/analysis/totalgarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/analysis/analysis_state.dart';
+import 'package:wardrobe_mobile/bloc/analysis/totalgarment_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_bloc.dart';
@@ -47,6 +49,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<RegisterBloc>(create: (context) => RegisterBloc(RegisterInitState(), UserRepository())),
         BlocProvider<UserProfileBloc>(create: (context) => UserProfileBloc(UserProfileInitState(), UserRepository())),
         BlocProvider<DisplayAnalysisBloc>(create: (context) => DisplayAnalysisBloc(DisplayAnalysisInitState(), AnalysisRepository())),
+        BlocProvider<TotalGarmentBloc>(create: (context) => TotalGarmentBloc(TotalGarmentInitState(), AnalysisRepository())),
 
       ],
       child: MaterialApp(

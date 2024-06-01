@@ -5,6 +5,10 @@ class DisplayAnalysisEvent extends Equatable{
   List<Object> get props => []; 
 } 
 
-class GetTotalGarmentEvent extends DisplayAnalysisEvent{}
-
 class GetBrandAnalysisEvent extends DisplayAnalysisEvent{}
+
+class GetCountryAnalysisEvent extends DisplayAnalysisEvent{}
+
+class GetColourAnalysisEvent extends DisplayAnalysisEvent{}
+
+class GetSizeAnalysisEvent extends DisplayAnalysisEvent{}

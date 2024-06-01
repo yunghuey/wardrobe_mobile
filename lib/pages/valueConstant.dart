@@ -7,5 +7,3 @@ class ValueConstant{
   static const List<String> COLOUR_NAME = ['NONE','RED', 'PURPLE', 'PINK', 'BLUE', 'BLUE GREEN', 'GREEN', 'YELLOW', 'ORANGE','WHITE','BLACK', 'GREY', 'BROWN', 'BEIGE', 'MULTI COLOUR'];
   static const List<String> COLOUR_CODE = ['0','#ff0000', '#800080', '#ffc0cb', '#0000ff', '#0d98ba', '#008000', '#ffff00', '#ffa500','#ffffff','#000000', '#808080', '#8b4513', '#f5f5dc', '#ffffff'];
 } 
-  
-  

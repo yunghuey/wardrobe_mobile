@@ -20,5 +20,9 @@ class APIConstant {
   static String get getOneUserURL => "${APIConstant.ipaddress}/account/get/";
 
   // analysis repo
-  static String get totalGarmentURL => "${APIConstant.ipaddress}/garment/getInfo";
+  static String get totalGarmentURL => "${APIConstant.ipaddress}/garment/getTotalGarment";
+  static String get brandAnalysisURL => "${APIConstant.ipaddress}/garment/getBrandAnalysis";
+  static String get countryAnalysisURL => "${APIConstant.ipaddress}/garment/getCountryAnalysis";
+  static String get colourAnalysisURL => "${APIConstant.ipaddress}/garment/getColourAnalysis";
+  static String get sizeAnalysisURL => "${APIConstant.ipaddress}/garment/getSizeAnalysis";
 } 
