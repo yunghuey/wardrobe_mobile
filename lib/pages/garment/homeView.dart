@@ -4,7 +4,8 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:wardrobe_mobile/bloc/analysis/analysis_bloc.dart';
 import 'package:wardrobe_mobile/bloc/analysis/analysis_event.dart';
 import 'package:wardrobe_mobile/bloc/analysis/analysis_state.dart';
-
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/widgets.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -13,8 +14,54 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
+class IndividualBar{
+  final int x; // position on x
+  final double y;
+
+  IndividualBar({ required this.x, required this.y });
+}
+
+class BarData{
+  final double sunAmount;
+  final double monAmount;
+  final double tueAmount;
+  final double wedAmount;
+  final double thuAmount;
+  final double friAmount;
+  final double satAmount;
+
+  BarData({required this.sunAmount, required this.monAmount,
+  required this.tueAmount,required this.wedAmount,
+  required this.thuAmount,required this.friAmount,required this.satAmount});
+
+  List<IndividualBar> barData = [];
+
+  void initalizeBarData(){
+    barData = [
+      IndividualBar(x: 0, y:sunAmount),
+      IndividualBar(x: 0, y:monAmount),
+      IndividualBar(x: 0, y:tueAmount),
+      IndividualBar(x: 0, y:wedAmount),
+      IndividualBar(x: 0, y:thuAmount),
+      IndividualBar(x: 0, y:friAmount),
+      IndividualBar(x: 0, y:satAmount),
+    ];
+  }
+}
 class _HomeViewState extends State<HomeView> {
   late DisplayAnalysisBloc analysisBloc;
+
+  List<double> weeklySummary = [
+    4.4,
+    2.5,
+    42.42,
+    10.5,
+    100.2,
+    88.99,
+    90.10
+  ];
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -44,6 +91,7 @@ class _HomeViewState extends State<HomeView> {
                     _displayGarmentNumber(),
                   ],),
                   // this row is to show the statistic bar chart
+                  _displayBarChart(),
                 ]
               ),
             ),
@@ -51,6 +99,14 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
     );
+  }
+
+  Widget _displayBarChart(){
+      return Center(
+        child: BarChart(
+          BarChartData(maxY: 100, minY: 0),
+        ),
+      );
   }
 
   Widget _displayGarmentNumber(){
@@ -81,7 +137,10 @@ class _HomeViewState extends State<HomeView> {
             ),
           );
         }
-        return Center(child: Text("Fetching data...", style: TextStyle(fontSize: 18),),);
+        return Card(
+          color: HexColor("#FFE6E6"),
+          child: Center(child: Text("Fetching data...", style: TextStyle(fontSize: 18),),)
+        );
       }
     );
   }

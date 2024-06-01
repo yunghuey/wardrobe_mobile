@@ -6,3 +6,5 @@ class DisplayAnalysisEvent extends Equatable{
 } 
 
 class GetTotalGarmentEvent extends DisplayAnalysisEvent{}
+
+class GetBrandAnalysisEvent extends DisplayAnalysisEvent{}
