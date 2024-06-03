@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -14,6 +12,7 @@ import 'package:wardrobe_mobile/model/brand.dart';
 import 'package:wardrobe_mobile/model/colour.dart';
 import 'package:wardrobe_mobile/model/country.dart';
 import 'package:wardrobe_mobile/model/size.dart';
+import 'package:wardrobe_mobile/pages/garment/mapView.dart';
 import 'package:wardrobe_mobile/pages/valueConstant.dart';
 
 class HomeView extends StatefulWidget {
@@ -27,9 +26,16 @@ class _HomeViewState extends State<HomeView> {
   late DisplayAnalysisBloc analysisBloc;
   late TotalGarmentBloc displaytotalBloc;
 
+  // location
+  double lat = 0.0, long = 0.0;
+
+  // group button
   int selectedIndex = 1;
   final List<bool> isSelected = [true,false, false, false];
 
+  // dropdown button
+  // var dropdownItem = [];
+  String dropdownValue = "";
   @override
   void initState() {
     // TODO: implement initState
@@ -58,17 +64,27 @@ class _HomeViewState extends State<HomeView> {
               padding: EdgeInsets.all(5),
               child: Column(
                 children: <Widget>[
-                  Row(
-                    children: [
-                      _displayGarmentNumber(),
-                    // get location
-                  ],),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _displayGarmentNumber(),
+                        _getCurrentLocation(),
+                      // get location
+                    ],),
+                  ),
                   SizedBox(height: 50),
                   _displayGroupButton(),
-                  SizedBox( 
+                  SizedBox(height: 20),
+                 SizedBox( 
                     height: 250,
                     child: _displayBarChart()
                   ),
+                  _displayDropDown(),
+                  // SizedBox(
+                  //   height: 300,
+                  //   child: _displayPie1(),
+                  // ),
                 ]
               ),
             ),
@@ -76,67 +92,6 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
     );
-  }
-
-  Widget _displayGroupButton(){
-    return ToggleButtons(
-      borderColor: Color.fromARGB(255, 70, 32, 139),
-      fillColor: Color.fromARGB(255, 93, 63, 184),
-      borderWidth: 1,
-      selectedBorderColor: Color.fromARGB(255, 103, 24, 230),
-      selectedColor: Colors.white,
-      borderRadius: BorderRadius.circular(10),
-      onPressed:(int index){
-        print("Index clicked is${index}");
-        setState(() {
-          for (int i =0; i< isSelected.length; i++){
-            if (i == index){
-              isSelected[i] = true;
-            } else{
-              isSelected[i] = false;
-            }
-          }
-         });
-        //  trigger event based on 
-        switch(index){
-          case 0:
-            analysisBloc.add(GetBrandAnalysisEvent());
-            break;
-          case 1:
-            analysisBloc.add(GetCountryAnalysisEvent());
-            break;
-          case 2:
-            analysisBloc.add(GetColourAnalysisEvent());
-            break;
-          case 3:
-            analysisBloc.add(GetSizeAnalysisEvent());
-            break;
-          default:
-            analysisBloc.add(GetBrandAnalysisEvent());
-            break;
-        }
-       },
-      isSelected :isSelected,
-      children: const <Widget>[
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          child: Text('Brands'),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          child: Text('Country'),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          child: Text('Colour'),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          child: Text('Size'),
-        ),
-      ],
-     );
-   }  
   }
 
   Widget _displayBarChart(){
@@ -282,6 +237,7 @@ class _HomeViewState extends State<HomeView> {
           }
           else if (state is SizeAndNumberBarChart){
             List<SizeModel> sizes = state.data; 
+
             return Padding(
               padding: const EdgeInsets.all(5),
               child: BarChart(
@@ -335,6 +291,175 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  Widget _displayPie1(){
+    return PieChart(PieChartData());
+  }
+  
+  Widget _getCurrentLocation(){
+    return Card(
+      color: HexColor("#F1B2AE"),
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Column(
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>MapScreen()))
+                .then((result)=> {
+                  if (result != null){
+                  setState(() {
+                    
+                    lat = result['lat'];
+                    long = result['lng'];
+                  })
+                  }
+                });
+              }, child: Text("get")
+            ),
+            Text("Lat: ${lat.toString()}"),
+            Text("Long: ${long.toString()}"),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _displayDropDown(){
+    return BlocBuilder<DisplayAnalysisBloc, DisplayAnalysisState>(
+      builder: (context, state){
+        if (state is BrandAndNumberBarChart || state is CountryAndNumberBarChart || state is ColourAndNumberBarChart || state is SizeAndNumberBarChart){
+          List<String> dropdownItem = [];
+          dropdownValue = "";
+          // dropdownItem.clear();
+          var data;
+          if (state is BrandAndNumberBarChart){
+            data = state.data;
+          }
+          else if (state is CountryAndNumberBarChart){
+            data = state.data;
+          }
+          else if (state is ColourAndNumberBarChart){
+            data = state.data;
+          }
+          else if (state is SizeAndNumberBarChart){
+            data = state.data;
+          }
+
+          for (final b in data){
+            dropdownItem.add(b.name);
+          }
+          if (dropdownValue.isEmpty && dropdownItem.isNotEmpty) {
+            dropdownValue = dropdownItem.first;
+          }
+         return Center(
+            child: DropdownButton(
+              value: dropdownValue,
+              items: dropdownItem.map((String items){
+        return DropdownMenuItem(value:items, child: Text(items),);
+      }).toList(), 
+              onChanged: (String? newvalue){
+                setState(() {
+                  dropdownValue = newvalue!;
+                });
+                print(dropdownValue);
+              }
+            ),
+          );
+         
+          // return Text("inside if statmeent");
+        }
+        return Container(child: CircularProgressIndicator(),);
+      }
+    );
+  }
+
+  // Widget _displayDropDown(){
+  //   String dropdownvalue1 = 'Item 1';    
+  
+  // // List of items in our dropdown menu 
+  // var items = [     
+  //   'Item 1', 
+  //   'Item 2', 
+  //   'Item 3', 
+  //   'Item 4', 
+  //   'Item 5', 
+  // ]; 
+  //   return DropdownButton(
+  //     value: dropdownvalue1,
+  //     items: items.map((String items){
+  //       return DropdownMenuItem(value:items, child: Text(items),);
+  //     }).toList(), 
+  //     onChanged: (String? newValue) {  
+  //               setState(() { 
+  //                 dropdownvalue1 = newValue!; 
+  //               }); 
+  //             }, 
+  //   );
+
+
+  // }
+  Widget _displayGroupButton(){
+    return ToggleButtons(
+      borderColor: Color.fromARGB(255, 70, 32, 139),
+      fillColor: Color.fromARGB(255, 93, 63, 184),
+      borderWidth: 1,
+      selectedBorderColor: Color.fromARGB(255, 103, 24, 230),
+      selectedColor: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+      onPressed:(int index){
+        print("Index clicked is${index}");
+        setState(() {
+          for (int i =0; i< isSelected.length; i++){
+            if (i == index){
+              isSelected[i] = true;
+            } else{
+              isSelected[i] = false;
+            }
+          }
+         });
+        //  trigger event based on 
+        switch(index){
+          case 0:
+            analysisBloc.add(GetBrandAnalysisEvent());
+            break;
+          case 1:
+            analysisBloc.add(GetCountryAnalysisEvent());
+            break;
+          case 2:
+            analysisBloc.add(GetColourAnalysisEvent());
+            break;
+          case 3:
+            analysisBloc.add(GetSizeAnalysisEvent());
+            break;
+          default:
+            analysisBloc.add(GetBrandAnalysisEvent());
+            break;
+        }
+       },
+      isSelected :isSelected,
+      children: const <Widget>[
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: Text('Brands'),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: Text('Country'),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: Text('Colour'),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: Text('Size'),
+        ),
+      ],
+     );
+   }  
+  }
+
+ 
   Widget getBrandTitles(double value, TitleMeta meta){
     TextStyle style = TextStyle(
       color: HexColor("#655e67"),

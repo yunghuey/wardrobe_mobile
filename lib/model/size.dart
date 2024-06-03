@@ -1,10 +1,10 @@
 class SizeModel{
-  String sizeName;
+  String name;
   int sizeCode;
   int numberOfGarment;
 
   SizeModel({
-    required this.sizeName, 
+    required this.name, 
     required this.sizeCode, 
     required this.numberOfGarment
   });

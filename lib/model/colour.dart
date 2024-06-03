@@ -1,10 +1,10 @@
 class ColourModel{
-  String colourName;
+  String name;
   int colourCode;
   int numberOfGarment;
 
   ColourModel({
-    required this.colourName, 
+    required this.name, 
     required this.colourCode, 
     required this.numberOfGarment
   });

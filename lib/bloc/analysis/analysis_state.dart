@@ -10,6 +10,7 @@ class DisplayAnalysisState extends Equatable{
 }
 
 class DisplayAnalysisInitState extends DisplayAnalysisState {}
+
 class FetchingAnaDataState extends DisplayAnalysisState {}
 // total number of garment for each brand
 class BrandAndNumberBarChart extends DisplayAnalysisState {

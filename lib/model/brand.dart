@@ -1,12 +1,12 @@
 import 'dart:io';
 
 class BrandModel{
-  String brandName;
+  String name;
   int brandCode;
   int numberOfGarment;
 
   BrandModel({
-    required this.brandName, 
+    required this.name, 
     required this.brandCode, 
     required this.numberOfGarment
   });

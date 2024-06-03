@@ -25,7 +25,7 @@ class DisplayAnalysisBloc extends Bloc<DisplayAnalysisEvent,DisplayAnalysisState
             highest = totalNum.toDouble();
           }
           int index = ValueConstant.BRANDS_NAME.indexOf(brandName);
-          var brand = BrandModel(brandName: brandName, numberOfGarment: totalNum, brandCode: index);
+          var brand = BrandModel(name: brandName, numberOfGarment: totalNum, brandCode: index);
           print("brand ${brandName} number: ${totalNum}");
           eachBrandGarment.add(brand);
         });
@@ -53,7 +53,7 @@ class DisplayAnalysisBloc extends Bloc<DisplayAnalysisEvent,DisplayAnalysisState
             highest = totalNum.toDouble();
           }
           int index = ValueConstant.COUNTRY.indexOf(countryName);
-          var brand = CountryModel(countryName: countryName, numberOfGarment: totalNum, countryCode: index);
+          var brand = CountryModel(name: countryName, numberOfGarment: totalNum, countryCode: index);
           print("country ${countryName} number: ${totalNum}");
           eachCountryGarment.add(brand);
         });
@@ -82,7 +82,7 @@ class DisplayAnalysisBloc extends Bloc<DisplayAnalysisEvent,DisplayAnalysisState
             highest = totalNum.toDouble();
           }
           int index = ValueConstant.COLOUR_NAME.indexOf(colourName);
-          var brand = ColourModel(colourName: colourName, numberOfGarment: totalNum, colourCode: index);
+          var brand = ColourModel(name: colourName, numberOfGarment: totalNum, colourCode: index);
           print("colour ${colourName} number: ${totalNum} index ${index}");
           eachColourGarment.add(brand);
         });
@@ -111,7 +111,7 @@ class DisplayAnalysisBloc extends Bloc<DisplayAnalysisEvent,DisplayAnalysisState
             highest = totalNum.toDouble();
           }
           int index = ValueConstant.SIZES.indexOf(sizeName);
-          var brand = SizeModel(sizeName: sizeName, numberOfGarment: totalNum, sizeCode: index);
+          var brand = SizeModel(name: sizeName, numberOfGarment: totalNum, sizeCode: index);
           print("size ${sizeName} number: ${totalNum}");
           eachSizeGarment.add(brand);
         });

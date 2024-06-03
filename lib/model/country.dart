@@ -1,10 +1,10 @@
 class CountryModel{
-  String countryName;
+  String name;
   int countryCode;
   int numberOfGarment;
 
   CountryModel({
-    required this.countryName, 
+    required this.name, 
     required this.countryCode, 
     required this.numberOfGarment
   });
