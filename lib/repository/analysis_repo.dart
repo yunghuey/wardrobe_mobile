@@ -64,7 +64,6 @@ class AnalysisRepository{
         var response = await http.get(url, headers: header);
         if (response.statusCode == 200){
           var value = json.decode(response.body);
-          print(value);
           return value;
         }
       }
@@ -88,7 +87,6 @@ class AnalysisRepository{
         var response = await http.get(url, headers: header);
         if (response.statusCode == 200){
           var value = json.decode(response.body);
-          print(value);
           return value;
         }
       }
@@ -112,7 +110,6 @@ class AnalysisRepository{
         var response = await http.get(url, headers: header);
         if (response.statusCode == 200){
           var value = json.decode(response.body);
-          print(value);
           return value;
         }
       }

@@ -1,61 +1,27 @@
 import 'package:equatable/equatable.dart';
-import 'package:wardrobe_mobile/model/BarChart/brand.dart';
-import 'package:wardrobe_mobile/model/BarChart/colour.dart';
-import 'package:wardrobe_mobile/model/BarChart/country.dart';
-import 'package:wardrobe_mobile/model/BarChart/size.dart';
+import 'package:wardrobe_mobile/model/barchart.dart';
 
 class DisplayAnalysisState extends Equatable{
   @override
   List<Object> get props => [];
+  List<BarChartModel> data = [];
+  String message = "";
 }
 
 class DisplayAnalysisInitState extends DisplayAnalysisState {}
 
 class FetchingAnaDataState extends DisplayAnalysisState {}
+
 // total number of garment for each brand
-class BrandAndNumberBarChart extends DisplayAnalysisState {
-  final List<BrandModel> data;
+class DataAndNumberBarChart extends DisplayAnalysisState {
+  final List<BarChartModel> data;
   final double y;
-  BrandAndNumberBarChart({required this.data, required this.y});
+  DataAndNumberBarChart({required this.data, required this.y});
 }
 
-class BrandAndNumberError extends DisplayAnalysisState{
+class DataAndNumberError extends DisplayAnalysisState{
   final String message;
-  BrandAndNumberError({required this.message});
+  DataAndNumberError({required this.message});
 }
 
-// country
-class CountryAndNumberBarChart extends DisplayAnalysisState {
-  final List<CountryModel> data;
-  final double y;
-  CountryAndNumberBarChart({required this.data, required this.y});
-}
-
-class CountryAndNumberError extends DisplayAnalysisState{
-  final String message;
-  CountryAndNumberError({required this.message});
-}
-
-// colour
-class ColourAndNumberBarChart extends DisplayAnalysisState {
-  final List<ColourModel> data;
-  final double y;
-  ColourAndNumberBarChart({required this.data, required this.y});
-}
-
-class ColourAndNumberError extends DisplayAnalysisState{
-  final String message;
-  ColourAndNumberError({required this.message});
-}
-
-// size
-class SizeAndNumberBarChart extends DisplayAnalysisState {
-  final List<SizeModel> data;
-  final double y;
-  SizeAndNumberBarChart({required this.data, required this.y});
-}
-
-class SizeAndNumberError extends DisplayAnalysisState{
-  final String message;
-  SizeAndNumberError({required this.message});
-}
+class DataAndNumberEmpty extends DisplayAnalysisState{}

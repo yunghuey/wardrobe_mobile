@@ -46,7 +46,6 @@ class UserRepository{
           "Content-Type": "application/json",
           'Authorization' : 'Bearer $token',
         };
-        print(url);
         var response = await http.put(url, headers: header);
         if (response.statusCode == 200) {
           pref.remove("token");
@@ -130,7 +129,6 @@ class UserRepository{
       String? token = pref.getString("token");
       if (token!.isNotEmpty) {
         var url = Uri.parse(APIConstant.getOneUserURL);
-        print(url);
         var header = {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${token}",

@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:wardrobe_mobile/model/BarChart/brand.dart';
 
 class TotalGarmentState extends Equatable{
   @override

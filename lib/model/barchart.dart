@@ -1,11 +1,12 @@
-class SizeModel{
+import 'dart:io';
+class BarChartModel{
   String name;
-  int sizeCode;
+  int code;
   int numberOfGarment;
 
-  SizeModel({
+  BarChartModel({
     required this.name, 
-    required this.sizeCode, 
+    required this.code, 
     required this.numberOfGarment
   });
 }

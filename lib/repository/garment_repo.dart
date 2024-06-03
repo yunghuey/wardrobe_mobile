@@ -47,7 +47,6 @@ class GarmentRepository{
   Future<GarmentModel?> processGarment(String base64) async{
       try{
         var url = Uri.parse(APIConstant.processImageURL);
-        print(url);
         var body = json.encode({
           "image": base64
         });
@@ -76,7 +75,6 @@ class GarmentRepository{
       String? token = pref.getString('token') ;
       if (token != null){
         var url = Uri.parse(APIConstant.getAllGarmentsURL);
-        print(url);
         var header = {
             "Content-Type": "application/json",
             "Authorization": "Bearer $token"
