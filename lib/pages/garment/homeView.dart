@@ -11,6 +11,9 @@ import 'package:wardrobe_mobile/bloc/analysis/analysis_state.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:wardrobe_mobile/bloc/analysis/totalgarment_event.dart';
 import 'package:wardrobe_mobile/bloc/analysis/totalgarment_state.dart';
+import 'package:wardrobe_mobile/bloc/weather/getWeather_bloc.dart';
+import 'package:wardrobe_mobile/bloc/weather/getWeather_event.dart';
+import 'package:wardrobe_mobile/bloc/weather/getWeather_state.dart';
 import 'package:wardrobe_mobile/model/barchart.dart';
 import 'package:wardrobe_mobile/model/piechart.dart';
 import 'package:wardrobe_mobile/pages/garment/mapView.dart';
@@ -34,6 +37,7 @@ class _HomeViewState extends State<HomeView> {
   late DisplayAnalysisBloc analysisBloc;
   late TotalGarmentBloc displaytotalBloc;
   late PieChartBloc pieBloc;
+  late GetWeatherBloc weatherBloc;
 
   // location
   double lat = 0.0, long = 0.0;
@@ -55,6 +59,7 @@ class _HomeViewState extends State<HomeView> {
     analysisBloc = BlocProvider.of<DisplayAnalysisBloc>(context);
     displaytotalBloc = BlocProvider.of<TotalGarmentBloc>(context);
     pieBloc = BlocProvider.of<PieChartBloc>(context);
+    weatherBloc = BlocProvider.of<GetWeatherBloc>(context);
     refreshPage();
   }
 
@@ -94,6 +99,51 @@ class _HomeViewState extends State<HomeView> {
                         // get user location
                         _getCurrentLocation(),
                       ],
+                    ),
+                  ),
+                  Card(
+                    color: HexColor("#C3EEFA"),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: BlocBuilder<GetWeatherBloc, GetWeatherState>(builder:(context, state){
+                        if (state is GetWeatherInitState){
+                          return Center(child: Text('Click the button to get location!'),);
+                        }
+                        else if (state is GetWeatherSuccess){
+                          var textstyle = const TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(children: [
+                              Row(
+                                children: [
+                                  Text("${state.weather.weatherday!}  ", style: textstyle,),
+                                  Text(state.weather.description!),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text("Temperature  ", style: textstyle,),
+                                  Text("${state.weather.currentTemperature!.toStringAsFixed(1)}°C"),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text("Humidity  ", style: textstyle,),
+                                  Text("${state.weather.humidityTemperature!.toStringAsFixed(1)}°C"),
+                                ],
+                              ),
+                                                  
+                            ],),
+                          );
+                        }
+                        else if (state is GetWeatherFail){
+                          return Text(state.message);
+                        }
+                        else if (state is GettingWeatherState){
+                          return Center(child: CircularProgressIndicator(),);
+                        }
+                        return Container();
+                      }),
                     ),
                   ),
                   BlocBuilder<DisplayAnalysisBloc, DisplayAnalysisState>(
@@ -140,7 +190,7 @@ class _HomeViewState extends State<HomeView> {
                       return _displayFetchData();
                     }
                     else if (state is PieChartDataState){
-                      return _test(state);
+                      return _pieChartDiagram(state);
                     }
                     else if (state is PieChartEmpty){
                       return Text("${category}, ${dropdownValue}, ${userClicked}");
@@ -322,7 +372,7 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _test(PieChartDataState state) {
+  Widget _pieChartDiagram(PieChartDataState state) {
         return Column(
           children: [
             Center(
@@ -420,7 +470,8 @@ class _HomeViewState extends State<HomeView> {
                                 setState(() {
                                   lat = result['lat'];
                                   long = result['lng'];
-                                })
+                                }),
+                                weatherBloc.add(FindWeatherPressed(long: long, lat: lat)),
                               }
                           });
                 },

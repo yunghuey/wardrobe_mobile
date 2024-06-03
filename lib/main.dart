@@ -24,10 +24,13 @@ import 'package:wardrobe_mobile/bloc/user/Authentication/Register/register_bloc.
 import 'package:wardrobe_mobile/bloc/user/Authentication/Register/register_state.dart';
 import 'package:wardrobe_mobile/bloc/user/GetUserDetails/getuser_bloc.dart';
 import 'package:wardrobe_mobile/bloc/user/GetUserDetails/getuser_state.dart';
+import 'package:wardrobe_mobile/bloc/weather/getWeather_bloc.dart';
+import 'package:wardrobe_mobile/bloc/weather/getWeather_state.dart';
 import 'package:wardrobe_mobile/pages/auth/splashScreen.dart';
 import 'package:wardrobe_mobile/repository/analysis_repo.dart';
 import 'package:wardrobe_mobile/repository/garment_repo.dart';
 import 'package:wardrobe_mobile/repository/user_repo.dart';
+import 'package:wardrobe_mobile/repository/weather_repo.dart';
 
 void main() {
   runApp(const MyApp());
@@ -53,6 +56,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<DisplayAnalysisBloc>(create: (context) => DisplayAnalysisBloc(DisplayAnalysisInitState(), AnalysisRepository())),
         BlocProvider<TotalGarmentBloc>(create: (context) => TotalGarmentBloc(TotalGarmentInitState(), AnalysisRepository())),
         BlocProvider<PieChartBloc>(create: (context) => PieChartBloc(PieChartInitState(), AnalysisRepository())),
+        BlocProvider<GetWeatherBloc>(create: (context) => GetWeatherBloc(GetWeatherInitState(), WeatherRepository())),
       ],
       child: MaterialApp(
         title: 'Yourdrobe',

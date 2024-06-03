@@ -25,4 +25,7 @@ class APIConstant {
   static String get countryAnalysisURL => "${APIConstant.ipaddress}/garment/getCountryAnalysis";
   static String get colourAnalysisURL => "${APIConstant.ipaddress}/garment/getColourAnalysis";
   static String get sizeAnalysisURL => "${APIConstant.ipaddress}/garment/getSizeAnalysis";
+
+  // weather repo
+  static String get getWeatherWithLocationURL => "${APIConstant.ipaddress}/weather/getTemperature";
 } 
