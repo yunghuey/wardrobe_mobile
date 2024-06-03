@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:wardrobe_mobile/model/brand.dart';
-import 'package:wardrobe_mobile/model/colour.dart';
-import 'package:wardrobe_mobile/model/country.dart';
-import 'package:wardrobe_mobile/model/size.dart';
+import 'package:wardrobe_mobile/model/BarChart/brand.dart';
+import 'package:wardrobe_mobile/model/BarChart/colour.dart';
+import 'package:wardrobe_mobile/model/BarChart/country.dart';
+import 'package:wardrobe_mobile/model/BarChart/size.dart';
 
 class DisplayAnalysisState extends Equatable{
   @override

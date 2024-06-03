@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wardrobe_mobile/bloc/analysis/analysis_bloc.dart';
+import 'package:wardrobe_mobile/bloc/analysis/piechart_state.dart';
+import 'package:wardrobe_mobile/bloc/analysis/piechart_bloc.dart';
 import 'package:wardrobe_mobile/bloc/analysis/totalgarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/analysis/analysis_state.dart';
 import 'package:wardrobe_mobile/bloc/analysis/totalgarment_state.dart';
@@ -50,7 +52,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<UserProfileBloc>(create: (context) => UserProfileBloc(UserProfileInitState(), UserRepository())),
         BlocProvider<DisplayAnalysisBloc>(create: (context) => DisplayAnalysisBloc(DisplayAnalysisInitState(), AnalysisRepository())),
         BlocProvider<TotalGarmentBloc>(create: (context) => TotalGarmentBloc(TotalGarmentInitState(), AnalysisRepository())),
-
+        BlocProvider<PieChartBloc>(create: (context) => PieChartBloc(PieChartInitState(), AnalysisRepository())),
       ],
       child: MaterialApp(
         title: 'Yourdrobe',

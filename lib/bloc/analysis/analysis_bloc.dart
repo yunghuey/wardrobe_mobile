@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wardrobe_mobile/bloc/analysis/analysis_event.dart';
 import 'package:wardrobe_mobile/bloc/analysis/analysis_state.dart';
-import 'package:wardrobe_mobile/model/brand.dart';
-import 'package:wardrobe_mobile/model/colour.dart';
-import 'package:wardrobe_mobile/model/country.dart';
-import 'package:wardrobe_mobile/model/size.dart';
+import 'package:wardrobe_mobile/model/BarChart/brand.dart';
+import 'package:wardrobe_mobile/model/BarChart/colour.dart';
+import 'package:wardrobe_mobile/model/BarChart/country.dart';
+import 'package:wardrobe_mobile/model/BarChart/size.dart';
 import 'package:wardrobe_mobile/pages/valueConstant.dart';
 import 'package:wardrobe_mobile/repository/analysis_repo.dart';
 
