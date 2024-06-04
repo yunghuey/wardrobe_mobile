@@ -91,7 +91,14 @@ class _ViewGarmentDetailsState extends State<ViewGarmentDetails> {
       child: Column(children: [
         // display image
         Image.network(
-          garment.imageURL!,
+          garment.garmentImageURL!,
+          width: 300,
+          height:300,
+          fit: BoxFit.cover,
+        ),
+        SizedBox(height: 20,),
+        Image.network(
+          garment.garmentImageURL!,
           width: 300,
           height:300,
           fit: BoxFit.cover,

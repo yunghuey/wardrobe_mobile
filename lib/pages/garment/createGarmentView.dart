@@ -1,24 +1,30 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:wardrobe_mobile/bloc/garment/CaptureMaterial/captureMaterial_bloc.dart';
+import 'package:wardrobe_mobile/bloc/garment/CaptureMaterial/captureMaterial_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_event.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
+import 'package:wardrobe_mobile/model/material.dart';
 import 'package:wardrobe_mobile/pages/RoutePage.dart';
 import 'package:wardrobe_mobile/pages/garment/homeView.dart';
 import 'package:wardrobe_mobile/pages/ValueConstant.dart';
 
 class CreateGarmentView extends StatefulWidget {
   final GarmentModel garment;
-  final File image;
+  final File garmentImage;
+  final File materialImage;
 
   const CreateGarmentView({
     required this.garment, 
-    required this.image,
+    required this.garmentImage,
+    required this.materialImage,
     Key? key
   }): super(key: key);
 
@@ -28,10 +34,11 @@ class CreateGarmentView extends StatefulWidget {
 
 class _CreateGarmentViewState extends State<CreateGarmentView> {
   late GarmentModel garmentResult;
-  late File imageResult;
+  late File garmentImageResult;
+  late File materialImageResult;
   final _formKey = GlobalKey<FormState>();
   late CreateGarmentBloc createBloc;
-
+  late List<MaterialModel> materials;
   bool colourChanged = false;
 
   String? _selectedCountry;
@@ -46,7 +53,8 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
     // TODO: implement initState
     super.initState();
     garmentResult = widget.garment;
-    imageResult = widget.image;
+    garmentImageResult = widget.garmentImage;
+    materialImageResult = widget.materialImage;
     createBloc =  BlocProvider.of<CreateGarmentBloc>(context);
     _selectedCountry = garmentResult.country;
     _selectedSize = garmentResult.size;
@@ -90,11 +98,13 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
               child: Column(
                 children: [
                   _garmentImage(),
+                  _materialImage(),
                   _garmentName(),
                   _garmentCountry(),
                   _garmentBrand(),
                   _garmentSize(),
                   _garmentColour(),
+                  _materialCustomization(),
                   // _garmentColorCode(),
                   _garmentSubmit(),
                 ]
@@ -106,6 +116,55 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
     );
   }
   
+  Widget _materialCustomization(){
+    return BlocBuilder<CaptureMaterialBloc, CaptureMaterialState>(
+      builder: (context, state) {
+        if (state is CaptureMaterialSuccess){
+          materials = state.materialList;
+
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: materials.length,
+            itemBuilder: (context, index){
+
+              return Column(
+                children: <Widget>[
+                  DropdownButton<String>(
+                    value: materials[index].materialName,
+                    onChanged: (String? newValue){
+                      setState((){
+                        materials[index].materialName = newValue!;
+                      });
+                    },
+                    items: ValueConstant.MATERIAL_NAME.map<DropdownMenuItem<String>>((String value){
+                      return DropdownMenuItem<String>(value: value, child: Text(value));
+                    }).toList(),
+                  ),
+                  TextFormField(
+                    initialValue: materials[index].percentage.toString(),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ], // Only numbers can be entered
+                    onChanged: (value) {
+                      if (double.parse(value) <= 100) {
+                        setState(() {
+                          materials[index].percentage = double.parse(value);
+                        });
+                      }
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+        return Container();
+      },
+      
+    );
+  }
   // set default colorcode for color changed
   Widget _garmentColour(){
     return Padding(
@@ -147,7 +206,8 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
             size: _selectedSize ?? '',
             colour_name: _selectedColour ?? 'WHITE',
             name:nameController.text.trim(),
-            image: imageResult
+            garmentImage: garmentImageResult,
+            materialImage: materialImageResult,
           );
 
           createBloc.add(CreateButtonPressed(garment: garmentObj));
@@ -264,7 +324,29 @@ Widget _garmentSize(){
   Widget _garmentImage(){
     Uint8List bytes;
     try {
-      bytes = imageResult.readAsBytesSync();
+      bytes = garmentImageResult.readAsBytesSync();
+    } catch (e) {
+      print("Error reading image file: $e");
+      bytes = Uint8List(0);
+    }
+    return Container(
+      height: 185,
+      width: 185,
+      decoration: BoxDecoration(
+        color: Colors.blueGrey,
+        // shape: BoxShape.circle,
+        image: DecorationImage(
+          image: MemoryImage(bytes),
+          fit: BoxFit.cover,
+        ),
+        ),
+      );
+  }
+
+  Widget _materialImage(){
+    Uint8List bytes;
+    try {
+      bytes = materialImageResult.readAsBytesSync();
     } catch (e) {
       print("Error reading image file: $e");
       bytes = Uint8List(0);

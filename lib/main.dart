@@ -6,6 +6,8 @@ import 'package:wardrobe_mobile/bloc/analysis/piechart_bloc.dart';
 import 'package:wardrobe_mobile/bloc/analysis/totalgarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/analysis/analysis_state.dart';
 import 'package:wardrobe_mobile/bloc/analysis/totalgarment_state.dart';
+import 'package:wardrobe_mobile/bloc/garment/CaptureMaterial/captureMaterial_bloc.dart';
+import 'package:wardrobe_mobile/bloc/garment/CaptureMaterial/captureMaterial_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_bloc.dart';
@@ -57,6 +59,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<TotalGarmentBloc>(create: (context) => TotalGarmentBloc(TotalGarmentInitState(), AnalysisRepository())),
         BlocProvider<PieChartBloc>(create: (context) => PieChartBloc(PieChartInitState(), AnalysisRepository())),
         BlocProvider<GetWeatherBloc>(create: (context) => GetWeatherBloc(GetWeatherInitState(), WeatherRepository())),
+        BlocProvider<CaptureMaterialBloc>(create: (context) => CaptureMaterialBloc(CaptureMaterialInitState(), GarmentRepository())),
       ],
       child: MaterialApp(
         title: 'Yourdrobe',

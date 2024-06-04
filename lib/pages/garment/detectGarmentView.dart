@@ -11,6 +11,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_event.dart';
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
+import 'package:wardrobe_mobile/pages/garment/captureMaterialView.dart';
 import 'package:wardrobe_mobile/pages/garment/createGarmentView.dart'; 
 
 class CaptureImageView extends StatefulWidget {
@@ -23,7 +24,7 @@ class CaptureImageView extends StatefulWidget {
 class _CaptureImageViewState extends State<CaptureImageView> {
   File? image;
   final _picker = ImagePicker();
-  late CreateGarmentBloc createBloc;
+  // late CreateGarmentBloc createBloc;
 
   Future<void> getImage(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source);
@@ -48,7 +49,6 @@ class _CaptureImageViewState extends State<CaptureImageView> {
   @override
   void initState() {
     super.initState();
-    createBloc = BlocProvider.of<CreateGarmentBloc>(context);
   }
 
   @override
@@ -57,63 +57,14 @@ class _CaptureImageViewState extends State<CaptureImageView> {
       appBar: AppBar(
         title: const Text('Capture Image'),
       ),
-      body: BlocListener<CreateGarmentBloc, CreateGarmentState>(
-        listener: (context, state){
-          if (state is DetectGarmentLoadingState){
-            // Handle loading state
-            showDialog(
-              context: context,
-              barrierDismissible: false, // Prevent dismissing while loading
-              builder: (BuildContext context) {
-                return Stack(
-                  children: <Widget>[
-                    // Blurred background
-                    Container(
-                      color: Colors.black.withOpacity(0.5),
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                    ),
-                    // Centered loading indicator
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-          else if (state is DetectGarmentSuccessState){
-            Navigator.of(context, rootNavigator: true).pop();
-            final snackBar = SnackBar(content: Text("success"));
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            print('detect success');
-            // Navigator.push(context, MaterialPageRoute(builder: (context) => CreateGarmentView(image: image!, garment: state.result)));
-            Navigator.push(
-              context, 
-              MaterialPageRoute(
-                builder: (context) => CreateGarmentView(
-                  garment: state.result,
-                  image: image!,
-                ),
-              )
-              );
-          }
-          else if (state is DetectGarmentFailState){
-            Navigator.of(context, rootNavigator: true).pop();
-            // change to dialog
-            final snackBar = SnackBar(content: Text(state.message));
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          }
-        },
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: <Widget>[
-                _insertImage(context),
-                _captureText(),
-                _captureButton(),
-              ],
-            ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              _insertImage(context),
+              _captureText(),
+              _captureButton(),
+            ],
           ),
         ),
       ),
@@ -122,21 +73,27 @@ class _CaptureImageViewState extends State<CaptureImageView> {
 
 
   Widget _captureButton(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[ElevatedButton(
-        onPressed: () async {
-          // if got image
-          if (image != null){
-            Uint8List? imageData = await _getImageBytes(image!);
-            if (imageData != null){
-              String base64String = base64Encode(Uint8List.fromList(imageData));
-              createBloc.add(SubmitImageEvent(imageBytes: base64String));
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[ElevatedButton(
+          onPressed: () {
+            if (image != null){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CaptureMaterialView(garmentImage: image!,)));
             }
-          }
-        },
-        child: const Text('Submit'),
-      ),],
+            // if got image
+            // if (image != null){
+            //   Uint8List? imageData = await _getImageBytes(image!);
+            //   if (imageData != null){
+                // String base64String = base64Encode(Uint8List.fromList(imageData));
+                // createBloc.add(SubmitImageEvent(imageBytes: base64String));
+            //   }
+            // }
+          },
+          child: const Text('Submit'),
+        ),],
+      ),
     );
   }
 

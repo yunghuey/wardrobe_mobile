@@ -31,7 +31,7 @@ class _EditGarmentViewState extends State<EditGarmentView> {
   String? _selectedSize;
   String? _selectedBrand;
   String? _selectedColour;
-  String? imageURL;
+  String? garmentImageURL;
   bool isChanged = false;
   
   final loadingWidget = BlocBuilder<UpdateGarmentBloc, UpdateGarmentState>(
@@ -55,7 +55,7 @@ class _EditGarmentViewState extends State<EditGarmentView> {
     _selectedColour = updateGarment.colour_name;
     _selectedCountry = updateGarment.country;
     _selectedSize = updateGarment.size;
-    imageURL = updateGarment.imageURL;
+    garmentImageURL = updateGarment.garmentImageURL;
   }
   @override
   Widget build(BuildContext context) {
@@ -98,7 +98,7 @@ class _EditGarmentViewState extends State<EditGarmentView> {
 
   Widget _displayImage(){
     return Image.network(
-          imageURL!,
+          garmentImageURL!,
           width: 300,
           height:300,
           fit: BoxFit.cover,

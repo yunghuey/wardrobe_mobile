@@ -7,8 +7,10 @@ class GarmentModel{
   String brand;
   String colour;
   String size;
-  File? image;
-  String? imageURL;
+  File? garmentImage;
+  String? garmentImageURL;
+  File? materialImage;
+  String? materialImageURL;
   bool? status;
   String? created_date;
   String? colour_name;
@@ -21,8 +23,10 @@ class GarmentModel{
     required this.colour,
     required this.size,
     this.status,
-    this.imageURL,
-    this.image,
+    this.garmentImageURL,
+    this.garmentImage,
+    this.materialImageURL,
+    this.materialImage,
     this.created_date,
     this.colour_name,
   });
@@ -37,7 +41,8 @@ class GarmentModel{
       colour_name: json["colour_name"],
       size: json["size"],
       status: json["status"],
-      imageURL: json["image_url"],
+      garmentImageURL: json["image_url"],
+      materialImageURL: json["material_url"],
       created_date: json["created_date"],
     );
   }

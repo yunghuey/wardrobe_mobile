@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
+import 'package:wardrobe_mobile/model/material.dart';
 import 'package:wardrobe_mobile/repository/APIConstant.dart';
 
 class GarmentRepository{
@@ -20,7 +21,8 @@ class GarmentRepository{
             "colour": shirt.colour,
             "colour_name" : shirt.colour_name,
             "status": true,
-            "image": await _convertImageToBase64(shirt.image!),
+            "image": await _convertImageToBase64(shirt.garmentImage!),
+            "material": await _convertImageToBase64(shirt.materialImage!),
           });
           print(body);
           var header = {
@@ -177,6 +179,42 @@ class GarmentRepository{
       return false;
     } catch (e){
       return false;
+    }
+  }
+
+  Future<List<MaterialModel>> getMaterialList(String materialImageByte) async {
+    try{
+      List<MaterialModel> materials = [];
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString('token') ;
+      if (token != null){
+        var url = Uri.parse(APIConstant.detectMaterialURL);
+        var header = {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        };
+        print(url);
+        var body = json.encode({
+          "image" : materialImageByte
+        });
+
+        var response = await http.post(url, headers: header, body: body);
+        if (response.statusCode == 201){
+          List<dynamic> value  = json.decode(response.body)['result'];
+          print("material value ${value}");
+          materials = value.map((e) => MaterialModel.fromJson(e)).toList();
+          return materials;
+        }
+        else {
+          return Future.error(json.decode(response.body)['error']);
+        }
+      
+      }
+      return materials;
+    } catch (e, stackTrace){
+      print(stackTrace.toString());
+      print(e.toString());
+      return Future.error(e);
     }
   }
 }
