@@ -41,8 +41,6 @@ class GarmentRepository{
         }
         return false;
       } catch (e, stackTrace) {
-        print(e.toString());
-        print(stackTrace.toString());
         return false;
       }
   }
@@ -90,7 +88,7 @@ class GarmentRepository{
         var response = await http.get(url, headers: header);
         if (response.statusCode == 200){
           List<dynamic> result = jsonDecode(response.body)['garments'];
-          return result.map((e) => GarmentModel.fromJson(e)).toList();
+          return result.map((e) => GarmentModel.allFromJson(e)).toList();
         } else {
           print(response.body);
           return [];
@@ -175,6 +173,10 @@ class GarmentRepository{
           "country": gmt.country,
           "size" : gmt.size,
           "status": true,
+          "materialList": gmt.materialList?.map((material) => {
+              "material_name": material.materialName,
+              "percentage": material.percentage
+            }).toList(),
         });
 
         var response = await http.put(url, headers: header, body: body);

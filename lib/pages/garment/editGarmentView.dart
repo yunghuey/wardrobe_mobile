@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_event.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_state.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
+import 'package:wardrobe_mobile/model/material.dart';
 import 'package:wardrobe_mobile/pages/RoutePage.dart';
 import 'package:wardrobe_mobile/pages/garment/homeView.dart';
 import 'package:wardrobe_mobile/pages/valueConstant.dart';
@@ -32,7 +35,10 @@ class _EditGarmentViewState extends State<EditGarmentView> {
   String? _selectedBrand;
   String? _selectedColour;
   String? garmentImageURL;
+  String? materialImageURL;
   bool isChanged = false;
+  double percentageSum = 0.0;
+  late List<MaterialModel> materials;
   
   final loadingWidget = BlocBuilder<UpdateGarmentBloc, UpdateGarmentState>(
     builder: (context, state){
@@ -56,6 +62,8 @@ class _EditGarmentViewState extends State<EditGarmentView> {
     _selectedCountry = updateGarment.country;
     _selectedSize = updateGarment.size;
     garmentImageURL = updateGarment.garmentImageURL;
+    materialImageURL = updateGarment.materialImageURL;
+    materials = updateGarment.materialList!;
   }
   @override
   Widget build(BuildContext context) {
@@ -80,11 +88,13 @@ class _EditGarmentViewState extends State<EditGarmentView> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _displayImage(),
+                _displayMaterialImage(),
                 _nameTextField(),
                 _countryField(),
                 _sizeField(),
                 _brandField(),
                 _colourField(),
+                _materialCustomization(),
                 loadingWidget,
                 _submitButton(),
                 // future enhancement : add delete button here
@@ -96,9 +106,136 @@ class _EditGarmentViewState extends State<EditGarmentView> {
     );
   }
 
+Widget _materialCustomization() {
+    return Column(
+            children: [
+              IconButton(
+                onPressed: () {
+                  percentageSum = 0.0;
+                  
+                  setState(() {
+                    for (var m in materials) {
+                      if (m.materialName != ValueConstant.MATERIAL_NAME[0]){
+                        percentageSum += m.percentage;
+                      }
+                      else {
+                        percentageSum = 200;
+                      }
+
+                      if (m.percentage == 0){
+                        percentageSum = 300;
+                      }
+                  }
+                  });
+                  if (percentageSum < 100) {
+                    var newRow = MaterialModel(materialName: ValueConstant.MATERIAL_NAME[0], percentage: 0.0);
+                    materials.add(newRow);
+                    setState(() {});
+                  } 
+                  else if (percentageSum == 200){
+                    final snackBar = SnackBar(content: Text("Please choose a material"));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  }
+                  else {
+                    final snackBar = SnackBar(content: Text("Percentage has exceed 100, cannot add anymore"));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  }
+                },
+                icon: const Icon(Icons.add),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: materials.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: <Widget>[
+                      DropdownButton<String>(
+                        value: materials[index].materialName,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            materials[index].materialName = newValue!;
+                          });
+                        },
+                        items: _getDropdownItems(index),
+                      ),
+                      TextFormField(
+                        initialValue: materials[index].percentage.toString(),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        onChanged: (value) {
+                          double newPercentage = double.tryParse(value) ?? 0.0;
+                          if (newPercentage <= 100) {
+                            setState(() {
+                              materials[index].percentage = newPercentage;
+                            });
+                          }
+                          if (newPercentage == 0.0){
+                             final snackBar = SnackBar(content: Text("Percentage cannot be 0"));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          }
+                        },
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          if (materials.length > 1){
+                            setState(() {
+                              materials.removeAt(index);
+                            });
+                          }
+                          else {
+                            SnackBar sn = SnackBar(content: Text("Unable to remove"));
+                            ScaffoldMessenger.of(context).showSnackBar(sn);
+                          }
+                        },
+                        icon: Icon(Icons.remove_circle),
+                      ),
+                      Divider(
+                        color: HexColor("#dbc83c"),
+                        thickness: 6,
+                        endIndent: 25,
+                        indent: 25,
+                      ),
+
+                    ],
+                  );
+                },
+              ),
+            ],
+    );
+  }
+
+  List<DropdownMenuItem<String>> _getDropdownItems(int index) {
+    List<String> selectedMaterials = materials.map((m) => m.materialName).toList();
+
+    if (selectedMaterials.isNotEmpty){
+      selectedMaterials.removeAt(index); 
+    }else {
+          selectedMaterials.removeAt(0);
+
+    }
+    List<String> availableMaterials = ['Select material'];
+    availableMaterials.addAll(ValueConstant.MATERIAL_NAME
+      .where((material) => material != 'Select material' && !selectedMaterials.contains(material))
+      .toList());
+    return availableMaterials.map<DropdownMenuItem<String>>((String value) {
+      return DropdownMenuItem<String>(value: value, child: Text(value));
+    }).toList();
+  }
+
   Widget _displayImage(){
     return Image.network(
           garmentImageURL!,
+          width: 300,
+          height:300,
+          fit: BoxFit.cover,
+        );
+  }
+  Widget _displayMaterialImage(){
+    return Image.network(
+          materialImageURL!,
           width: 300,
           height:300,
           fit: BoxFit.cover,
@@ -111,9 +248,13 @@ class _EditGarmentViewState extends State<EditGarmentView> {
         children: [
           ElevatedButton(
             onPressed: (){
+              percentageSum = 0.0;
+              for (final m in materials){
+                percentageSum += m.percentage;
+              }
               if (_formKey.currentState!.validate() && _selectedCountry != ValueConstant.COUNTRY[0] 
                 && _selectedBrand != ValueConstant.BRANDS_NAME[0] && _selectedSize != ValueConstant.SIZES[0] 
-                && _selectedColour != ValueConstant.COLOUR_NAME[0]){
+                && _selectedColour != ValueConstant.COLOUR_NAME[0] && percentageSum == 100){
                   String colorCode = updateGarment.colour;
 
                   if (isChanged){
@@ -131,6 +272,7 @@ class _EditGarmentViewState extends State<EditGarmentView> {
                     size: _selectedSize ?? '',
                     colour_name: _selectedColour,
                     status: true,
+                    materialList: materials,
                   );
                   updateBloc.add(UpdateButtonPressed(garment: garmentObj));
             }

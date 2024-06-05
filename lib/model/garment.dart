@@ -36,6 +36,14 @@ class GarmentModel{
   });
 
   factory GarmentModel.fromJson(Map<String, dynamic> json){
+    var materialListJson = json['material'] as Map<String, dynamic>;
+    print(materialListJson);
+    List<MaterialModel> materialList = materialListJson != null
+        ? materialListJson.entries.map((entry) {
+          return MaterialModel(materialName: entry.key, percentage: (entry.value as num).toDouble());
+        }).toList()
+        : [];
+
     return GarmentModel(
       id: json["id"],
       name: json["name"],
@@ -48,7 +56,22 @@ class GarmentModel{
       garmentImageURL: json["image_url"],
       materialImageURL: json["material_url"],
       created_date: json["created_date"],
-      materialList: json["materialList"] ?? [],
+      materialList: materialList,
+    );
+  }
+
+  factory GarmentModel.allFromJson(Map<String, dynamic> json){
+    return GarmentModel(
+      id: json["id"],
+      name: json["name"],
+      country: json["country"],
+      brand: json["brand"],
+      colour: json["colour"],
+      colour_name: json["colour_name"],
+      size: json["size"],
+      status: json["status"],
+      garmentImageURL: json["image_url"],
+      created_date: json["created_date"],
     );
   }
 
