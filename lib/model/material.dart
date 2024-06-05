@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class MaterialModel{
   String materialName;
   double percentage;

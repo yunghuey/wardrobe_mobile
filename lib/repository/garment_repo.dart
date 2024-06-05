@@ -20,6 +20,10 @@ class GarmentRepository{
             "size": shirt.size,
             "colour": shirt.colour,
             "colour_name" : shirt.colour_name,
+            "materialList": shirt.materialList?.map((material) => {
+              "material_name": material.materialName,
+              "percentage": material.percentage
+            }).toList(),
             "status": true,
             "image": await _convertImageToBase64(shirt.garmentImage!),
             "material": await _convertImageToBase64(shirt.materialImage!),
@@ -36,7 +40,9 @@ class GarmentRepository{
           }
         }
         return false;
-      } catch (e) {
+      } catch (e, stackTrace) {
+        print(e.toString());
+        print(stackTrace.toString());
         return false;
       }
   }

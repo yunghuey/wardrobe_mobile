@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:wardrobe_mobile/model/material.dart';
+
 class GarmentModel{
   String? id;
   String? name;
@@ -14,6 +16,7 @@ class GarmentModel{
   bool? status;
   String? created_date;
   String? colour_name;
+  List<MaterialModel>? materialList;
 
   GarmentModel({
     this.id,
@@ -29,6 +32,7 @@ class GarmentModel{
     this.materialImage,
     this.created_date,
     this.colour_name,
+    this.materialList,
   });
 
   factory GarmentModel.fromJson(Map<String, dynamic> json){
@@ -44,6 +48,7 @@ class GarmentModel{
       garmentImageURL: json["image_url"],
       materialImageURL: json["material_url"],
       created_date: json["created_date"],
+      materialList: json["materialList"] ?? [],
     );
   }
 

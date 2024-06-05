@@ -274,9 +274,15 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
   Widget _garmentSubmit(){
     return ElevatedButton(
       onPressed: (){
+
+        // calculate material summation
+        percentageSum = 0.0;
+        for (final m in materials){
+          percentageSum += m.percentage;
+        }
         if(_formKey.currentState!.validate() && _selectedCountry != ValueConstant.COUNTRY[0] 
         && _selectedBrand != ValueConstant.BRANDS_NAME[0] && _selectedSize != ValueConstant.SIZES[0] && _selectedColour != ValueConstant.COLOUR_NAME[0]
-        && nameController.text != ''){
+        && nameController.text != '' && percentageSum == 100){
           // is to check garment name
           String colorString = _colorNotifier.value.toString(); // Color(0xffcca2ae)
           String hexColor = '#${colorString.split('(0xff')[1].split(')')[0]}'; // cca2ae
@@ -290,6 +296,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
             name:nameController.text.trim(),
             garmentImage: garmentImageResult,
             materialImage: materialImageResult,
+            materialList: materials,
           );
 
           createBloc.add(CreateButtonPressed(garment: garmentObj));
