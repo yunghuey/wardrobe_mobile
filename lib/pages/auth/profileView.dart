@@ -156,27 +156,27 @@ class _ProfileViewState extends State<ProfileView> {
             ),
           ),
           SizedBox(height: 15),
-          Container(
-            margin: EdgeInsets.all(5.0),
-            decoration: BoxDecoration(
-              color: HexColor("#EEE9FA"),
-              borderRadius: BorderRadius.circular(15.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: Offset(0,3),
-                )
-              ]
-            ),
-            child: ListTile(
-              title: Text("Privacy"),
-              subtitle: Text("Change your password"),
-              trailing: Icon(Icons.chevron_right),
-              ),
-            ),
-            SizedBox(height: 15),
+          // Container(
+          //   margin: EdgeInsets.all(5.0),
+          //   decoration: BoxDecoration(
+          //     color: HexColor("#EEE9FA"),
+          //     borderRadius: BorderRadius.circular(15.0),
+          //     boxShadow: [
+          //       BoxShadow(
+          //         color: Colors.grey.withOpacity(0.3),
+          //         spreadRadius: 2,
+          //         blurRadius: 5,
+          //         offset: Offset(0,3),
+          //       )
+          //     ]
+          //   ),
+          //   child: ListTile(
+          //     title: Text("Privacy"),
+          //     subtitle: Text("Change your password"),
+          //     trailing: Icon(Icons.chevron_right),
+          //     ),
+          //   ),
+            // SizedBox(height: 15),
             Container(
               margin: EdgeInsets.all(5.0),
               decoration: BoxDecoration(

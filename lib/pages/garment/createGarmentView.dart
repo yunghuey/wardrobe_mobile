@@ -120,112 +120,119 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
     );
   }
   
-  Widget _materialCustomization() {
-    return BlocBuilder<CaptureMaterialBloc, CaptureMaterialState>(
-      builder: (context, state) {
-        if (state is CaptureMaterialSuccess) {
-          materials = state.materialList;
-          return Column(
-            children: [
-              IconButton(
-                onPressed: () {
-                  percentageSum = 0.0;
-                  
-                  setState(() {
-                    for (var m in materials) {
-                      if (m.materialName != ValueConstant.MATERIAL_NAME[0]){
-                        percentageSum += m.percentage;
-                      }
-                      else {
-                        percentageSum = 200;
-                      }
-
-                      if (m.percentage == 0){
-                        percentageSum = 300;
-                      }
+ Widget _materialCustomization() {
+    return Column(
+      children: [
+        Text("Materials", style: TextStyle(fontSize: 16),),
+        Padding(
+          padding: const EdgeInsets.only(left: 70.0, right: 70.0, top: 10.0, bottom: 10.0),
+          child: ElevatedButton(
+            onPressed: () {
+              percentageSum = 0.0;
+              setState(() {
+                for (var m in materials) {
+                  if (m.materialName != ValueConstant.MATERIAL_NAME[0]) {
+                    percentageSum += m.percentage;
+                  } else {
+                    percentageSum = 200;
                   }
-                  });
-                  if (percentageSum < 100) {
-                    var newRow = MaterialModel(materialName: ValueConstant.MATERIAL_NAME[0], percentage: 0.0);
-                    materials.add(newRow);
-                    setState(() {});
-                  } 
-                  else if (percentageSum == 200){
-                    final snackBar = SnackBar(content: Text("Please choose a material"));
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          
+                  if (m.percentage == 0) {
+                    percentageSum = 300;
                   }
-                  else {
-                    final snackBar = SnackBar(content: Text("Percentage has exceed 100, cannot add anymore"));
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  }
-                },
-                icon: const Icon(Icons.add),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: materials.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: <Widget>[
-                      DropdownButton<String>(
-                        value: materials[index].materialName,
-                        onChanged: (String? newValue) {
+                }
+              });
+              if (percentageSum < 100) {
+                var newRow = MaterialModel(
+                    materialName: ValueConstant.MATERIAL_NAME[0],
+                    percentage: 0.0);
+                materials.add(newRow);
+                setState(() {});
+              } else if (percentageSum == 200) {
+                final snackBar =
+                    SnackBar(content: Text("Please choose a material"));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              } else {
+                final snackBar = SnackBar(
+                    content:
+                        Text("Percentage has exceed 100, cannot add anymore"));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+            },
+            child: Row(
+              children: [
+                const Icon(Icons.add),
+                SizedBox(width: 10,),
+                Text("Add material"),
+              ],
+            ),
+          ),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: materials.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: DropdownButton<String>(
+                      value: materials[index].materialName,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          materials[index].materialName = newValue!;
+                        });
+                      },
+                      items: _getDropdownItems(index),
+                    ),
+                  ),
+                  SizedBox(width: 15),
+                  Container(
+                    width: 70, // Set the width you want here
+                    child: TextFormField(
+                      initialValue: materials[index].percentage.toString(),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      onChanged: (value) {
+                        double newPercentage = double.tryParse(value) ?? 0.0;
+                        if (newPercentage <= 100) {
                           setState(() {
-                            materials[index].materialName = newValue!;
+                            materials[index].percentage = newPercentage;
                           });
-                        },
-                        items: _getDropdownItems(index),
-                      ),
-                      TextFormField(
-                        initialValue: materials[index].percentage.toString(),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        onChanged: (value) {
-                          double newPercentage = double.tryParse(value) ?? 0.0;
-                          if (newPercentage <= 100) {
-                            setState(() {
-                              materials[index].percentage = newPercentage;
-                            });
-                          }
-                          if (newPercentage == 0.0){
-                             final snackBar = SnackBar(content: Text("Percentage cannot be 0"));
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          }
-                        },
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          if (materials.length > 1){
-                            setState(() {
-                              materials.removeAt(index);
-                            });
-                          }
-                          else {
-                            SnackBar sn = SnackBar(content: Text("Unable to remove"));
-                            ScaffoldMessenger.of(context).showSnackBar(sn);
-                          }
-                        },
-                        icon: Icon(Icons.remove_circle),
-                      ),
-                      Divider(
-                        color: HexColor("#dbc83c"),
-                        thickness: 6,
-                        endIndent: 25,
-                        indent: 25,
-                      ),
-
-                    ],
-                  );
-                },
+                        }
+                        if (newPercentage == 0.0) {
+                          final snackBar =
+                              SnackBar(content: Text("Percentage cannot be 0"));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 3),
+                  IconButton(
+                    onPressed: () {
+                      if (materials.length > 1) {
+                        setState(() {
+                          materials.removeAt(index);
+                        });
+                      } else {
+                        SnackBar sn =
+                            SnackBar(content: Text("Unable to remove"));
+                        ScaffoldMessenger.of(context).showSnackBar(sn);
+                      }
+                    },
+                    icon: Icon(Icons.remove_circle),
+                  ),
+                ],
               ),
-            ],
-          );
-        }
-        return Container();
-      },
+            );
+          },
+        ),
+      ],
     );
   }
 

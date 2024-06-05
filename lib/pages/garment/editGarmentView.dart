@@ -13,11 +13,8 @@ import 'package:wardrobe_mobile/pages/valueConstant.dart';
 
 class EditGarmentView extends StatefulWidget {
   final GarmentModel garment;
-  
-  const EditGarmentView({
-    required this.garment,
-    Key? key
-  }):super(key:key);
+
+  const EditGarmentView({required this.garment, Key? key}) : super(key: key);
 
   @override
   State<EditGarmentView> createState() => _EditGarmentViewState();
@@ -39,12 +36,12 @@ class _EditGarmentViewState extends State<EditGarmentView> {
   bool isChanged = false;
   double percentageSum = 0.0;
   late List<MaterialModel> materials;
-  
+
   final loadingWidget = BlocBuilder<UpdateGarmentBloc, UpdateGarmentState>(
-    builder: (context, state){
-      if (state is UpdateGarmentLoading){
+    builder: (context, state) {
+      if (state is UpdateGarmentLoading) {
         return Center(child: CircularProgressIndicator());
-      } else{
+      } else {
         return Container();
       }
     },
@@ -65,18 +62,26 @@ class _EditGarmentViewState extends State<EditGarmentView> {
     materialImageURL = updateGarment.materialImageURL;
     materials = updateGarment.materialList!;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Edit garment'),),
+      appBar: AppBar(
+        title: Text('Edit garment'),
+      ),
       body: BlocListener<UpdateGarmentBloc, UpdateGarmentState>(
-        listener: (context, state){
-          if (state is UpdateGarmentSuccess){
+        listener: (context, state) {
+          if (state is UpdateGarmentSuccess) {
             const snackBar = SnackBar(content: Text('Updated successfully!'));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => RoutePage(page: 1,)), (route) => false);
-          }
-          else if (state is UpdateGarmentFail){
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => RoutePage(
+                          page: 1,
+                        )),
+                (route) => false);
+          } else if (state is UpdateGarmentFail) {
             const snackBar = SnackBar(content: Text(''));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
@@ -85,208 +90,230 @@ class _EditGarmentViewState extends State<EditGarmentView> {
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _displayImage(),
-                _displayMaterialImage(),
-                _nameTextField(),
-                _countryField(),
-                _sizeField(),
-                _brandField(),
-                _colourField(),
-                _materialCustomization(),
-                loadingWidget,
-                _submitButton(),
-                // future enhancement : add delete button here
-            ]
-            ),
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _displayImage(),
+                  _displayMaterialImage(),
+                  _nameTextField(),
+                  _countryField(),
+                  _sizeField(),
+                  _brandField(),
+                  _colourField(),
+                  _materialCustomization(),
+                  loadingWidget,
+                  _submitButton(),
+                  // future enhancement : add delete button here
+                ]),
           ),
         ),
       ),
     );
   }
 
-Widget _materialCustomization() {
+  Widget _materialCustomization() {
     return Column(
-            children: [
-              IconButton(
-                onPressed: () {
-                  percentageSum = 0.0;
-                  
-                  setState(() {
-                    for (var m in materials) {
-                      if (m.materialName != ValueConstant.MATERIAL_NAME[0]){
-                        percentageSum += m.percentage;
-                      }
-                      else {
-                        percentageSum = 200;
-                      }
-
-                      if (m.percentage == 0){
-                        percentageSum = 300;
-                      }
+      children: [
+        Text("Materials", style: TextStyle(fontSize: 16),),
+        Padding(
+          padding: const EdgeInsets.only(left: 70.0, right: 70.0, top: 10.0, bottom: 10.0),
+          child: ElevatedButton(
+            onPressed: () {
+              percentageSum = 0.0;
+              setState(() {
+                for (var m in materials) {
+                  if (m.materialName != ValueConstant.MATERIAL_NAME[0]) {
+                    percentageSum += m.percentage;
+                  } else {
+                    percentageSum = 200;
                   }
-                  });
-                  if (percentageSum < 100) {
-                    var newRow = MaterialModel(materialName: ValueConstant.MATERIAL_NAME[0], percentage: 0.0);
-                    materials.add(newRow);
-                    setState(() {});
-                  } 
-                  else if (percentageSum == 200){
-                    final snackBar = SnackBar(content: Text("Please choose a material"));
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          
+                  if (m.percentage == 0) {
+                    percentageSum = 300;
                   }
-                  else {
-                    final snackBar = SnackBar(content: Text("Percentage has exceed 100, cannot add anymore"));
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  }
-                },
-                icon: const Icon(Icons.add),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: materials.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: <Widget>[
-                      DropdownButton<String>(
-                        value: materials[index].materialName,
-                        onChanged: (String? newValue) {
+                }
+              });
+              if (percentageSum < 100) {
+                var newRow = MaterialModel(
+                    materialName: ValueConstant.MATERIAL_NAME[0],
+                    percentage: 0.0);
+                materials.add(newRow);
+                setState(() {});
+              } else if (percentageSum == 200) {
+                final snackBar =
+                    SnackBar(content: Text("Please choose a material"));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              } else {
+                final snackBar = SnackBar(
+                    content:
+                        Text("Percentage has exceed 100, cannot add anymore"));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+            },
+            child: Row(
+              children: [
+                const Icon(Icons.add),
+                SizedBox(width: 10,),
+                Text("Add material"),
+              ],
+            ),
+          ),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: materials.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: DropdownButton<String>(
+                      value: materials[index].materialName,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          materials[index].materialName = newValue!;
+                        });
+                      },
+                      items: _getDropdownItems(index),
+                    ),
+                  ),
+                  SizedBox(width: 15),
+                  Container(
+                    width: 70, // Set the width you want here
+                    child: TextFormField(
+                      initialValue: materials[index].percentage.toString(),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      onChanged: (value) {
+                        double newPercentage = double.tryParse(value) ?? 0.0;
+                        if (newPercentage <= 100) {
                           setState(() {
-                            materials[index].materialName = newValue!;
+                            materials[index].percentage = newPercentage;
                           });
-                        },
-                        items: _getDropdownItems(index),
-                      ),
-                      TextFormField(
-                        initialValue: materials[index].percentage.toString(),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        onChanged: (value) {
-                          double newPercentage = double.tryParse(value) ?? 0.0;
-                          if (newPercentage <= 100) {
-                            setState(() {
-                              materials[index].percentage = newPercentage;
-                            });
-                          }
-                          if (newPercentage == 0.0){
-                             final snackBar = SnackBar(content: Text("Percentage cannot be 0"));
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          }
-                        },
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          if (materials.length > 1){
-                            setState(() {
-                              materials.removeAt(index);
-                            });
-                          }
-                          else {
-                            SnackBar sn = SnackBar(content: Text("Unable to remove"));
-                            ScaffoldMessenger.of(context).showSnackBar(sn);
-                          }
-                        },
-                        icon: Icon(Icons.remove_circle),
-                      ),
-                      Divider(
-                        color: HexColor("#dbc83c"),
-                        thickness: 6,
-                        endIndent: 25,
-                        indent: 25,
-                      ),
-
-                    ],
-                  );
-                },
+                        }
+                        if (newPercentage == 0.0) {
+                          final snackBar =
+                              SnackBar(content: Text("Percentage cannot be 0"));
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 3),
+                  IconButton(
+                    onPressed: () {
+                      if (materials.length > 1) {
+                        setState(() {
+                          materials.removeAt(index);
+                        });
+                      } else {
+                        SnackBar sn =
+                            SnackBar(content: Text("Unable to remove"));
+                        ScaffoldMessenger.of(context).showSnackBar(sn);
+                      }
+                    },
+                    icon: Icon(Icons.remove_circle),
+                  ),
+                ],
               ),
-            ],
+            );
+          },
+        ),
+      ],
     );
   }
 
   List<DropdownMenuItem<String>> _getDropdownItems(int index) {
-    List<String> selectedMaterials = materials.map((m) => m.materialName).toList();
+    List<String> selectedMaterials =
+        materials.map((m) => m.materialName).toList();
 
-    if (selectedMaterials.isNotEmpty){
-      selectedMaterials.removeAt(index); 
-    }else {
-          selectedMaterials.removeAt(0);
-
+    if (selectedMaterials.isNotEmpty) {
+      selectedMaterials.removeAt(index);
+    } else {
+      selectedMaterials.removeAt(0);
     }
     List<String> availableMaterials = ['Select material'];
     availableMaterials.addAll(ValueConstant.MATERIAL_NAME
-      .where((material) => material != 'Select material' && !selectedMaterials.contains(material))
-      .toList());
+        .where((material) =>
+            material != 'Select material' &&
+            !selectedMaterials.contains(material))
+        .toList());
     return availableMaterials.map<DropdownMenuItem<String>>((String value) {
       return DropdownMenuItem<String>(value: value, child: Text(value));
     }).toList();
   }
 
-  Widget _displayImage(){
+  Widget _displayImage() {
     return Image.network(
-          garmentImageURL!,
-          width: 300,
-          height:300,
-          fit: BoxFit.cover,
-        );
+      garmentImageURL!,
+      width: 300,
+      height: 300,
+      fit: BoxFit.cover,
+    );
   }
-  Widget _displayMaterialImage(){
+
+  Widget _displayMaterialImage() {
     return Image.network(
-          materialImageURL!,
-          width: 300,
-          height:300,
-          fit: BoxFit.cover,
-        );
+      materialImageURL!,
+      width: 300,
+      height: 300,
+      fit: BoxFit.cover,
+    );
   }
-  Widget _submitButton(){
+
+  Widget _submitButton() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
           ElevatedButton(
-            onPressed: (){
+            onPressed: () {
               percentageSum = 0.0;
-              for (final m in materials){
+              for (final m in materials) {
                 percentageSum += m.percentage;
               }
-              if (_formKey.currentState!.validate() && _selectedCountry != ValueConstant.COUNTRY[0] 
-                && _selectedBrand != ValueConstant.BRANDS_NAME[0] && _selectedSize != ValueConstant.SIZES[0] 
-                && _selectedColour != ValueConstant.COLOUR_NAME[0] && percentageSum == 100){
-                  String colorCode = updateGarment.colour;
+              if (_formKey.currentState!.validate() &&
+                  _selectedCountry != ValueConstant.COUNTRY[0] &&
+                  _selectedBrand != ValueConstant.BRANDS_NAME[0] &&
+                  _selectedSize != ValueConstant.SIZES[0] &&
+                  _selectedColour != ValueConstant.COLOUR_NAME[0] &&
+                  percentageSum == 100) {
+                String colorCode = updateGarment.colour;
 
-                  if (isChanged){
-                    int index = ValueConstant.COLOUR_NAME.indexOf(_selectedColour!);
-                    colorCode = ValueConstant.COLOUR_CODE[index];
-                    // colour_name is changed, need to changed colour hexcode also
-                    // updateGarment.colour = ValueConstant.COLOUR_CODE[]
-                  }
-                  GarmentModel garmentObj = GarmentModel(
-                    id: updateGarment.id,
-                    country: _selectedCountry ?? '', 
-                    brand:_selectedBrand ?? '',
-                    name: nameController.text.trim(),
-                    colour: colorCode,
-                    size: _selectedSize ?? '',
-                    colour_name: _selectedColour,
-                    status: true,
-                    materialList: materials,
-                  );
-                  updateBloc.add(UpdateButtonPressed(garment: garmentObj));
-            }
+                if (isChanged) {
+                  int index =
+                      ValueConstant.COLOUR_NAME.indexOf(_selectedColour!);
+                  colorCode = ValueConstant.COLOUR_CODE[index];
+                  // colour_name is changed, need to changed colour hexcode also
+                  // updateGarment.colour = ValueConstant.COLOUR_CODE[]
+                }
+                GarmentModel garmentObj = GarmentModel(
+                  id: updateGarment.id,
+                  country: _selectedCountry ?? '',
+                  brand: _selectedBrand ?? '',
+                  name: nameController.text.trim(),
+                  colour: colorCode,
+                  size: _selectedSize ?? '',
+                  colour_name: _selectedColour,
+                  status: true,
+                  materialList: materials,
+                );
+                updateBloc.add(UpdateButtonPressed(garment: garmentObj));
+              }
             },
             child: Text('Submit'),
           ),
         ],
-      ),  
+      ),
     );
   }
 
-  Widget _nameTextField(){
+  Widget _nameTextField() {
     return Padding(
-    padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
+      padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
       child: TextFormField(
         controller: nameController,
         decoration: const InputDecoration(
@@ -294,100 +321,104 @@ Widget _materialCustomization() {
           hintText: 'Enter garment name',
         ),
       ),
-    ); 
+    );
   }
 
-  Widget _colourField(){
+  Widget _colourField() {
     return Padding(
-    padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
+      padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text('Garment Colour:'), // Label
-        DropdownButton<String>(
-        value: _selectedColour,
-        onChanged: (String? newValue){
-          setState((){
-            _selectedColour = newValue; 
-            isChanged = true;
-          });
-        },
-        items: ValueConstant.COLOUR_NAME.map<DropdownMenuItem<String>>((String value){
-          return DropdownMenuItem<String>(value: value, child: Text(value));
-        }).toList(),
-      ),
-      ],
+          DropdownButton<String>(
+            value: _selectedColour,
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedColour = newValue;
+                isChanged = true;
+              });
+            },
+            items: ValueConstant.COLOUR_NAME
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(value: value, child: Text(value));
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _sizeField(){
+  Widget _sizeField() {
     return Padding(
-    padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
+      padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text('Garment Size:'), // Label
-        DropdownButton<String>(
-        value: _selectedSize,
-        onChanged: (String? newValue){
-          setState((){
-            _selectedSize = newValue; // Corrected the variable name
-          });
-        },
-        items: ValueConstant.SIZES.map<DropdownMenuItem<String>>((String value){
-          return DropdownMenuItem<String>(value: value, child: Text(value));
-        }).toList(),
-      ),
-      ],
+          DropdownButton<String>(
+            value: _selectedSize,
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedSize = newValue; // Corrected the variable name
+              });
+            },
+            items: ValueConstant.SIZES
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(value: value, child: Text(value));
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _brandField(){
+  Widget _brandField() {
     return Padding(
-    padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
+      padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text('Garment Brand:'), // Label
-        DropdownButton<String>(
-        value: _selectedBrand,
-        onChanged: (String? newValue){
-          setState((){
-            _selectedBrand = newValue; // Corrected the variable name
-          });
-        },
-        items: ValueConstant.BRANDS_NAME.map<DropdownMenuItem<String>>((String value){
-          return DropdownMenuItem<String>(value: value, child: Text(value));
-        }).toList(),
-      ),
-      ],
+          DropdownButton<String>(
+            value: _selectedBrand,
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedBrand = newValue; // Corrected the variable name
+              });
+            },
+            items: ValueConstant.BRANDS_NAME
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(value: value, child: Text(value));
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _countryField(){
-  return Padding(
-    padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch, // Align children to the left
-      children: [
-        const Text('Garment Country:'), // Label
-        DropdownButton<String>(
-          value: _selectedCountry,
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedCountry = newValue; // Corrected the variable name
-            });
-          },
-          items: ValueConstant.COUNTRY.map<DropdownMenuItem<String>>((String value){
-            return DropdownMenuItem<String>(value: value, child: Text(value));
-          }).toList(),
-        ),
-      ],
-    ),
-  );
-}
-
+  Widget _countryField() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10, top: 10),
+      child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.stretch, // Align children to the left
+        children: [
+          const Text('Garment Country:'), // Label
+          DropdownButton<String>(
+            value: _selectedCountry,
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedCountry = newValue; // Corrected the variable name
+              });
+            },
+            items: ValueConstant.COUNTRY
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(value: value, child: Text(value));
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
 }
