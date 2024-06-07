@@ -26,11 +26,12 @@ class DisplayAnalysisBloc extends Bloc<DisplayAnalysisEvent,DisplayAnalysisState
           var brand = BarChartModel(name: brandName, numberOfGarment: totalNum, code: index);
           eachBrandGarment.add(brand);
         });
-        if (eachBrandGarment != []){
-          emit(DataAndNumberBarChart(data: eachBrandGarment,y: highest));
-        }
-        else {
+        print("highest number$highest");
+        if(highest == 0.0){
           emit(DataAndNumberEmpty());
+        }
+        else if (eachBrandGarment != [] || highest != 0.0){
+          emit(DataAndNumberBarChart(data: eachBrandGarment,y: highest));
         }
       } catch (e){
         emit(DataAndNumberError(message: e.toString()));

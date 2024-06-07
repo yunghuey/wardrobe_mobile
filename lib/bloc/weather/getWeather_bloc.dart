@@ -8,7 +8,6 @@ class GetWeatherBloc extends Bloc<GetWeatherEvent, GetWeatherState>{
   WeatherRepository repo;
   GetWeatherBloc(GetWeatherState initialState, this.repo): super(initialState){
     on<FindWeatherPressed>((event, emit) async {
-      print('hello weather');
       try{
         emit(GettingWeatherState());
         WeatherModel? weather = await repo.getWeatherByLngLat(event.long, event.lat);

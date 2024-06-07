@@ -40,9 +40,13 @@ class _GarmentListViewState extends State<GarmentListView> {
       body: 
       RefreshIndicator(
       onRefresh: refreshPage,
-      child: SingleChildScrollView(
-        child: _garmentList(),
-        ),
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            child: _garmentList(),
+            ),
+        ],
+      ),
       ),
       floatingActionButton: _floatingButton(),
     );
@@ -105,10 +109,9 @@ class _GarmentListViewState extends State<GarmentListView> {
         } else if (state is ReadAllGarmentEmpty){
           return RefreshIndicator(
             onRefresh: refreshPage,
-            child: Stack(
-              children: <Widget>[
-                Text('no garment found'),
-                ]
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Center(child: Text('Oopsie, you have no garment yet', style: TextStyle(fontSize: 20))),
             )
           );
         } else {

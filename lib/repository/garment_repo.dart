@@ -20,13 +20,12 @@ class GarmentRepository{
             "size": shirt.size,
             "colour": shirt.colour,
             "colour_name" : shirt.colour_name,
-            "materialList": shirt.materialList?.map((material) => {
-              "material_name": material.materialName,
-              "percentage": material.percentage
+            "material": shirt.materialList?.map((material) => {
+              material.materialName:material.percentage ,
             }).toList(),
             "status": true,
             "image": await _convertImageToBase64(shirt.garmentImage!),
-            "material": await _convertImageToBase64(shirt.materialImage!),
+            "materialImage": await _convertImageToBase64(shirt.materialImage!),
           });
           print(body);
           var header = {
@@ -173,11 +172,11 @@ class GarmentRepository{
           "country": gmt.country,
           "size" : gmt.size,
           "status": true,
-          "materialList": gmt.materialList?.map((material) => {
-              "material_name": material.materialName,
-              "percentage": material.percentage
+          "material": gmt.materialList?.map((material) => {
+              material.materialName:material.percentage ,
             }).toList(),
         });
+        print(body);
 
         var response = await http.put(url, headers: header, body: body);
         if (response.statusCode == 200){

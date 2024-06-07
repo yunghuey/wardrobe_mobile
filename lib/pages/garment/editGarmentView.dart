@@ -236,7 +236,7 @@ class _EditGarmentViewState extends State<EditGarmentView> {
                   Container(
                     width: 70, // Set the width you want here
                     child: TextFormField(
-                      initialValue: materials[index].percentage.toString(),
+                      initialValue: materials[index].percentage.toStringAsFixed(0),
                       keyboardType: TextInputType.number,
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly,
@@ -249,9 +249,9 @@ class _EditGarmentViewState extends State<EditGarmentView> {
                           });
                         }
                         if (newPercentage == 0.0) {
-                          final snackBar =
-                              SnackBar(content: Text("Percentage cannot be 0"));
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          // final snackBar =
+                          //     SnackBar(content: Text("Percentage cannot be 0"));
+                          // ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         }
                       },
                     ),

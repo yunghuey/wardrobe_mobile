@@ -219,8 +219,14 @@ class _HomeViewState extends State<HomeView> {
                         // return _displayFetchData();
                         return Container();
                       } else if (state is DataAndNumberEmpty) {
-                        return const Center(
-                          child: Text("No result can be shown"),
+                        return Card(
+                          color: HexColor("#f9e8f4"),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 15.0),
+                            child: Center(
+                              child: Text("No insights of garment can be shown"),
+                            ),
+                          ),
                         );
                       }
                       return _displayFetchData();
@@ -229,7 +235,7 @@ class _HomeViewState extends State<HomeView> {
                   BlocBuilder<PieChartBloc, DisplayPieChartState>(builder: (context, state){
                     if (state is PieChartInitState){
                       getPieEvent(category, dropdownValue);
-                      return Center(child: CircularProgressIndicator(),);
+                      return Container();
                     }
                     else if (state is FetchingPieData){
                       return _displayFetchData();
@@ -238,10 +244,10 @@ class _HomeViewState extends State<HomeView> {
                       return _pieChartDiagram(state);
                     }
                     else if (state is PieChartEmpty){
-                      return Text("${category}, ${dropdownValue}, ${userClicked}");
+                      return Text("No result can be shown");
                     }
                     else if (state is PieChartError){
-                      return Text("${category}, ${dropdownValue}, ${userClicked}, ${state.error}");
+                      return Text("${state.error}");
                     }
                     return Text(state.toString());
                   }),
