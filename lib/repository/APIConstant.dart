@@ -30,4 +30,5 @@ class APIConstant {
 
   // weather repo
   static String get getWeatherWithLocationURL => "${APIConstant.ipaddress}/weather/getTemperature";
+  static String get getRecommendationWithLocationURL => "${APIConstant.ipaddress}/weather/getRecommendation";
 } 

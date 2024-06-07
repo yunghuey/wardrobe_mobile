@@ -26,7 +26,6 @@ class DisplayAnalysisBloc extends Bloc<DisplayAnalysisEvent,DisplayAnalysisState
           var brand = BarChartModel(name: brandName, numberOfGarment: totalNum, code: index);
           eachBrandGarment.add(brand);
         });
-        print("highest number$highest");
         if(highest == 0.0){
           emit(DataAndNumberEmpty());
         }

@@ -18,6 +18,8 @@ import 'package:wardrobe_mobile/bloc/garment/ReadGarment/readgarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/ReadGarment/readgarment_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_state.dart';
+import 'package:wardrobe_mobile/bloc/recommendation/recommend_bloc.dart';
+import 'package:wardrobe_mobile/bloc/recommendation/recommend_state.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Login/login_bloc.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Login/login_state.dart';
 import 'package:wardrobe_mobile/bloc/user/Authentication/Logout/logout_bloc.dart';
@@ -60,6 +62,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<PieChartBloc>(create: (context) => PieChartBloc(PieChartInitState(), AnalysisRepository())),
         BlocProvider<GetWeatherBloc>(create: (context) => GetWeatherBloc(GetWeatherInitState(), WeatherRepository())),
         BlocProvider<CaptureMaterialBloc>(create: (context) => CaptureMaterialBloc(CaptureMaterialInitState(), GarmentRepository())),
+        BlocProvider<RecommendationBloc>(create: (context) => RecommendationBloc(GetRecommendInitState(), WeatherRepository())),
       ],
       child: MaterialApp(
         title: 'Yourdrobe',

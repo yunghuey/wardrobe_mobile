@@ -12,7 +12,6 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
   PieChartBloc(DisplayPieChartState initialState, this.repo)
       : super(initialState) {
     on<PieChartReset>((event, emit) {
-      print('reset event');
       emit(PieChartInitState());
     });
 

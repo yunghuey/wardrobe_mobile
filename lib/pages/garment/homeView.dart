@@ -12,12 +12,17 @@ import 'package:wardrobe_mobile/bloc/analysis/analysis_state.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:wardrobe_mobile/bloc/analysis/totalgarment_event.dart';
 import 'package:wardrobe_mobile/bloc/analysis/totalgarment_state.dart';
+import 'package:wardrobe_mobile/bloc/recommendation/recommend_bloc.dart';
+import 'package:wardrobe_mobile/bloc/recommendation/recommend_event.dart';
+import 'package:wardrobe_mobile/bloc/recommendation/recommend_state.dart';
 import 'package:wardrobe_mobile/bloc/weather/getWeather_bloc.dart';
 import 'package:wardrobe_mobile/bloc/weather/getWeather_event.dart';
 import 'package:wardrobe_mobile/bloc/weather/getWeather_state.dart';
 import 'package:wardrobe_mobile/model/barchart.dart';
+import 'package:wardrobe_mobile/model/garment.dart';
 import 'package:wardrobe_mobile/model/piechart.dart';
 import 'package:wardrobe_mobile/pages/garment/mapView.dart';
+import 'package:wardrobe_mobile/pages/garment/viewGarmentDetails.dart';
 import 'package:wardrobe_mobile/pages/valueConstant.dart';
 
 class HomeView extends StatefulWidget {
@@ -39,6 +44,7 @@ class _HomeViewState extends State<HomeView> {
   late TotalGarmentBloc displaytotalBloc;
   late PieChartBloc pieBloc;
   late GetWeatherBloc weatherBloc;
+  late RecommendationBloc recommendBloc;
 
   // location
   double lat = 0.0, long = 0.0;
@@ -61,6 +67,8 @@ class _HomeViewState extends State<HomeView> {
     displaytotalBloc = BlocProvider.of<TotalGarmentBloc>(context);
     pieBloc = BlocProvider.of<PieChartBloc>(context);
     weatherBloc = BlocProvider.of<GetWeatherBloc>(context);
+    recommendBloc = BlocProvider.of<RecommendationBloc>(context);
+
     refreshPage();
   }
 
@@ -111,7 +119,10 @@ class _HomeViewState extends State<HomeView> {
     else if (category == "size"){
       analysisBloc.add(GetSizeAnalysisEvent());
     }
+    // weather bloc & recommend bloc
     await _setInitialLocation();
+    recommendBloc.add(GetRecommendationEvent(lat: lat, long: long));
+
   }
 
   @override
@@ -145,6 +156,7 @@ class _HomeViewState extends State<HomeView> {
                       ],
                     ),
                   ),
+                  // weather
                   Card(
                     color: HexColor("#C3EEFA"),
                     child: Padding(
@@ -190,6 +202,55 @@ class _HomeViewState extends State<HomeView> {
                       }),
                     ),
                   ),
+                  // recommend clothes
+                  Card(
+                    color: HexColor("#C3EBCA"),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: BlocBuilder<RecommendationBloc, RecommendationState>(builder:(context, state){
+                        if (state is RecommendationEmpty){
+                          return Center(child: Text('No suitable recommendation '),);
+                        }
+                        else if (state is RecommendationSuccess){
+                          var textstyle = const TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
+                          return Column(
+                            children: [
+                              Text('Recommendation'),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: state.garmentList.length,
+                                  itemBuilder: (context, index){
+                                    GarmentModel m = state.garmentList[index];
+                                    return InkWell(
+                                      onTap: (){
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewGarmentDetails(garmentID: m.id!)));
+                                      },
+                                      child: ListTile(
+                                        title: Text(m.name!),
+                                        subtitle: Text("${m.colour_name} in colour, ${m.brand} brand"),
+                                        contentPadding: EdgeInsets.all(10),
+                                      )
+                                    );
+                                  }
+                                )                      
+                              ),
+                            ],
+                          );
+                        }
+                        else if (state is RecommendationError){
+                          return Text(state.message);
+                        }
+                        else if (state is GetRecommendationLoading){
+                          return Center(child: CircularProgressIndicator(),);
+                        }
+                        return Container(child: Text('gegrg'));
+                      }),
+                    ),
+                  ),
+                  // barchart
                   BlocBuilder<DisplayAnalysisBloc, DisplayAnalysisState>(
                     builder: (context, state) {
                       if (state is DataAndNumberBarChart) {
@@ -581,7 +642,6 @@ class _HomeViewState extends State<HomeView> {
         dropdownValue = dropdownItem.first;
       }
       // Trigger event of pie chart
-      print("loaddata ${category}, ${dropdownValue}");
       await getPieEvent(category, dropdownValue);
     }
   }
