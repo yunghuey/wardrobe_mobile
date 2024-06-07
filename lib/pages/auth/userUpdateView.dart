@@ -190,7 +190,13 @@ class _UserUpdateViewState extends State<UserUpdateView> {
               userBloc.add(UpdateButtonPressed(user: user));
             }
           },
-          child: Text('Update')
+          child: Text('Update', style: TextStyle(color: Color.fromARGB(255, 93, 63, 184))),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 55, vertical: 15),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            side: BorderSide(color: Color.fromARGB(255, 93, 63, 184), width: 2)
+          ),
         ),
       ),
     );

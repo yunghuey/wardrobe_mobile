@@ -210,7 +210,7 @@ class _HomeViewState extends State<HomeView> {
                             child: CircularProgressIndicator(),
                           );
                         }
-                        return Container();
+                        return Center(child: Text("Enable location for the result"));
                       }),
                     ),
                   ),
@@ -380,32 +380,32 @@ class _HomeViewState extends State<HomeView> {
             }
             pieBloc.add(PieChartReset());
           }
+          userClicked = false;
+          dropdownItem = [];
+          dropdownValue = "";
+          category = 'brand';
+          switch (index) {
+            case 0:
+              analysisBloc.add(GetBrandAnalysisEvent());
+              break;
+            case 1:
+              analysisBloc.add(GetCountryAnalysisEvent());
+              category = 'country';
+              break;
+            case 2:
+              analysisBloc.add(GetColourAnalysisEvent());
+              category = 'colour';
+              break;
+            case 3:
+              analysisBloc.add(GetSizeAnalysisEvent());
+              category = 'size';
+              break;
+            default:
+              analysisBloc.add(GetBrandAnalysisEvent());
+              break;
+          }
         }); // end of setstate
         //  reset chart
-        userClicked = false;
-        dropdownItem = [];
-        dropdownValue = "";
-        category = 'brand';
-        switch (index) {
-          case 0:
-            analysisBloc.add(GetBrandAnalysisEvent());
-            break;
-          case 1:
-            analysisBloc.add(GetCountryAnalysisEvent());
-            category = 'country';
-            break;
-          case 2:
-            analysisBloc.add(GetColourAnalysisEvent());
-            category = 'colour';
-            break;
-          case 3:
-            analysisBloc.add(GetSizeAnalysisEvent());
-            category = 'size';
-            break;
-          default:
-            analysisBloc.add(GetBrandAnalysisEvent());
-            break;
-        }
       },
       isSelected: isSelected,
       children: const <Widget>[

@@ -125,6 +125,7 @@ class _EditGarmentViewState extends State<EditGarmentView> {
                     _materialCustomization(),
                     loadingWidget,
                     _submitButton(),
+                    SizedBox(height: 20),
                     _deleteButton(),
                     SizedBox(height: 20),
                   ]),
@@ -154,8 +155,14 @@ class _EditGarmentViewState extends State<EditGarmentView> {
                   ],
                 ));
       },
-      icon: const Icon(Icons.remove),
-      label: const Text("Delete garment"),
+      icon: const Icon(Icons.remove, color: Color.fromARGB(255, 93, 63, 184)),
+      label: const Text("Delete garment", style: TextStyle(color: Color.fromARGB(255, 93, 63, 184))),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        side: BorderSide(color: Color.fromARGB(255, 93, 63, 184), width: 2)
+      )
     );
   }
 
@@ -207,8 +214,14 @@ class _EditGarmentViewState extends State<EditGarmentView> {
                 SizedBox(
                   width: 10,
                 ),
-                Text("Add material"),
+                Text("Add material", style: TextStyle(color:Color.fromARGB(255, 93, 63, 184))),
               ],
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              side: BorderSide(color: Color.fromARGB(255, 93, 63, 184), width: 2)
             ),
           ),
         ),
@@ -319,49 +332,48 @@ class _EditGarmentViewState extends State<EditGarmentView> {
   }
 
   Widget _submitButton() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              percentageSum = 0.0;
-              for (final m in materials) {
-                percentageSum += m.percentage;
-              }
-              if (_formKey.currentState!.validate() &&
-                  _selectedCountry != ValueConstant.COUNTRY[0] &&
-                  _selectedBrand != ValueConstant.BRANDS_NAME[0] &&
-                  _selectedSize != ValueConstant.SIZES[0] &&
-                  _selectedColour != ValueConstant.COLOUR_NAME[0] &&
-                  percentageSum == 100) {
-                String colorCode = updateGarment.colour;
-
-                if (isChanged) {
-                  int index =
-                      ValueConstant.COLOUR_NAME.indexOf(_selectedColour!);
-                  colorCode = ValueConstant.COLOUR_CODE[index];
-                  // colour_name is changed, need to changed colour hexcode also
-                  // updateGarment.colour = ValueConstant.COLOUR_CODE[]
-                }
-                GarmentModel garmentObj = GarmentModel(
-                  id: updateGarment.id,
-                  country: _selectedCountry ?? '',
-                  brand: _selectedBrand ?? '',
-                  name: nameController.text.trim(),
-                  colour: colorCode,
-                  size: _selectedSize ?? '',
-                  colour_name: _selectedColour,
-                  status: true,
-                  materialList: materials,
-                );
-                updateBloc.add(UpdateButtonPressed(garment: garmentObj));
-              }
-            },
-            child: Text('Submit'),
-          ),
-        ],
+    return ElevatedButton(
+      onPressed: () {
+        percentageSum = 0.0;
+        for (final m in materials) {
+          percentageSum += m.percentage;
+        }
+        if (_formKey.currentState!.validate() &&
+            _selectedCountry != ValueConstant.COUNTRY[0] &&
+            _selectedBrand != ValueConstant.BRANDS_NAME[0] &&
+            _selectedSize != ValueConstant.SIZES[0] &&
+            _selectedColour != ValueConstant.COLOUR_NAME[0] &&
+            percentageSum == 100) {
+          String colorCode = updateGarment.colour;
+    
+          if (isChanged) {
+            int index =
+                ValueConstant.COLOUR_NAME.indexOf(_selectedColour!);
+            colorCode = ValueConstant.COLOUR_CODE[index];
+            // colour_name is changed, need to changed colour hexcode also
+            // updateGarment.colour = ValueConstant.COLOUR_CODE[]
+          }
+          GarmentModel garmentObj = GarmentModel(
+            id: updateGarment.id,
+            country: _selectedCountry ?? '',
+            brand: _selectedBrand ?? '',
+            name: nameController.text.trim(),
+            colour: colorCode,
+            size: _selectedSize ?? '',
+            colour_name: _selectedColour,
+            status: true,
+            materialList: materials,
+          );
+          updateBloc.add(UpdateButtonPressed(garment: garmentObj));
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color.fromARGB(255, 93, 63, 184),
+        padding: EdgeInsets.symmetric(horizontal: 75, vertical: 15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        // side: BorderSide(color: Color.fromARGB(255, 93, 63, 184), width: 2)
       ),
+      child: Text('Submit', style: TextStyle(color: Colors.white)),
     );
   }
 
