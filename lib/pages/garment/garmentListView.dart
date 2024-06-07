@@ -38,27 +38,10 @@ class _GarmentListViewState extends State<GarmentListView> {
     return Scaffold(
       appBar: AppBar(title: Text('Garment List')),
       body: 
-      MultiBlocListener(
-        listeners: [
-          BlocListener<DeleteGarmentBloc, DeleteGarmentState>(
-            listener: (context, state){
-              if (state is DeleteGarmentSuccess){
-                final snackBar = SnackBar(content: Text('garment deleted'));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                refreshPage();
-              }
-              else if (state is DeleteGarmentFail){
-                final snackbar = SnackBar(content: Text(state.message));
-                ScaffoldMessenger.of(context).showSnackBar(snackbar);
-              }
-            }
-          ),
-        ],
-        child: RefreshIndicator(
-        onRefresh: refreshPage,
-        child: SingleChildScrollView(
-          child: _garmentList(),
-          ),
+      RefreshIndicator(
+      onRefresh: refreshPage,
+      child: SingleChildScrollView(
+        child: _garmentList(),
         ),
       ),
       floatingActionButton: _floatingButton(),

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_event.dart';
+import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_event.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_state.dart';
@@ -74,44 +75,62 @@ class _EditGarmentViewState extends State<EditGarmentView> {
       appBar: AppBar(
         title: Text('Edit garment'),
       ),
-      body: BlocListener<UpdateGarmentBloc, UpdateGarmentState>(
-        listener: (context, state) {
-          if (state is UpdateGarmentSuccess) {
-            const snackBar = SnackBar(content: Text('Updated successfully!'));
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => RoutePage(
-                          page: 1,
-                        )),
-                (route) => false);
-          } else if (state is UpdateGarmentFail) {
-            const snackBar = SnackBar(content: Text(''));
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          }
-        },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<UpdateGarmentBloc, UpdateGarmentState>(
+          listener: (context, state) {
+            if (state is UpdateGarmentSuccess) {
+              const snackBar = SnackBar(content: Text('Updated successfully!'));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RoutePage(
+                            page: 1,
+                          )),
+                  (route) => false);
+            } else if (state is UpdateGarmentFail) {
+              const snackBar = SnackBar(content: Text(''));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            }
+          },
+          ),
+          BlocListener<DeleteGarmentBloc, DeleteGarmentState>(
+            listener: (context, state){
+              if (state is DeleteGarmentSuccess){
+                final snackBar = SnackBar(content: Text('Garment is deleted'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => RoutePage(page: 1,)),(route) => false);
+              }
+              else if (state is DeleteGarmentFail){
+                final snackbar = SnackBar(content: Text(state.message));
+                ScaffoldMessenger.of(context).showSnackBar(snackbar);
+              }
+            }
+          ),
+        ],
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
             child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _displayImage(),
-                  _displayMaterialImage(),
-                  _nameTextField(),
-                  _countryField(),
-                  _sizeField(),
-                  _brandField(),
-                  _colourField(),
-                  _materialCustomization(),
-                  loadingWidget,
-                  _submitButton(),
-                  _deleteButton(),
-                ]),
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _displayImage(),
+                    _displayMaterialImage(),
+                    _nameTextField(),
+                    _countryField(),
+                    _sizeField(),
+                    _brandField(),
+                    _colourField(),
+                    _materialCustomization(),
+                    loadingWidget,
+                    _submitButton(),
+                    _deleteButton(),
+                    SizedBox(height: 20),
+                  ]),
+            ),
           ),
-        ),
-      ),
+      ),      
     );
   }
 
@@ -136,7 +155,7 @@ class _EditGarmentViewState extends State<EditGarmentView> {
                 ));
       },
       icon: const Icon(Icons.remove),
-      label: const Text("Delete"),
+      label: const Text("Delete garment"),
     );
   }
 
