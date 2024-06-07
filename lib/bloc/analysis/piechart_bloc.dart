@@ -17,9 +17,9 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
 
     String getRandomColorHex() {
       final random = Random();
-      int red = random.nextInt(256);
-      int green = random.nextInt(256);
-      int blue = random.nextInt(256);
+      int red = 150 +  random.nextInt(100);
+      int green = 150 +  random.nextInt(100);
+      int blue = 150 +  random.nextInt(100);
 
       // Convert RGB values to a hexadecimal string
       return '#${red.toRadixString(16).padLeft(2, '0')}${green.toRadixString(16).padLeft(2, '0')}${blue.toRadixString(16).padLeft(2, '0')}';

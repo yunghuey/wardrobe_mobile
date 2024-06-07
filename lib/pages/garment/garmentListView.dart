@@ -29,24 +29,24 @@ class _GarmentListViewState extends State<GarmentListView> {
     readBloc = BlocProvider.of<ReadGarmentBloc>(context);
     refreshPage();
   }
-  
+
   Future<void> refreshPage() async {
     readBloc.add(GetAllGarmentEvent());
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Garment List')),
-      body: 
-      RefreshIndicator(
-      onRefresh: refreshPage,
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            child: _garmentList(),
+      body: RefreshIndicator(
+        onRefresh: refreshPage,
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: _garmentList(),
             ),
-        ],
-      ),
+          ],
+        ),
       ),
       floatingActionButton: _floatingButton(),
     );
@@ -59,74 +59,100 @@ class _GarmentListViewState extends State<GarmentListView> {
     return colorValue < 0x666666 ? Colors.white : Colors.black;
   }
 
-  
-  Widget _garmentList(){
+  Widget _garmentList() {
     return BlocBuilder<ReadGarmentBloc, ReadGarmentState>(
-      builder: (context, state) {
-        if (state is ReadAllGarmentLoading){
-          return Center(
-                child: CircularProgressIndicator(),
-              );
-        } else if (state is ReadAllGarmentSuccess){
-          garmentList = state.garmentss;
-          return Padding(
+        builder: (context, state) {
+      if (state is ReadAllGarmentLoading) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      } else if (state is ReadAllGarmentSuccess) {
+        garmentList = state.garmentss;
+        return Padding(
             padding: const EdgeInsets.all(20),
             child: ListView.builder(
-              itemCount:  garmentList.length,
+              itemCount: garmentList.length,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index){
+              itemBuilder: (context, index) {
                 final garment = garmentList[index];
                 return InkWell(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewGarmentDetails(garmentID: garment.id!)));
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ViewGarmentDetails(garmentID: garment.id!)));
                   },
                   child: Card(
                     elevation: 5,
                     color: HexColor(garment.colour),
                     child: Padding(
                       padding: const EdgeInsets.all(15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Text(garment.name!, style: TextStyle(
-                            color: getTextColor(garment.colour),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                          // Your existing column
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  garment.name!,
+                                  style: TextStyle(
+                                    color: getTextColor(garment.colour),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Text(
+                                  garment.brand,
+                                  style: TextStyle(
+                                      color: getTextColor(garment.colour)),
+                                ),
+                                SizedBox(height: 5,),
+                                Text(
+                                  garment.country,
+                                  style: TextStyle(
+                                      color: getTextColor(garment.colour)),
+                                ),
+                              ],
                             ),
                           ),
-                          Text(garment.brand, style: TextStyle(color: getTextColor(garment.colour)),),
-                          SizedBox(height: 5,),
-                          Text(garment.country, style: TextStyle(color: getTextColor(garment.colour)),),
+                          // New Image widget
+                          Image.network(
+                            garment.garmentImageURL!, // Replace with your image URL
+                            fit: BoxFit.cover,
+                            height: 130.0, // You can adjust as needed
+                            width: 130.0, // You can adjust as needed
+                          ),
                         ],
                       ),
+                    
                     ),
                   ),
                 );
               },
-            )
-          );
-        } else if (state is ReadAllGarmentEmpty){
-          return RefreshIndicator(
+            ));
+      } else if (state is ReadAllGarmentEmpty) {
+        return RefreshIndicator(
             onRefresh: refreshPage,
             child: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Center(child: Text('Oopsie, you have no garment yet', style: TextStyle(fontSize: 20))),
-            )
-          );
-        } else {
-          return Container(child: Text('empty thing'));
-        }
+              child: Center(
+                  child: Text('Oopsie, you have no garment yet',
+                      style: TextStyle(fontSize: 20))),
+            ));
+      } else {
+        return Container(child: Text('empty thing'));
       }
-    );
+    });
   }
 
-  Widget _floatingButton(){
+  Widget _floatingButton() {
     return FloatingActionButton(
-      onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=> CaptureImageView())),
+      onPressed: () => Navigator.push(
+          context, MaterialPageRoute(builder: (context) => CaptureImageView())),
       child: const Icon(Icons.add),
     );
   }
-
-  
 }

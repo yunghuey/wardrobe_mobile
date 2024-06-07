@@ -216,6 +216,7 @@ class _MapScreenState extends State<MapScreen> {
 
     setState(() {
       userAddress = addressParts.join(', ');
+      print(userAddress);
       userLat = latLng.latitude;
       userLng = latLng.longitude;
     });

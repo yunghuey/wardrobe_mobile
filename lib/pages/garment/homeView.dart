@@ -48,6 +48,7 @@ class _HomeViewState extends State<HomeView> {
 
   // location
   double lat = 0.0, long = 0.0;
+  String area = "";
 
   // group button
   int selectedIndex = 1;
@@ -90,11 +91,12 @@ class _HomeViewState extends State<HomeView> {
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
     }
     return await Geolocator.getCurrentPosition();
   }
-  
+
   Future<void> _setInitialLocation() async {
     Position position = await determinePosition();
     setState(() {
@@ -107,22 +109,18 @@ class _HomeViewState extends State<HomeView> {
   Future<void> refreshPage() async {
     displaytotalBloc.add(GetTotalEvent());
     pieBloc.add(PieChartReset());
-    if (category == "brand"){
+    if (category == "brand") {
       analysisBloc.add(GetBrandAnalysisEvent());
-    }
-    else if (category == "country"){
+    } else if (category == "country") {
       analysisBloc.add(GetCountryAnalysisEvent());
-    }
-    else if (category == "colour"){
+    } else if (category == "colour") {
       analysisBloc.add(GetColourAnalysisEvent());
-    }
-    else if (category == "size"){
+    } else if (category == "size") {
       analysisBloc.add(GetSizeAnalysisEvent());
     }
     // weather bloc & recommend bloc
     await _setInitialLocation();
     recommendBloc.add(GetRecommendationEvent(lat: lat, long: long));
-
   }
 
   @override
@@ -130,12 +128,12 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(title: Text('Home page')),
       body: Padding(
-        padding: const EdgeInsets.all(2.0),
+        padding: EdgeInsets.all(2.0),
         child: RefreshIndicator(
             onRefresh: refreshPage,
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(5),
+                padding: EdgeInsets.all(5),
                 child: Column(children: <Widget>[
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -152,101 +150,67 @@ class _HomeViewState extends State<HomeView> {
                           return _displayFetchData();
                         }),
                         // get user location
-                        _getCurrentLocation(),
+                        // _getCurrentLocation(),
+                        _getCurrentTemp(),
                       ],
-                    ),
-                  ),
-                  // weather
-                  Card(
-                    color: HexColor("#C3EEFA"),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: BlocBuilder<GetWeatherBloc, GetWeatherState>(builder:(context, state){
-                        if (state is GetWeatherInitState){
-                          return Center(child: Text('Enable location to view'),);
-                        }
-                        else if (state is GetWeatherSuccess){
-                          var textstyle = const TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(children: [
-                              Row(
-                                children: [
-                                  Text("${state.weather.weatherday!}  ", style: textstyle,),
-                                  Text(state.weather.description!),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text("Temperature  ", style: textstyle,),
-                                  Text("${state.weather.currentTemperature!.toStringAsFixed(1)}°C"),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text("Humidity  ", style: textstyle,),
-                                  Text("${state.weather.humidityTemperature!.toStringAsFixed(1)}°C"),
-                                ],
-                              ),
-                                                  
-                            ],),
-                          );
-                        }
-                        else if (state is GetWeatherFail){
-                          return Text(state.message);
-                        }
-                        else if (state is GettingWeatherState){
-                          return Center(child: CircularProgressIndicator(),);
-                        }
-                        return Container();
-                      }),
                     ),
                   ),
                   // recommend clothes
                   Card(
-                    color: HexColor("#C3EBCA"),
+                    elevation: 4,
+                    // color: HexColor("#C3EBCA"),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: BlocBuilder<RecommendationBloc, RecommendationState>(builder:(context, state){
-                        if (state is RecommendationEmpty){
-                          return Center(child: Text('No suitable recommendation '),);
-                        }
-                        else if (state is RecommendationSuccess){
-                          var textstyle = const TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
+                      child:
+                          BlocBuilder<RecommendationBloc, RecommendationState>(
+                              builder: (context, state) {
+                        if (state is RecommendationEmpty) {
+                          return const Center(child: Text('No suitable recommendation '),);
+                        } else if (state is RecommendationSuccess) {
                           return Column(
                             children: [
-                              Text('Recommendation'),
+                              const Text("Recommendation", style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF46208B),
+                              ),),
                               Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: state.garmentList.length,
-                                  itemBuilder: (context, index){
-                                    GarmentModel m = state.garmentList[index];
-                                    return InkWell(
-                                      onTap: (){
-                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewGarmentDetails(garmentID: m.id!)));
-                                      },
-                                      child: ListTile(
-                                        title: Text(m.name!),
-                                        subtitle: Text("${m.colour_name} in colour, ${m.brand} brand"),
-                                        contentPadding: EdgeInsets.all(10),
-                                      )
-                                    );
-                                  }
-                                )                      
-                              ),
+                                  padding:  EdgeInsets.all(8.0),
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: state.garmentList.length,
+                                      itemBuilder: (context, index) {
+                                        GarmentModel m =
+                                            state.garmentList[index];
+                                        return InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ViewGarmentDetails(
+                                                              garmentID:
+                                                                  m.id!)));
+                                            },
+                                            child: ListTile(
+                                              title: Text(m.name!, style: TextStyle(fontSize: 17),),
+                                              subtitle: Text(
+                                                  "${m.colour_name} in colour, ${m.brand} brand"),
+                                              contentPadding:
+                                                  EdgeInsets.all(10),
+                                            ));
+                                      })),
                             ],
                           );
-                        }
-                        else if (state is RecommendationError){
+                        } else if (state is RecommendationError) {
                           return Text(state.message);
+                        } else if (state is GetRecommendationLoading) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
-                        else if (state is GetRecommendationLoading){
-                          return Center(child: CircularProgressIndicator(),);
-                        }
-                        return Container(child: Text('gegrg'));
+                        return Container();
                       }),
                     ),
                   ),
@@ -254,17 +218,19 @@ class _HomeViewState extends State<HomeView> {
                   BlocBuilder<DisplayAnalysisBloc, DisplayAnalysisState>(
                     builder: (context, state) {
                       if (state is DataAndNumberBarChart) {
-                        // List<BarChartModel> brand = state.data;
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12.0),
                           child: Card(
-                            color: HexColor("#f9e8f4"),
+                            elevation: 0,
                             child: Column(
                               children: [
                                 const SizedBox(height: 10),
                                 _buttonGroupCategory(),
                                 const SizedBox(height: 10),
-                                Text("Total number of garment by $category", style: TextStyle(fontWeight: FontWeight.bold)),
+                                Text("Total number of garment by $category",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 10),
                                 _barChartDiagram(state.y, state.data),
                                 const SizedBox(height: 10),
                                 _displayDropDown(state),
@@ -285,7 +251,8 @@ class _HomeViewState extends State<HomeView> {
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 15.0),
                             child: Center(
-                              child: Text("No insights of garment can be shown"),
+                              child:
+                                  Text("No insights of garment can be shown"),
                             ),
                           ),
                         );
@@ -293,21 +260,18 @@ class _HomeViewState extends State<HomeView> {
                       return _displayFetchData();
                     },
                   ),
-                  BlocBuilder<PieChartBloc, DisplayPieChartState>(builder: (context, state){
-                    if (state is PieChartInitState){
+                  BlocBuilder<PieChartBloc, DisplayPieChartState>(
+                      builder: (context, state) {
+                    if (state is PieChartInitState) {
                       getPieEvent(category, dropdownValue);
                       return Container();
-                    }
-                    else if (state is FetchingPieData){
+                    } else if (state is FetchingPieData) {
                       return _displayFetchData();
-                    }
-                    else if (state is PieChartDataState){
+                    } else if (state is PieChartDataState) {
                       return _pieChartDiagram(state);
-                    }
-                    else if (state is PieChartEmpty){
+                    } else if (state is PieChartEmpty) {
                       return Text("No result can be shown");
-                    }
-                    else if (state is PieChartError){
+                    } else if (state is PieChartError) {
                       return Text("${state.error}");
                     }
                     return Text(state.toString());
@@ -330,25 +294,27 @@ class _HomeViewState extends State<HomeView> {
             barTouchData: BarTouchData(
               enabled: true,
               touchTooltipData: BarTouchTooltipData(
-                getTooltipColor: (BarChartGroupData group) => HexColor("#dfaf37"),
+                getTooltipColor: (BarChartGroupData group) =>
+                    HexColor("#dfaf37"),
                 getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                return BarTooltipItem(
-                  rod.toY.toStringAsFixed(0),
-                  TextStyle(
-                    color: HexColor("#572a66"), 
-                    fontWeight: FontWeight.bold,
-                  ),
-                );
-              },
+                  return BarTooltipItem(
+                    rod.toY.toStringAsFixed(0),
+                    TextStyle(
+                      color: HexColor("#572a66"),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
               ),
             ),
             borderData: FlBorderData(show: false),
             titlesData: FlTitlesData(
               show: true,
-              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              topTitles:
+                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               leftTitles: const AxisTitles(
                   sideTitles: SideTitles(
-                showTitles: false,
+                showTitles: true,
               )),
               rightTitles:
                   const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -464,8 +430,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _displayFetchData() {
-    return Card(
-        color: HexColor("#FFE6E6"),
+    return const Card(
         child: const Center(
           child: Text(
             "Fetching data...",
@@ -475,106 +440,158 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _displayGarmentNumber(int numberOfGarment) {
-    return Card(
-      color: HexColor("#f0dbf7"),
-      child: Column(children: [
-        const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Icon(Icons.favorite, color: Colors.red, size: 48),
-        ),
-        const Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'Total Garment',
-            style: TextStyle(fontSize: 18),
+    return SizedBox(
+      width: 170,
+      height: 125,
+      child: Card(
+        // color: HexColor("#f0dbf7"),
+        child: Column(children: [
+          SizedBox(height: 10),
+          Text(
+            numberOfGarment.toString(),
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, 
+            //color:Color.fromARGB(255, 103, 24, 230), 
+            ),
           ),
-        ),
-        Text(
-          numberOfGarment.toString(),
-        )
-      ]),
+          const Padding(
+            padding: const EdgeInsets.all(5),
+            child: Text(
+              'Total Garment',
+              style: TextStyle(fontSize: 15),
+            ),
+          ),
+        ]),
+      ),
     );
   }
 
   Widget _pieChartDiagram(PieChartDataState state) {
-        return Column(
-          children: [
-            Center(
-                child: Text(
-              state.pie1Type,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            )),
-            SizedBox(
-              height: 200,
-              child: PieChart(PieChartData(
-                borderData: FlBorderData(show: false),
-                sectionsSpace: 0,
-                centerSpaceRadius: 60,
-                sections: state.pie1
-                    .asMap()
-                    .map<int, PieChartSectionData>((index, data) {
-                      final value = PieChartSectionData(
-                        color: data.color,
-                        value: data.percent,
-                        title: data.totalNumber.toString(),
-                        showTitle: true,
-                      );
-                      return MapEntry(index, value);
-                    })
-                    .values
-                    .toList(),
-              )),
-            ),
-            SizedBox(height: 20),
-            Center(
-                child: Text(
-              state.pie2Type,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            )),
-            SizedBox(
-              height: 200,
-              child: PieChart(PieChartData(
-                borderData: FlBorderData(show: false),
-                sections: state.pie2
-                    .asMap()
-                    .map<int, PieChartSectionData>((index, data) {
-                      final value = PieChartSectionData(
-                        color: data.color,
-                        value: data.percent,
-                        title: data.name,
-                      );
-                      return MapEntry(index, value);
-                    })
-                    .values
-                    .toList(),
-              )),
-            ),
-            SizedBox(height: 20),
-            Center(
-                child: Text(
-              state.pie3Type,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            )),
-            SizedBox(
-              height: 200,
-              child: PieChart(PieChartData(
-                borderData: FlBorderData(show: false),
-                sections: state.pie3
-                    .asMap()
-                    .map<int, PieChartSectionData>((index, data) {
-                      final value = PieChartSectionData(
-                        color: data.color,
-                        value: data.percent,
-                        title: data.name,
-                      );
-                      return MapEntry(index, value);
-                    })
-                    .values
-                    .toList(),
-              )),
-            ),
-          ],
-        );
+    return Column(
+      children: [
+        Center(
+            child: Text(
+          state.pie1Type,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        )),
+        SizedBox(
+          height: 200,
+          child: PieChart(PieChartData(
+            borderData: FlBorderData(show: false),
+            sectionsSpace: 2,
+            centerSpaceRadius: 50,
+            sections: state.pie1
+                .asMap()
+                .map<int, PieChartSectionData>((index, data) {
+
+                  final isTouched = index == 18; // To highlight the touched section
+                  final double fontSize = isTouched ? 18 : 14; // Increase font size for touched section
+                  final double radius = isTouched ? 60 : 50; // Increase radius for touched section
+                  final Color color = isTouched ? Colors.blue : data.color; // Change color for touched section
+                  final value = PieChartSectionData(
+                    color: data.color,
+                    value: data.percent,
+                    title: data.name,
+                    radius: radius,
+                    titleStyle: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      color: getTextColor(data.color.toString())
+                    ),
+                    showTitle: true,
+                  );
+                  return MapEntry(index, value);
+                })
+                .values
+                .toList(),
+          ),
+          swapAnimationDuration: Duration(milliseconds: 800),
+          swapAnimationCurve: Curves.easeInOut,
+          ),
+        ),
+        SizedBox(height: 20),
+        Center(
+            child: Text(
+          state.pie2Type,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        )),
+        SizedBox(
+          height: 200,
+          child: PieChart(PieChartData(
+            borderData: FlBorderData(show: false),
+            sectionsSpace: 2,
+            centerSpaceRadius: 50,
+            sections: state.pie2
+                .asMap()
+                .map<int, PieChartSectionData>((index, data) {
+
+                  final isTouched = index == 18; // To highlight the touched section
+                  final double fontSize = isTouched ? 18 : 14; // Increase font size for touched section
+                  final double radius = isTouched ? 60 : 50; // Increase radius for touched section
+                  final Color color = isTouched ? Colors.blue : data.color; // Change color for touched section
+                  final value = PieChartSectionData(
+                    color: data.color,
+                    value: data.percent,
+                    title: data.name,
+                    radius: radius,
+                    titleStyle: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      color: getTextColor(data.color.toString()),
+                    ),
+                    showTitle: true,
+                  );
+                  return MapEntry(index, value);
+                })
+                .values
+                .toList(),
+          ),
+          swapAnimationDuration: Duration(milliseconds: 800),
+          swapAnimationCurve: Curves.easeInOut,
+          ),
+        ),
+        SizedBox(height: 20),
+        Center(
+            child: Text(
+          state.pie3Type,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        )),
+        SizedBox(
+          height: 200,
+          child: PieChart(PieChartData(
+            borderData: FlBorderData(show: false),
+            sectionsSpace: 2,
+            centerSpaceRadius: 50,
+            sections: state.pie3
+                .asMap()
+                .map<int, PieChartSectionData>((index, data) {
+
+                  final isTouched = index == 18; // To highlight the touched section
+                  final double fontSize = isTouched ? 18 : 14; // Increase font size for touched section
+                  final double radius = isTouched ? 60 : 50; // Increase radius for touched section
+                  final Color color = isTouched ? Colors.blue : data.color; // Change color for touched section
+                  final value = PieChartSectionData(
+                    color: data.color,
+                    value: data.percent,
+                    title: data.name,
+                    radius: radius,
+                    titleStyle: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      color:getTextColor(data.color.toString()),
+                    ),
+                    showTitle: true,
+                  );
+                  return MapEntry(index, value);
+                })
+                .values
+                .toList(),
+          ),
+          swapAnimationDuration: Duration(milliseconds: 800),
+          swapAnimationCurve: Curves.easeInOut,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _getCurrentLocation() {
@@ -592,30 +609,85 @@ class _HomeViewState extends State<HomeView> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => MapScreen()))
-                      .then((result) => {
-                            if (result != null)
-                              {
-                                setState(() {
-                                  lat = result['lat'];
-                                  long = result['lng'];
-                                }),
-                                weatherBloc.add(FindWeatherPressed(long: long, lat: lat)),
-                              }
-                          });
+                  _toMapScreen();
                 },
-                child: Text("get")),
-            Text("Lat: ${lat.toString()}"),
-            Text("Long: ${long.toString()}"),
+                child: Text("Update")),
+            Text("area ${area}"),
           ],
         ),
       ),
     );
   }
 
+  Widget _getCurrentTemp() {
+    var headingtext =
+        const TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
+
+    return SizedBox(
+      width: 170,
+      height: 125,
+      child: Card(
+        // color: HexColor("#efd0ff"),
+        child: BlocBuilder<GetWeatherBloc, GetWeatherState>(
+          builder: (context, state){
+            if (state is GetWeatherSuccess) {
+              return InkWell(
+                onTap: (){
+                  showDialog(context: context, 
+                  builder: (BuildContext context){
+                    return AlertDialog(
+                      title: Text(state.weather.weatherday!),
+                      content: Text("Today is ${state.weather.description}, it's feels like ${state.weather.humidityTemperature}°C",
+                      style: TextStyle(fontSize: 15)),
+                      actions: [
+                        TextButton(onPressed: ()=> Navigator.pop(context), child: Text("Alright!"))
+                      ],
+                    );
+                  });
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                  Center(child: Text('Now'),),
+                  Center(
+                    child: Text("${state.weather.currentTemperature!.toStringAsFixed(1)}°C", 
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),)
+                  ),
+                ],),
+              );
+            }
+            return Container(child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(child: Text('Enable location for weather result')),
+            ),);
+          },
+
+        ),
+        )
+    ,);
+    
+    
+
+  }
+
+  void _toMapScreen() {
+    Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MapScreen()))
+        .then((result) => {
+              if (result != null)
+                {
+                  setState(() {
+                    lat = result['lat'];
+                    long = result['lng'];
+                    area = result['address'];
+                  }),
+                  weatherBloc.add(FindWeatherPressed(long: long, lat: lat)),
+                }
+            });
+  }
+
   Future<void> getPieEvent(String category, String dropdownvalue) async {
-    if (dropdownvalue.isNotEmpty){
+    if (dropdownvalue.isNotEmpty) {
       pieBloc.add(PieChartReset());
       if (category == "brand") {
         pieBloc.add(BrandPieChart(brandname: dropdownValue));
@@ -688,6 +760,17 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
     );
+  }
+
+    Color getTextColor(String hexColor) {
+
+    // print(hexColor);
+    // String hexValue = hexColor.split('(0x')[1].split(')')[0];
+  // Parse the hexadecimal string as an integer
+  // int colorValue = int.parse(hexValue, radix: 16);
+  // If the color value is less than the threshold, return white; otherwise, return black.
+  // return colorValue <  0xffAAAAAA ? Colors.white : Colors.black;
+  return Colors.black;
   }
 
   Widget getColourTitles(double value, TitleMeta meta) {
