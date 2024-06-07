@@ -46,6 +46,8 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
   String? _selectedSize;
   String? _selectedBrand;
   String? _selectedColour;
+  String? colorCode;
+  bool isChanged = false;
   late ValueNotifier<Color> _colorNotifier;
   TextEditingController nameController = TextEditingController();
 
@@ -65,6 +67,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
     _selectedBrand = garmentResult.brand;
     _selectedColour = garmentResult.colour_name;
     _colorNotifier = ValueNotifier<Color>(HexColor(garmentResult.colour));
+    colorCode = garmentResult.colour;
   }
 
   @override
@@ -123,41 +126,49 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
           materials = state.materialList;
           return Column(
             children: [
-              IconButton(
-                onPressed: () {
-                  percentageSum = 0.0;
-
-                  setState(() {
-                    for (var m in materials) {
-                      if (m.materialName != ValueConstant.MATERIAL_NAME[0]) {
-                        percentageSum += m.percentage;
-                      } else {
-                        percentageSum = 200;
+              Padding(
+                padding: const EdgeInsets.only(left: 70.0, right: 70.0, top: 10.0, bottom: 10.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    percentageSum = 0.0;
+                    setState(() {
+                      for (var m in materials) {
+                        if (m.materialName != ValueConstant.MATERIAL_NAME[0]) {
+                          percentageSum += m.percentage;
+                        } else {
+                          percentageSum = 200;
+                        }
+                        if (m.percentage == 0) {
+                          percentageSum = 300;
+                        }
                       }
-
-                      if (m.percentage == 0) {
-                        percentageSum = 300;
-                      }
+                    });
+                    if (percentageSum < 100) {
+                      var newRow = MaterialModel(
+                          materialName: ValueConstant.MATERIAL_NAME[0],
+                          percentage: 0.0);
+                      materials.add(newRow);
+                      setState(() {});
+                    } else if (percentageSum == 200) {
+                      final snackBar =
+                          SnackBar(content: Text("Please choose a material"));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    } else {
+                      // final snackBar = SnackBar(
+                      //     content: Text(
+                      //         "Percentage has exceed 100, cannot add anymore"));
+                      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      null;
                     }
-                  });
-                  if (percentageSum < 100) {
-                    var newRow = MaterialModel(
-                        materialName: ValueConstant.MATERIAL_NAME[0],
-                        percentage: 0.0);
-                    materials.add(newRow);
-                    setState(() {});
-                  } else if (percentageSum == 200) {
-                    final snackBar =
-                        SnackBar(content: Text("Please choose a material"));
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  } else {
-                    final snackBar = SnackBar(
-                        content: Text(
-                            "Percentage has exceed 100, cannot add anymore"));
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  }
-                },
-                icon: const Icon(Icons.add),
+                  },
+                  child: const Row(
+                    children: [
+                      Icon(Icons.add),
+                      SizedBox(width: 10,),
+                      Text("Add material"),
+                    ],
+                  ),
+                ),
               ),
               ListView.builder(
                 shrinkWrap: true,
@@ -214,9 +225,10 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
                                 materials.removeAt(index);
                               });
                             } else {
-                              SnackBar sn =
-                                  SnackBar(content: Text("Unable to remove"));
-                              ScaffoldMessenger.of(context).showSnackBar(sn);
+                              // SnackBar sn =
+                              //     SnackBar(content: Text("Unable to remove"));
+                              // ScaffoldMessenger.of(context).showSnackBar(sn);
+                              null;
                             }
                           },
                           icon: Icon(Icons.remove_circle),
@@ -295,14 +307,18 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
               nameController.text != '' &&
               percentageSum == 100) {
             // is to check garment name
+            if (isChanged) {
+                  int index = ValueConstant.COLOUR_NAME.indexOf(_selectedColour!);
+                  colorCode = ValueConstant.COLOUR_CODE[index];
+            }
+            else {
             String colorString =
                 _colorNotifier.value.toString(); // Color(0xffcca2ae)
-            String hexColor =
-                '#${colorString.split('(0xff')[1].split(')')[0]}'; // cca2ae
-
+            colorCode = '#${colorString.split('(0xff')[1].split(')')[0]}'; // cca2ae
+            }
             GarmentModel garmentObj = GarmentModel(
               brand: _selectedBrand ?? '',
-              colour: hexColor,
+              colour: colorCode!,
               country: _selectedCountry ?? '',
               size: _selectedSize ?? '',
               colour_name: _selectedColour ?? 'WHITE',

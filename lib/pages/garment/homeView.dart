@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:wardrobe_mobile/bloc/analysis/analysis_bloc.dart';
 import 'package:wardrobe_mobile/bloc/analysis/piechart_bloc.dart';
@@ -63,11 +64,54 @@ class _HomeViewState extends State<HomeView> {
     refreshPage();
   }
 
+  Future<Position> determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+    }
+    return await Geolocator.getCurrentPosition();
+  }
+  
+  Future<void> _setInitialLocation() async {
+    Position position = await determinePosition();
+    setState(() {
+      lat = position.latitude;
+      long = position.longitude;
+    });
+    weatherBloc.add(FindWeatherPressed(long: long, lat: lat));
+  }
+
   Future<void> refreshPage() async {
     displaytotalBloc.add(GetTotalEvent());
-    analysisBloc.add(GetBrandAnalysisEvent());
     pieBloc.add(PieChartReset());
-    selectedIndex = 1;
+    if (category == "brand"){
+      analysisBloc.add(GetBrandAnalysisEvent());
+    }
+    else if (category == "country"){
+      analysisBloc.add(GetCountryAnalysisEvent());
+    }
+    else if (category == "colour"){
+      analysisBloc.add(GetColourAnalysisEvent());
+    }
+    else if (category == "size"){
+      analysisBloc.add(GetSizeAnalysisEvent());
+    }
+    await _setInitialLocation();
   }
 
   @override
@@ -107,7 +151,7 @@ class _HomeViewState extends State<HomeView> {
                       padding: const EdgeInsets.all(8.0),
                       child: BlocBuilder<GetWeatherBloc, GetWeatherState>(builder:(context, state){
                         if (state is GetWeatherInitState){
-                          return Center(child: Text('Click the button to get location!'),);
+                          return Center(child: Text('Enable location to view'),);
                         }
                         else if (state is GetWeatherSuccess){
                           var textstyle = const TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
@@ -149,7 +193,7 @@ class _HomeViewState extends State<HomeView> {
                   BlocBuilder<DisplayAnalysisBloc, DisplayAnalysisState>(
                     builder: (context, state) {
                       if (state is DataAndNumberBarChart) {
-                        List<BarChartModel> brand = state.data;
+                        // List<BarChartModel> brand = state.data;
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12.0),
                           child: Card(
@@ -159,6 +203,7 @@ class _HomeViewState extends State<HomeView> {
                                 const SizedBox(height: 10),
                                 _buttonGroupCategory(),
                                 const SizedBox(height: 10),
+                                Text("Total number of garment by $category", style: TextStyle(fontWeight: FontWeight.bold)),
                                 _barChartDiagram(state.y, state.data),
                                 const SizedBox(height: 10),
                                 _displayDropDown(state),
@@ -217,6 +262,18 @@ class _HomeViewState extends State<HomeView> {
             gridData: const FlGridData(show: false),
             barTouchData: BarTouchData(
               enabled: true,
+              touchTooltipData: BarTouchTooltipData(
+                getTooltipColor: (BarChartGroupData group) => HexColor("#dfaf37"),
+                getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                return BarTooltipItem(
+                  rod.toY.toStringAsFixed(0),
+                  TextStyle(
+                    color: HexColor("#572a66"), 
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              },
+              ),
             ),
             borderData: FlBorderData(show: false),
             titlesData: FlTitlesData(
@@ -245,7 +302,7 @@ class _HomeViewState extends State<HomeView> {
                       return Container(); // Return an empty container if category is unknown
                   }
                 },
-                reservedSize: 100,
+                reservedSize: 130,
               )),
             ),
             minY: 0,
@@ -402,7 +459,11 @@ class _HomeViewState extends State<HomeView> {
               )),
             ),
             SizedBox(height: 20),
-            Center(child: Text(state.pie2Type,)),
+            Center(
+                child: Text(
+              state.pie2Type,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            )),
             SizedBox(
               height: 200,
               child: PieChart(PieChartData(
@@ -422,8 +483,10 @@ class _HomeViewState extends State<HomeView> {
               )),
             ),
             SizedBox(height: 20),
-            Center(child: Text(
+            Center(
+                child: Text(
               state.pie3Type,
+              style: TextStyle(fontWeight: FontWeight.bold),
             )),
             SizedBox(
               height: 200,

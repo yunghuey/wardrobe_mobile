@@ -94,7 +94,7 @@ class _CaptureMaterialViewState extends State<CaptureMaterialView> {
                   children: <Widget>[
                     // Blurred background
                     Container(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withOpacity(0.1),
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
                     ),
@@ -130,7 +130,7 @@ class _CaptureMaterialViewState extends State<CaptureMaterialView> {
                   children: <Widget>[
                     // Blurred background
                     Container(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withOpacity(0.1),
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
                     ),

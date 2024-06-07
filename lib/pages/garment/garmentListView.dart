@@ -22,13 +22,11 @@ class GarmentListView extends StatefulWidget {
 class _GarmentListViewState extends State<GarmentListView> {
   late ReadGarmentBloc readBloc;
   late List<GarmentModel> garmentList;
-  late DeleteGarmentBloc deleteBloc;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     readBloc = BlocProvider.of<ReadGarmentBloc>(context);
-    deleteBloc = BlocProvider.of<DeleteGarmentBloc>(context);
     refreshPage();
   }
   
@@ -92,53 +90,29 @@ class _GarmentListViewState extends State<GarmentListView> {
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index){
                 final garment = garmentList[index];
-                return Card(
-                  elevation: 5,
-                  color: HexColor(garment.colour),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(garment.name!, style: TextStyle(
-                          color: getTextColor(garment.colour),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                return InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewGarmentDetails(garmentID: garment.id!)));
+                  },
+                  child: Card(
+                    elevation: 5,
+                    color: HexColor(garment.colour),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(garment.name!, style: TextStyle(
+                            color: getTextColor(garment.colour),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            ),
                           ),
-                        ),
-                        Text(garment.brand, style: TextStyle(color: getTextColor(garment.colour)),),
-                        SizedBox(height: 5,),
-                        Text(garment.country, style: TextStyle(color: getTextColor(garment.colour)),),
-                        Row(
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: (){
-                                showDialog(
-                                  context: context, 
-                                  builder: (BuildContext context) => AlertDialog(
-                                    title: const Text('Delete garment'),
-                                    content: const Text('Are you sure to delete this garment?'),
-                                    actions: [
-                                      TextButton(onPressed:() => Navigator.pop(context), child: Text("No")),
-                                      TextButton(onPressed: () =>deleteBloc.add(DeleteButtonPressed(garmentID:garment.id!)), child: Text("Yes"),)
-                                    ],
-                                  ) 
-                                );
-                              }, 
-                              icon: const Icon(Icons.remove), 
-                              label: const Text("Delete"),
-                            ),
-                            SizedBox(width: 8,),
-                            ElevatedButton.icon(
-                              onPressed: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewGarmentDetails(garmentID: garment.id!)));
-                              }, 
-                              icon: const Icon(Icons.details), 
-                              label: const Text("View"),
-                            ),
-                          ],
-                        ),
-                      ],
+                          Text(garment.brand, style: TextStyle(color: getTextColor(garment.colour)),),
+                          SizedBox(height: 5,),
+                          Text(garment.country, style: TextStyle(color: getTextColor(garment.colour)),),
+                        ],
+                      ),
                     ),
                   ),
                 );

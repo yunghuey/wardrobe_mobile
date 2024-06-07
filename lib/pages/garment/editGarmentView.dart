@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_bloc.dart';
+import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_event.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_event.dart';
 import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_state.dart';
@@ -36,6 +38,7 @@ class _EditGarmentViewState extends State<EditGarmentView> {
   bool isChanged = false;
   double percentageSum = 0.0;
   late List<MaterialModel> materials;
+  late DeleteGarmentBloc deleteBloc;
 
   final loadingWidget = BlocBuilder<UpdateGarmentBloc, UpdateGarmentState>(
     builder: (context, state) {
@@ -52,6 +55,8 @@ class _EditGarmentViewState extends State<EditGarmentView> {
     // TODO: implement initState
     super.initState();
     updateBloc = BlocProvider.of<UpdateGarmentBloc>(context);
+    deleteBloc = BlocProvider.of<DeleteGarmentBloc>(context);
+
     updateGarment = widget.garment;
     nameController.text = updateGarment.name!;
     _selectedBrand = updateGarment.brand;
@@ -102,7 +107,7 @@ class _EditGarmentViewState extends State<EditGarmentView> {
                   _materialCustomization(),
                   loadingWidget,
                   _submitButton(),
-                  // future enhancement : add delete button here
+                  _deleteButton(),
                 ]),
           ),
         ),
@@ -110,12 +115,41 @@ class _EditGarmentViewState extends State<EditGarmentView> {
     );
   }
 
+  Widget _deleteButton() {
+    return ElevatedButton.icon(
+      onPressed: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Delete garment'),
+                  content: const Text('Are you sure to delete this garment?'),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text("No")),
+                    TextButton(
+                      onPressed: () => deleteBloc.add(
+                          DeleteButtonPressed(garmentID: updateGarment.id!)),
+                      child: Text("Yes"),
+                    )
+                  ],
+                ));
+      },
+      icon: const Icon(Icons.remove),
+      label: const Text("Delete"),
+    );
+  }
+
   Widget _materialCustomization() {
     return Column(
       children: [
-        Text("Materials", style: TextStyle(fontSize: 16),),
+        Text(
+          "Materials",
+          style: TextStyle(fontSize: 16),
+        ),
         Padding(
-          padding: const EdgeInsets.only(left: 70.0, right: 70.0, top: 10.0, bottom: 10.0),
+          padding: const EdgeInsets.only(
+              left: 70.0, right: 70.0, top: 10.0, bottom: 10.0),
           child: ElevatedButton(
             onPressed: () {
               percentageSum = 0.0;
@@ -126,7 +160,6 @@ class _EditGarmentViewState extends State<EditGarmentView> {
                   } else {
                     percentageSum = 200;
                   }
-          
                   if (m.percentage == 0) {
                     percentageSum = 300;
                   }
@@ -152,7 +185,9 @@ class _EditGarmentViewState extends State<EditGarmentView> {
             child: Row(
               children: [
                 const Icon(Icons.add),
-                SizedBox(width: 10,),
+                SizedBox(
+                  width: 10,
+                ),
                 Text("Add material"),
               ],
             ),
