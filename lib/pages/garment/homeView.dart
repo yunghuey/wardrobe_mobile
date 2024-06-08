@@ -273,13 +273,13 @@ class _HomeViewState extends State<HomeView> {
                       return Column(
                         children: [
                           Text(state.pie1Type),
-                          _smallBarChartDiagram(state.y,state.pie1, state.pie1Type),
+                          _smallBarChartDiagram(state.y+1,state.pie1, state.pie1Type),
                           SizedBox(height: 10),
                           Text(state.pie2Type),
-                          _smallBarChartDiagram(state.y,state.pie2, state.pie2Type),
+                          _smallBarChartDiagram(state.y+1,state.pie2, state.pie2Type),
                           SizedBox(height: 10),
                           Text(state.pie3Type),
-                          _smallBarChartDiagram(state.y,state.pie3, state.pie3Type),
+                          _smallBarChartDiagram(state.y+1,state.pie3, state.pie3Type),
                         ],
                       );
                     } else if (state is PieChartEmpty) {
@@ -327,6 +327,7 @@ class _HomeViewState extends State<HomeView> {
                   const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               leftTitles: const AxisTitles(
                   sideTitles: SideTitles(
+                interval: 1, // Adjust as needed
                 showTitles: true,
               )),
               rightTitles:
@@ -407,7 +408,7 @@ class _HomeViewState extends State<HomeView> {
               leftTitles: const AxisTitles(
                   sideTitles: SideTitles(
                     reservedSize: 30,
-                    // interval: 1, // Adjust as needed
+                    interval: 1, // Adjust as needed
                     showTitles: true,
               )),
               rightTitles:

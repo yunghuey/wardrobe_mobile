@@ -50,14 +50,21 @@ class _SplashScreenState extends State<SplashScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Yourdrobe', style: TextStyle(
-            fontSize: 50.0,
-            color: HexColor("#E5D7FD")
-          )),
-          Text('Your long life partner', style: TextStyle(
+          ClipRRect(
+            borderRadius: BorderRadius.circular(40),
+            child: Container(
+              height: 200,
+              child: Image.asset('assets/logo.png')
+            ),
+          ),
+          SizedBox(height: 30),
+          Text('Weaving Your Wardrobe Wonders', style: TextStyle(
             fontSize: 25.0,
-            color: HexColor("#E5D7FD")
-          )),
+            color: HexColor("#E5D7FD"),
+            fontFamily: 'Roboto'
+          ),
+          textAlign: TextAlign.center,
+          ),
         ]
       ),
     );

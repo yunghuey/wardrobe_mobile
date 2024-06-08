@@ -89,7 +89,7 @@ class _ProfileViewState extends State<ProfileView> {
         return Padding(
           padding: const EdgeInsets.only(top: 10, left: 20,right: 20,bottom: 10),
           child: Card(
-            color: HexColor("#272360"),
+            color: Color.fromARGB(255, 93, 63, 184),
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(28.0),
@@ -121,15 +121,15 @@ class _ProfileViewState extends State<ProfileView> {
           Text("GENERAL", 
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: HexColor("#7E7D80"),
-              fontSize: 16
+              color: Color.fromARGB(255, 93, 63, 184),
+              fontSize: 17
             )
           ), 
           SizedBox(height: 10.0,),
           Container(
             margin: EdgeInsets.all(5.0),
             decoration: BoxDecoration(
-              color: HexColor("#EEE9FA"),
+              color: HexColor("#F0DEFE"),
               borderRadius: BorderRadius.circular(15.0),
               boxShadow: [
                 BoxShadow(
@@ -180,7 +180,7 @@ class _ProfileViewState extends State<ProfileView> {
             Container(
               margin: EdgeInsets.all(5.0),
               decoration: BoxDecoration(
-                color: HexColor("#EEE9FA"),
+                color: HexColor("#F0DEFE"),
                 borderRadius: BorderRadius.circular(15.0),
                 boxShadow: [
                   BoxShadow(color: Colors.grey.withOpacity(0.3),
