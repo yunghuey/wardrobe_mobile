@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:wardrobe_mobile/model/piechart.dart';
+import 'package:wardrobe_mobile/model/barchart.dart';
 
 class DisplayPieChartState extends Equatable{
   @override
@@ -11,13 +11,14 @@ class PieChartInitState extends DisplayPieChartState {}
 class FetchingPieData extends DisplayPieChartState {}
 
 class PieChartDataState extends DisplayPieChartState {
-  final List<PieChartModel> pie1;
-  final List<PieChartModel> pie2;
-  final List<PieChartModel> pie3;
+  final List<BarChartModel> pie1;
+  final List<BarChartModel> pie2;
+  final List<BarChartModel> pie3;
   final String indicator;
   final String pie1Type;
   final String pie2Type;
   final String pie3Type;
+  final double y;
   PieChartDataState({
     required this.pie1, 
     required this.pie2, 
@@ -26,6 +27,7 @@ class PieChartDataState extends DisplayPieChartState {
     required this.pie1Type,
     required this.pie2Type,
     required this.pie3Type,
+    required this.y,
   });
 }
 

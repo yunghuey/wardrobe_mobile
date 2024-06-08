@@ -17,6 +17,5 @@ samples, guidance on mobile development, and a full API reference.
 
 ### UI design
 colour hexadecimal code
-1. dark - #272360
-2. medium - #272360
-3. light - #FFE6E6
+1. Color.fromARGB(255, 93, 63, 184) - solid purple
+2. F0DEFE - light

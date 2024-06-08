@@ -60,6 +60,9 @@ class _HomeViewState extends State<HomeView> {
   bool userClicked = false;
   String category = 'brand';
 
+  // pie chart
+  int touchedIndex = -1;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -149,7 +152,6 @@ class _HomeViewState extends State<HomeView> {
                           }
                           return _displayFetchData();
                         }),
-                        // get user location
                         // _getCurrentLocation(),
                         _getCurrentTemp(),
                       ],
@@ -158,7 +160,7 @@ class _HomeViewState extends State<HomeView> {
                   // recommend clothes
                   Card(
                     elevation: 4,
-                    // color: HexColor("#C3EBCA"),
+                    color: HexColor("#F0DEFE"),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child:
@@ -169,10 +171,10 @@ class _HomeViewState extends State<HomeView> {
                         } else if (state is RecommendationSuccess) {
                           return Column(
                             children: [
-                              const Text("Recommendation", style: TextStyle(
+                              Text("Recommendation", style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF46208B),
+                                // color: HexColor("#dfaf37"),
                               ),),
                               Padding(
                                   padding:  EdgeInsets.all(8.0),
@@ -268,7 +270,18 @@ class _HomeViewState extends State<HomeView> {
                     } else if (state is FetchingPieData) {
                       return _displayFetchData();
                     } else if (state is PieChartDataState) {
-                      return _pieChartDiagram(state);
+                      return Column(
+                        children: [
+                          Text(state.pie1Type),
+                          _smallBarChartDiagram(state.y,state.pie1, state.pie1Type),
+                          SizedBox(height: 10),
+                          Text(state.pie2Type),
+                          _smallBarChartDiagram(state.y,state.pie2, state.pie2Type),
+                          SizedBox(height: 10),
+                          Text(state.pie3Type),
+                          _smallBarChartDiagram(state.y,state.pie3, state.pie3Type),
+                        ],
+                      );
                     } else if (state is PieChartEmpty) {
                       return Text("No result can be shown");
                     } else if (state is PieChartError) {
@@ -346,12 +359,93 @@ class _HomeViewState extends State<HomeView> {
                       barRods: [
                         BarChartRodData(
                             toY: data.numberOfGarment.toDouble(),
-                            color: HexColor("#572a66"),
+                            color: HexColor("#dfaf37"),
                             width: 18,
                             backDrawRodData: BackgroundBarChartRodData(
                               show: true,
                               toY: y + 1,
-                              color: HexColor("#dfaf37"),
+                              color: Color.fromARGB(255, 93, 63, 184),
+                            ))
+                      ],
+                    ))
+                .toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _smallBarChartDiagram(double y, List<BarChartModel> data, String categoryy) {
+    return SizedBox(
+      height: 250,
+      child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: BarChart(
+          BarChartData(
+            gridData: const FlGridData(show: true),
+            borderData: FlBorderData(show: true),
+            barTouchData: BarTouchData(
+              enabled: true,
+              touchTooltipData: BarTouchTooltipData(
+                getTooltipColor: (BarChartGroupData group) =>
+                    HexColor("#dfaf37"),
+                getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                  return BarTooltipItem(
+                    rod.toY.toStringAsFixed(0),
+                    TextStyle(
+                      color: HexColor("#572a66"),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
+              ),
+            ),
+            titlesData: FlTitlesData(
+              show: true,
+              topTitles:
+                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              leftTitles: const AxisTitles(
+                  sideTitles: SideTitles(
+                    reservedSize: 30,
+                    // interval: 1, // Adjust as needed
+                    showTitles: true,
+              )),
+              rightTitles:
+                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (double value, TitleMeta meta) {
+                  switch (categoryy) {
+                    case "Brand":
+                      return getBrandTitles(value, meta);
+                    case "Country":
+                      return getCountryTitles(value, meta);
+                    case "Colour":
+                      return getColourTitles(value, meta);
+                    case "Size":
+                      return getSizeTitles(value, meta);
+                    default:
+                      return Container(); // Return an empty container if category is unknown
+                  }
+                },
+                reservedSize: 130,
+              )),
+            ),
+            minY: 0,
+            maxY: y + 1,
+            barGroups: data
+                .map((data) => BarChartGroupData(
+                      x: data.code,
+                      barRods: [
+                        BarChartRodData(
+                            toY: data.numberOfGarment.toDouble(),
+                            color: HexColor("#dfaf37"),
+                            width: 18,
+                            backDrawRodData: BackgroundBarChartRodData(
+                              show: true,
+                              toY: y + 1,
+                              color: Color.fromARGB(255, 93, 63, 184),
                             ))
                       ],
                     ))
@@ -364,10 +458,10 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _buttonGroupCategory() {
     return ToggleButtons(
-      borderColor: Color.fromARGB(255, 70, 32, 139),
+      borderColor: Color.fromARGB(255, 93, 63, 184),
       fillColor: Color.fromARGB(255, 93, 63, 184),
       borderWidth: 1,
-      selectedBorderColor: Color.fromARGB(255, 103, 24, 230),
+      selectedBorderColor: Color.fromARGB(255, 93, 63, 184),
       selectedColor: Colors.white,
       borderRadius: BorderRadius.circular(10),
       onPressed: (int index) {
@@ -444,7 +538,7 @@ class _HomeViewState extends State<HomeView> {
       width: 170,
       height: 125,
       child: Card(
-        // color: HexColor("#f0dbf7"),
+        // color: HexColor("#F1DCF6"),
         child: Column(children: [
           SizedBox(height: 10),
           Text(
@@ -465,134 +559,154 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _pieChartDiagram(PieChartDataState state) {
-    return Column(
-      children: [
-        Center(
-            child: Text(
-          state.pie1Type,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        )),
-        SizedBox(
-          height: 200,
-          child: PieChart(PieChartData(
-            borderData: FlBorderData(show: false),
-            sectionsSpace: 2,
-            centerSpaceRadius: 50,
-            sections: state.pie1
-                .asMap()
-                .map<int, PieChartSectionData>((index, data) {
+  List<PieChartSectionData> getSections(List<PieChartModel> listt){
 
-                  final isTouched = index == 18; // To highlight the touched section
-                  final double fontSize = isTouched ? 18 : 14; // Increase font size for touched section
-                  final double radius = isTouched ? 60 : 50; // Increase radius for touched section
-                  final Color color = isTouched ? Colors.blue : data.color; // Change color for touched section
-                  final value = PieChartSectionData(
-                    color: data.color,
-                    value: data.percent,
-                    title: data.name,
-                    radius: radius,
-                    titleStyle: TextStyle(
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                      color: getTextColor(data.color.toString())
-                    ),
-                    showTitle: true,
-                  );
-                  return MapEntry(index, value);
-                })
-                .values
-                .toList(),
-          ),
-          swapAnimationDuration: Duration(milliseconds: 800),
-          swapAnimationCurve: Curves.easeInOut,
-          ),
+    return List.generate(listt.length, (index){
+      final PieChartModel data = listt[index]; // Declare 'data' before using it
+      final isTouched = index == touchedIndex;
+      final double fontSize = isTouched ? 18 : 14;
+      final double radius = isTouched ? 60 : 50;
+      final Color color = isTouched ? Colors.blue : data.color;    
+      return PieChartSectionData(
+        color: color,
+        value: data.percent,
+        // title: '${data.name}\n(${data.totalNumber})',
+        title: data.name,
+        radius: radius,
+        titleStyle: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: getTextColor(data.color.toString()),
         ),
-        SizedBox(height: 20),
-        Center(
-            child: Text(
-          state.pie2Type,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        )),
-        SizedBox(
-          height: 200,
-          child: PieChart(PieChartData(
-            borderData: FlBorderData(show: false),
-            sectionsSpace: 2,
-            centerSpaceRadius: 50,
-            sections: state.pie2
-                .asMap()
-                .map<int, PieChartSectionData>((index, data) {
-
-                  final isTouched = index == 18; // To highlight the touched section
-                  final double fontSize = isTouched ? 18 : 14; // Increase font size for touched section
-                  final double radius = isTouched ? 60 : 50; // Increase radius for touched section
-                  final Color color = isTouched ? Colors.blue : data.color; // Change color for touched section
-                  final value = PieChartSectionData(
-                    color: data.color,
-                    value: data.percent,
-                    title: data.name,
-                    radius: radius,
-                    titleStyle: TextStyle(
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                      color: getTextColor(data.color.toString()),
-                    ),
-                    showTitle: true,
-                  );
-                  return MapEntry(index, value);
-                })
-                .values
-                .toList(),
-          ),
-          swapAnimationDuration: Duration(milliseconds: 800),
-          swapAnimationCurve: Curves.easeInOut,
-          ),
-        ),
-        SizedBox(height: 20),
-        Center(
-            child: Text(
-          state.pie3Type,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        )),
-        SizedBox(
-          height: 200,
-          child: PieChart(PieChartData(
-            borderData: FlBorderData(show: false),
-            sectionsSpace: 2,
-            centerSpaceRadius: 50,
-            sections: state.pie3
-                .asMap()
-                .map<int, PieChartSectionData>((index, data) {
-
-                  final isTouched = index == 18; // To highlight the touched section
-                  final double fontSize = isTouched ? 18 : 14; // Increase font size for touched section
-                  final double radius = isTouched ? 60 : 50; // Increase radius for touched section
-                  final Color color = isTouched ? Colors.blue : data.color; // Change color for touched section
-                  final value = PieChartSectionData(
-                    color: data.color,
-                    value: data.percent,
-                    title: data.name,
-                    radius: radius,
-                    titleStyle: TextStyle(
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                      color:getTextColor(data.color.toString()),
-                    ),
-                    showTitle: true,
-                  );
-                  return MapEntry(index, value);
-                })
-                .values
-                .toList(),
-          ),
-          swapAnimationDuration: Duration(milliseconds: 800),
-          swapAnimationCurve: Curves.easeInOut,
-          ),
-        ),
-      ],
-    );
+        showTitle: true,
+        badgeWidget: isTouched
+            ? TooltipWidget(data.totalNumber)
+            : null,
+        badgePositionPercentageOffset: 1.2,
+      );
+    });
   }
+
+  // Widget _pieChartDiagram(PieChartDataState state) {
+  //   return Column(
+  //     children: [
+  //       Center(
+  //           child: Text(
+  //         state.pie1Type,
+  //         style: TextStyle(fontWeight: FontWeight.bold),
+  //       )),
+  //       SizedBox(
+  //         height: 200,
+  //         child: PieChart(PieChartData(
+  //           borderData: FlBorderData(show: false),
+  //           sectionsSpace: 2,
+  //           centerSpaceRadius: 50,
+  //           sections: getSections(state.pie1),
+  //           pieTouchData: PieTouchData(
+           
+  //             touchCallback: (FlTouchEvent event, pieTouchResponse) {
+  //               print("touched");
+  //               setState(() {
+  //                 if (!event.isInterestedForInteractions ||
+  //                     pieTouchResponse == null ||
+  //                     pieTouchResponse.touchedSection == null) {
+  //                   touchedIndex = -1;
+  //                   return;
+  //                 }
+  //                 touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+  //                 print("touchedIndex ${touchedIndex}");
+  //               });
+  //             },
+  //           ),
+
+  //         ),
+  //         swapAnimationDuration: Duration(milliseconds: 800),
+  //         swapAnimationCurve: Curves.easeInOut,
+  //         ),
+  //       ),
+  //       SizedBox(height: 20),
+  //       Center(
+  //           child: Text(
+  //         state.pie2Type,
+  //         style: TextStyle(fontWeight: FontWeight.bold),
+  //       )),
+  //       SizedBox(
+  //         height: 200,
+  //         child: PieChart(PieChartData(
+  //           borderData: FlBorderData(show: false),
+  //           sectionsSpace: 2,
+  //           centerSpaceRadius: 50,
+  //           sections: state.pie2
+  //               .asMap()
+  //               .map<int, PieChartSectionData>((index, data) {
+  //                 final isTouched = index == 18; // To highlight the touched section
+  //                 final double fontSize = isTouched ? 18 : 14; // Increase font size for touched section
+  //                 final double radius = isTouched ? 60 : 50; // Increase radius for touched section
+  //                 final Color color = isTouched ? Colors.blue : data.color; // Change color for touched section
+  //                 final value = PieChartSectionData(
+  //                   color: data.color,
+  //                   value: data.percent,
+  //                   title: data.name,
+  //                   radius: radius,
+  //                   titleStyle: TextStyle(
+  //                     fontSize: fontSize,
+  //                     fontWeight: FontWeight.bold,
+  //                     color: getTextColor(data.color.toString()),
+  //                   ),
+  //                   showTitle: true,
+  //                 );
+  //                 return MapEntry(index, value);
+  //               })
+  //               .values
+  //               .toList(),
+  //         ),
+  //         swapAnimationDuration: Duration(milliseconds: 800),
+  //         swapAnimationCurve: Curves.easeInOut,
+  //         ),
+  //       ),
+  //       SizedBox(height: 20),
+  //       Center(
+  //           child: Text(
+  //         state.pie3Type,
+  //         style: TextStyle(fontWeight: FontWeight.bold),
+  //       )),
+  //       SizedBox(
+  //         height: 200,
+  //         child: PieChart(PieChartData(
+  //           borderData: FlBorderData(show: false),
+  //           sectionsSpace: 2,
+  //           centerSpaceRadius: 50,
+  //           sections: state.pie3
+  //               .asMap()
+  //               .map<int, PieChartSectionData>((index, data) {
+  //                 final isTouched = index == 18; // To highlight the touched section
+  //                 final double fontSize = isTouched ? 18 : 14; // Increase font size for touched section
+  //                 final double radius = isTouched ? 60 : 50; // Increase radius for touched section
+  //                 final Color color = isTouched ? Colors.blue : data.color; // Change color for touched section
+  //                 final value = PieChartSectionData(
+  //                   color: data.color,
+  //                   value: data.percent,
+  //                   title: data.name,
+  //                   radius: radius,
+  //                   titleStyle: TextStyle(
+  //                     fontSize: fontSize,
+  //                     fontWeight: FontWeight.bold,
+  //                     color:getTextColor(data.color.toString()),
+  //                   ),
+  //                   showTitle: true,
+  //                 );
+  //                 return MapEntry(index, value);
+  //               })
+  //               .values
+  //               .toList(),
+  //         ),
+  //         swapAnimationDuration: Duration(milliseconds: 800),
+  //         swapAnimationCurve: Curves.easeInOut,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _getCurrentLocation() {
     var headingtext =
@@ -620,14 +734,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _getCurrentTemp() {
-    var headingtext =
-        const TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
-
     return SizedBox(
       width: 170,
       height: 125,
       child: Card(
-        // color: HexColor("#efd0ff"),
+        color: Color.fromARGB(255, 93, 63, 184),
         child: BlocBuilder<GetWeatherBloc, GetWeatherState>(
           builder: (context, state){
             if (state is GetWeatherSuccess) {
@@ -648,17 +759,17 @@ class _HomeViewState extends State<HomeView> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                  Center(child: Text('Now'),),
+                  Center(child: Text('Now',style: TextStyle(color: Colors.white))),
                   Center(
                     child: Text("${state.weather.currentTemperature!.toStringAsFixed(1)}°C", 
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700),)
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700, color: Colors.white),)
                   ),
                 ],),
               );
             }
             return Container(child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Center(child: Text('Enable location for weather result')),
+              child: Center(child: Text('Enable location for weather result', style: TextStyle(color: Colors.white))),
             ),);
           },
 
@@ -829,6 +940,27 @@ class _HomeViewState extends State<HomeView> {
           style: style,
           textAlign: TextAlign.center, // Center the text vertically
         ),
+      ),
+    );
+  }
+}
+
+class TooltipWidget extends StatelessWidget {
+  final int value;
+
+  TooltipWidget(this.value);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.black87,
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      child: Text(
+        '$value',
+        style: TextStyle(color: Colors.white, fontSize: 12.0),
       ),
     );
   }

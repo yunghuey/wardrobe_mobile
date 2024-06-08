@@ -161,12 +161,20 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
                       null;
                     }
                   },
-                  child: const Row(
-                    children: [
-                      Icon(Icons.add),
-                      SizedBox(width: 10,),
-                      Text("Add material"),
-                    ],
+                  child: Row(
+                      children: [
+                        const Icon(Icons.add),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text("Add material", style: TextStyle(color:Color.fromARGB(255, 93, 63, 184))),
+                      ],
+                    ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    side: BorderSide(color: Color.fromARGB(255, 93, 63, 184), width: 2)
                   ),
                 ),
               ),
@@ -336,10 +344,10 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
           }
           // image
         },
-        child: const Text("submit", style: TextStyle(color: Color.fromARGB(255, 93, 63, 184))),
+        child: const Text("Create garment", style: TextStyle(color: Color.fromARGB(255, 93, 63, 184))),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
-          padding: EdgeInsets.symmetric(horizontal: 75, vertical: 15),
+          padding: EdgeInsets.symmetric(horizontal: 35, vertical: 15),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           side: BorderSide(color: Color.fromARGB(255, 93, 63, 184), width: 2)
       ),

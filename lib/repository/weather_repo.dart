@@ -57,7 +57,12 @@ class WeatherRepository{
         if (response.statusCode == 200){
           List<dynamic> result = jsonDecode(response.body)['garments'];
           return result.map((e) => GarmentModel.allFromJson(e)).toList();
-        } else {
+        } 
+        else if (response.statusCode == 204){
+          print(response.body);
+          return [];
+        }
+        else {
           print(response.body);
           return [];
         }

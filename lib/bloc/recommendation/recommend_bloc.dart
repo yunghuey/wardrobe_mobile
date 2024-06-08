@@ -12,11 +12,12 @@ class RecommendationBloc extends Bloc<RecommendationEvent,RecommendationState>{
         emit(GetRecommendationLoading());
         List<GarmentModel> garmentlist = [];
         garmentlist = await repo.getRecommendationByLngLat(event.long, event.lat);
-        if (garmentlist != []){
-          emit(RecommendationSuccess(garmentList: garmentlist));
+        print(garmentlist.length);
+        if (garmentlist.length == 0){
+          emit(RecommendationEmpty());
         }
         else {
-          emit(RecommendationEmpty());
+          emit(RecommendationSuccess(garmentList: garmentlist));
         }
       }catch(e){
         emit(RecommendationError(message: e.toString()));

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:wardrobe_mobile/model/piechart.dart';
+import 'package:wardrobe_mobile/model/barchart.dart';
 import 'package:wardrobe_mobile/pages/valueConstant.dart';
 import 'package:wardrobe_mobile/repository/analysis_repo.dart';
 import 'package:wardrobe_mobile/bloc/analysis/piechart_event.dart';
@@ -28,26 +28,25 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
     on<BrandPieChart>((event, emit) async {
       try {
         emit(FetchingPieData());
+        print("get data again");
         Map<String, dynamic> branddata = await repo.brandAnalysis();
-        List<PieChartModel> pieColourList = [];
-        List<PieChartModel> pieCountryList = [];
-        List<PieChartModel> pieSizeList = [];
+        List<BarChartModel> pieColourList = [];
+        List<BarChartModel> pieCountryList = [];
+        List<BarChartModel> pieSizeList = [];
+        double totalNum = 0;
         branddata.forEach((brandName, data) {
           if (brandName == event.brandname) {
-            double totalNum = data['total_num'].toDouble();
-            // settle colour
+            totalNum = data['total_num'].toDouble();
             var listgroup = data['colour_name'];
             for (final colourMap in listgroup) {
               colourMap.forEach((color, count) {
-                double secPercentage = count / totalNum * 100;
-                // get index of colour and get index of colour code
                 int index = ValueConstant.COLOUR_NAME.indexOf(color);
-                String colorCode = ValueConstant.COLOUR_CODE[index];
-                var data = PieChartModel(
+                var data = BarChartModel(
                     name: color,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colorCode));
+                    numberOfGarment: count,
+                    code: index
+                    // percent: secPercentage,
+                    );
                 pieColourList.add(data);
               });
             }
@@ -55,14 +54,15 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
             listgroup = data['size'];
             for (final sizeMap in listgroup) {
               sizeMap.forEach((name, count) {
-                double secPercentage = count / totalNum * 100;
+                // double secPercentage = count / totalNum * 100;
                 // get index of colour and get index of colour code
-                String colourCode = getRandomColorHex();
-                var data = PieChartModel(
+                // String colourCode = getRandomColorHex();
+                var data = BarChartModel(
                     name: name,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colourCode));
+                    numberOfGarment: count,
+                    // percent: secPercentage,
+                     code: ValueConstant.SIZES.indexOf(name)
+                  );
                 pieSizeList.add(data);
               });
             }
@@ -70,13 +70,15 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
             listgroup = data['country'];
             for (final countryMap in listgroup) {
               countryMap.forEach((name, count) {
-                double secPercentage = count / totalNum * 100;
-                String colourCode = getRandomColorHex();
-                var data = PieChartModel(
+                // double secPercentage = count / totalNum * 100;
+                // String colourCode = getRandomColorHex();
+                var data = BarChartModel(
                     name: name,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colourCode));
+                    numberOfGarment: count,
+                    // percent: secPercentage,
+                    code: ValueConstant.COUNTRY.indexOf(name),
+                    // color: HexColor(colourCode)
+                    );
                 pieCountryList.add(data);
               });
             }
@@ -93,7 +95,9 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
               pie1Type: 'Colour',
               pie2Type: 'Country',
               pie3Type: 'Size',
-              indicator: 'brand'));
+              indicator: 'brand',
+              y: totalNum
+              ));
         } else {
           emit(PieChartEmpty());
         }
@@ -108,26 +112,28 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
       try {
         emit(FetchingPieData());
         Map<String, dynamic> countrydata = await repo.countryAnalysis();
-        List<PieChartModel> pieColourList = [];
-        List<PieChartModel> pieBrandList = [];
-        List<PieChartModel> pieSizeList = [];
-
+        List<BarChartModel> pieColourList = [];
+        List<BarChartModel> pieBrandList = [];
+        List<BarChartModel> pieSizeList = [];
+        double totalNum = 0;
         countrydata.forEach((brandName, data) {
           if (brandName == event.countryname) {
-            double totalNum = data['total_num'].toDouble();
+            totalNum = data['total_num'].toDouble();
             // settle colour
             var listgroup = data['colour_name'];
             for (final colourMap in listgroup) {
               colourMap.forEach((color, count) {
-                double secPercentage = count / totalNum * 100;
+                // double secPercentage = count / totalNum * 100;
                 // get index of colour and get index of colour code
                 int index = ValueConstant.COLOUR_NAME.indexOf(color);
-                String colorCode = ValueConstant.COLOUR_CODE[index];
-                var data = PieChartModel(
+                // String colorCode = ValueConstant.COLOUR_CODE[index];
+                var data = BarChartModel(
                     name: color,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colorCode));
+                    numberOfGarment: count,
+                    // percent: secPercentage,
+                    // color: HexColor(colorCode)
+                    code: index,
+                    );
                 pieColourList.add(data);
               });
             }
@@ -135,14 +141,15 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
             listgroup = data['size'];
             for (final sizeMap in listgroup) {
               sizeMap.forEach((name, count) {
-                double secPercentage = count / totalNum * 100;
+                // double secPercentage = count / totalNum * 100;
                 // get index of colour and get index of colour code
-                String colourCode = getRandomColorHex();
-                var data = PieChartModel(
+                // String colourCode = getRandomColorHex();
+                var data = BarChartModel(
                     name: name,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colourCode));
+                    numberOfGarment: count,
+                    code: ValueConstant.SIZES.indexOf(name)
+
+                  );
                 pieSizeList.add(data);
               });
             }
@@ -150,13 +157,15 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
             listgroup = data['brand'];
             for (final brandMap in listgroup) {
               brandMap.forEach((name, count) {
-                double secPercentage = count / totalNum * 100;
-                String colourCode = getRandomColorHex();
-                var data = PieChartModel(
+                // double secPercentage = count / totalNum * 100;
+                // String colourCode = getRandomColorHex();
+                var data = BarChartModel(
                     name: name,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colourCode));
+                    numberOfGarment: count,
+                    // percent: secPercentage,
+                    code: ValueConstant.BRANDS_NAME.indexOf(name),
+                    // color: HexColor(colourCode)
+                    );
                 pieBrandList.add(data);
               });
             }
@@ -176,7 +185,9 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
               pie1Type: 'Colour',
               pie2Type: 'Brand',
               pie3Type: 'Size',
-              indicator: 'country'));
+              indicator: 'country',
+              y: totalNum
+              ));
         } else {
           emit(PieChartEmpty());
         }
@@ -192,26 +203,27 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
       try {
         emit(FetchingPieData());
         Map<String, dynamic> sizeData = await repo.sizeAnalysis();
-        List<PieChartModel> pieColourList = [];
-        List<PieChartModel> pieBrandList = [];
-        List<PieChartModel> pieCountryList = [];
-
+        List<BarChartModel> pieColourList = [];
+        List<BarChartModel> pieBrandList = [];
+        List<BarChartModel> pieCountryList = [];
+        double totalNum = 0;
         sizeData.forEach((sizeName, data) {
           if (sizeName == event.sizename) {
-            double totalNum = data['total_num'].toDouble();
+            totalNum = data['total_num'].toDouble();
             // settle colour
             var listgroup = data['colour_name'];
             for (final colourMap in listgroup) {
               colourMap.forEach((color, count) {
-                double secPercentage = count / totalNum * 100;
+                // double secPercentage = count / totalNum * 100;
                 // get index of colour and get index of colour code
                 int index = ValueConstant.COLOUR_NAME.indexOf(color);
-                String colorCode = ValueConstant.COLOUR_CODE[index];
-                var data = PieChartModel(
+                // String colorCode = ValueConstant.COLOUR_CODE[index];
+                var data = BarChartModel(
                     name: color,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colorCode));
+                    numberOfGarment: count,
+                    // percent: secPercentage,
+                    code: index
+                  );
                 pieColourList.add(data);
               });
             }
@@ -219,14 +231,17 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
             listgroup = data['country'];
             for (final countryMap in listgroup) {
               countryMap.forEach((name, count) {
-                double secPercentage = count / totalNum * 100;
+                // double secPercentage = count / totalNum * 100;
                 // get index of colour and get index of colour code
                 String colourCode = getRandomColorHex();
-                var data = PieChartModel(
+                var data = BarChartModel(
                     name: name,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colourCode));
+                    numberOfGarment: count,
+                    // percent: secPercentage,
+                    code: ValueConstant.COUNTRY.indexOf(name)
+
+                    // color: HexColor(colourCode)
+                    );
                 pieCountryList.add(data);
               });
             }
@@ -234,13 +249,15 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
             listgroup = data['brand'];
             for (final brandMap in listgroup) {
               brandMap.forEach((name, count) {
-                double secPercentage = count / totalNum * 100;
-                String colourCode = getRandomColorHex();
-                var data = PieChartModel(
+                // double secPercentage = count / totalNum * 100;
+                // String colourCode = getRandomColorHex();
+                var data = BarChartModel(
                     name: name,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colourCode));
+                    numberOfGarment: count,
+                    code: ValueConstant.BRANDS_NAME.indexOf(name)
+                    // percent: secPercentage,
+                    // color: HexColor(colourCode)
+                    );
                 pieBrandList.add(data);
               });
             }
@@ -257,7 +274,9 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
               pie1Type: 'Colour',
               pie2Type: 'Brand',
               pie3Type: 'Size',
-              indicator: 'Size'));
+              indicator: 'Size',
+              y: totalNum,
+              ));
         } else {
           emit(PieChartEmpty());
         }
@@ -274,10 +293,10 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
       try {
         emit(FetchingPieData());
         Map<String, dynamic> sizeData = await repo.colourAnalysis();
-        List<PieChartModel> pieSizeList = [];
-        List<PieChartModel> pieBrandList = [];
-        List<PieChartModel> pieCountryList = [];
-
+        List<BarChartModel> pieSizeList = [];
+        List<BarChartModel> pieBrandList = [];
+        List<BarChartModel> pieCountryList = [];
+        double totalNum = 0;
         sizeData.forEach((colour, data) {
           if (colour == event.colourname) {
             double totalNum = data['total_num'].toDouble();
@@ -285,14 +304,16 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
             var listgroup = data['size'];
             for (final sizeMap in listgroup) {
               sizeMap.forEach((color, count) {
-                double secPercentage = count / totalNum * 100;
+                // double secPercentage = count / totalNum * 100;
                 // get index of colour and get index of colour code
-                String colorCode = getRandomColorHex();
-                var data = PieChartModel(
+                // String colorCode = getRandomColorHex();
+                var data = BarChartModel(
                     name: color,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colorCode));
+                    code: ValueConstant.SIZES.indexOf(color),
+                    numberOfGarment: count,
+                    // percent: secPercentage,
+                    // color: HexColor(colorCode)
+                  );
                 pieSizeList.add(data);
               });
             }
@@ -300,14 +321,16 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
             listgroup = data['country'];
             for (final countryMap in listgroup) {
               countryMap.forEach((name, count) {
-                double secPercentage = count / totalNum * 100;
+                // double secPercentage = count / totalNum * 100;
                 // get index of colour and get index of colour code
-                String colourCode = getRandomColorHex();
-                var data = PieChartModel(
+                // String colourCode = getRandomColorHex();
+                var data = BarChartModel(
                     name: name,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colourCode));
+                    numberOfGarment: count,
+                    code: ValueConstant.COUNTRY.indexOf(name),
+                    // percent: secPercentage,
+                    // color: HexColor(colourCode)
+                    );
                 pieCountryList.add(data);
               });
             }
@@ -315,13 +338,15 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
             listgroup = data['brand'];
             for (final brandMap in listgroup) {
               brandMap.forEach((name, count) {
-                double secPercentage = count / totalNum * 100;
-                String colourCode = getRandomColorHex();
-                var data = PieChartModel(
+                // double secPercentage = count / totalNum * 100;
+                // String colourCode = getRandomColorHex();
+                var data = BarChartModel(
                     name: name,
-                    totalNumber: count,
-                    percent: secPercentage,
-                    color: HexColor(colourCode));
+                    code: ValueConstant.BRANDS_NAME.indexOf(name),
+                    numberOfGarment: count,
+                    // percent: secPercentage,
+                    // color: HexColor(colourCode)
+                    );
                 pieBrandList.add(data);
               });
             }
@@ -338,7 +363,9 @@ class PieChartBloc extends Bloc<DisplayPieChartEvent, DisplayPieChartState> {
               pie1Type: 'Size',
               pie2Type: 'Brand',
               pie3Type: 'Country',
-              indicator: 'Colour'));
+              indicator: 'Colour',
+              y: totalNum,
+              ));
         } else {
           emit(PieChartEmpty());
         }
