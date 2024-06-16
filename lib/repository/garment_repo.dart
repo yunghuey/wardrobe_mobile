@@ -10,7 +10,7 @@ class GarmentRepository{
   Future<bool> createGarment(GarmentModel shirt) async {
       try{
         var pref = await SharedPreferences.getInstance();
-        String? token = pref.getString('token') ;
+        String? token = pref.getString('token');
         if (token != null){
           var url = Uri.parse(APIConstant.addGarmentURL);
           var body = json.encode({

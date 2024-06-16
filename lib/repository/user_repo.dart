@@ -115,6 +115,9 @@ class UserRepository{
         if(response.statusCode == 200){
           return true;
         }
+        else {
+          return false;
+        }
       }
       return false;
     } catch (e){

@@ -36,8 +36,6 @@ import 'package:wardrobe_mobile/repository/garment_repo.dart';
 import 'package:wardrobe_mobile/repository/user_repo.dart';
 import 'package:wardrobe_mobile/repository/weather_repo.dart';
 
-import 'bloc/user/Authentication/Logout/logout_bloc.dart';
-
 void main() {
   runApp(const MyApp());
 }

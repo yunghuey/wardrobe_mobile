@@ -55,12 +55,14 @@ class _UserUpdateViewState extends State<UserUpdateView> {
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: SingleChildScrollView(
-            child: BlocBuilder<UserProfileBloc, UserProfileState>(
+            child: 
+            BlocBuilder<UserProfileBloc, UserProfileState>(
               builder: (context, state){
-                if (state is UserProfileErrorState){
-                  return Center(child: Text(state.message),);
-                }
-                else if (state is UserProfileLoadedState){
+                // if (state is UserProfileErrorState){
+                //   return Center(child: Text(state.message),);
+                // }
+                // else
+                 if (state is UserProfileLoadedState){
                   user = state.user;
                   emailController.text=user.email!;
                   usernameController.text=user.username;

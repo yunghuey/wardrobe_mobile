@@ -105,9 +105,6 @@ class _ProfileViewState extends State<ProfileView> {
             )
           ),
         );
-      } else if(state is UserProfileErrorState){
-        final snackBar = SnackBar(content: Text(state.message));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
       return Container();
     },);
@@ -192,8 +189,15 @@ class _ProfileViewState extends State<ProfileView> {
               ),
               child: ListTile(
                 title: Text("Logout"),
-                onTap: (){
+                onTap: ()async {
+                  var pref = await SharedPreferences.getInstance();
+                  String? token = pref.getString('token');
+                  if (token != null){
+                    pref.remove(token);
+                  }
                   logoutbloc.add(LogoutButtonPressed());
+                  // remove shared preference
+
                   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> SplashScreen()), (route) => false);
                 },
               ),

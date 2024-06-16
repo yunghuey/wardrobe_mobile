@@ -89,6 +89,7 @@ class _ViewGarmentDetailsState extends State<ViewGarmentDetails> {
     String formattedDate = DateFormat.yMMMMd().format(datetime);
     return Column(children: [
       // display image
+      Center(child: Text("Garment Image", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),),
       Image.network(
         garment.garmentImageURL!,
         width: 300,
@@ -96,6 +97,7 @@ class _ViewGarmentDetailsState extends State<ViewGarmentDetails> {
         fit: BoxFit.cover,
       ),
       SizedBox(height: 20,),
+      Center(child: Text("Material Image", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),),
       Image.network(
         garment.materialImageURL!,
         width: 300,
