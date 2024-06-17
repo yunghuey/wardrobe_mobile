@@ -12,6 +12,10 @@ import 'package:wardrobe_mobile/bloc/analysis/analysis_state.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:wardrobe_mobile/bloc/analysis/totalgarment_event.dart';
 import 'package:wardrobe_mobile/bloc/analysis/totalgarment_state.dart';
+import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.dart';
+import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
+import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_bloc.dart';
+import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_state.dart';
 import 'package:wardrobe_mobile/bloc/recommendation/recommend_bloc.dart';
 import 'package:wardrobe_mobile/bloc/recommendation/recommend_event.dart';
 import 'package:wardrobe_mobile/bloc/recommendation/recommend_state.dart';
@@ -45,6 +49,8 @@ class _HomeViewState extends State<HomeView> {
   late PieChartBloc pieBloc;
   late GetWeatherBloc weatherBloc;
   late RecommendationBloc recommendBloc;
+  late DeleteGarmentBloc deleteBloc;
+  late CreateGarmentBloc createBloc;
 
   // location
   double lat = 0.0, long = 0.0;
@@ -72,6 +78,8 @@ class _HomeViewState extends State<HomeView> {
     pieBloc = BlocProvider.of<PieChartBloc>(context);
     weatherBloc = BlocProvider.of<GetWeatherBloc>(context);
     recommendBloc = BlocProvider.of<RecommendationBloc>(context);
+    deleteBloc = BlocProvider.of<DeleteGarmentBloc>(context);
+    createBloc = BlocProvider.of<CreateGarmentBloc>(context);
 
     refreshPage();
   }
@@ -130,17 +138,31 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Home page')),
-      body: Padding(
-        padding: EdgeInsets.all(2.0),
-        child: RefreshIndicator(
-            onRefresh: refreshPage,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(5),
-                child: Column(children: <Widget>[
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<DeleteGarmentBloc, DeleteGarmentState>(listener: (context, state){
+            if (state is DeleteGarmentSuccess){
+              refreshPage();
+              }
+          }),
+          BlocListener<CreateGarmentBloc, CreateGarmentState>(
+            listener: (context, state) {
+              if (state is CreateGarmentSuccessState) {
+                refreshPage();
+              }
+
+            })
+        ],
+        child: Padding(
+          padding: EdgeInsets.all(2.0),
+          child: RefreshIndicator(
+              onRefresh: refreshPage,
+              child: SingleChildScrollView(
+                // physics: NeverScrollableScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.all(5),
+                  child: Column(children: <Widget>[
+                    Row(
                       children: [
                         // total garment
                         BlocBuilder<TotalGarmentBloc, TotalGarmentState>(
@@ -152,146 +174,187 @@ class _HomeViewState extends State<HomeView> {
                           }
                           return _displayFetchData();
                         }),
-                        // _getCurrentLocation(),
                         _getCurrentTemp(),
                       ],
                     ),
-                  ),
-                  // recommend clothes
-                  Card(
-                    elevation: 4,
-                    color: HexColor("#F0DEFE"),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child:
-                          BlocBuilder<RecommendationBloc, RecommendationState>(
-                              builder: (context, state) {
-                        if (state is RecommendationEmpty) {
-                          return const Center(child: Text('No suitable recommendation '),);
-                        } else if (state is RecommendationSuccess) {
-                          return Column(
-                            children: [
-                              Text("Recommendation", style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                // color: HexColor("#dfaf37"),
-                              ),),
-                              Padding(
-                                  padding:  EdgeInsets.all(8.0),
-                                  child: ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: state.garmentList.length,
-                                      itemBuilder: (context, index) {
-                                        GarmentModel m =
-                                            state.garmentList[index];
-                                        return InkWell(
+                    // recommend clothes
+                    // barchart
+                    BlocBuilder<DisplayAnalysisBloc, DisplayAnalysisState>(
+                      builder: (context, state) {
+                        if (state is DataAndNumberBarChart) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12.0),
+                            child: Card(
+                              elevation: 0,
+                              child: Column(
+                                children: [
+                                  const SizedBox(height: 10),
+                                  _buttonGroupCategory(),
+                                  const SizedBox(height: 10),
+                                  Text("Total number of garment by $category",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 10),
+                                  _barChartDiagram(state.y, state.data),
+                                  const SizedBox(height: 10),
+                                  _displayDropDown(state),
+                                ],
+                              ),
+                            ),
+                          );
+                        } else if (state is DataAndNumberError) {
+                          return Center(
+                            child: Text(state.message),
+                          );
+                        } else if (state is FetchingAnaDataState) {
+                          // return _displayFetchData();
+                          return Container();
+                        } else if (state is DataAndNumberEmpty) {
+                          return Card(
+                            // color: HexColor("#f9e8f4"),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 15.0),
+                              child: Center(
+                                child:
+                                    Text("No insights of garment can be shown"),
+                              ),
+                            ),
+                          );
+                        }
+                        return _displayFetchData();
+                      },
+                    ),
+                    BlocBuilder<PieChartBloc, DisplayPieChartState>(
+                        builder: (context, state) {
+                      if (state is PieChartInitState) {
+                        getPieEvent(category, dropdownValue);
+                        return Container();
+                      } else if (state is FetchingPieData) {
+                        return _displayFetchData();
+                      } else if (state is PieChartDataState) {
+                        return Column(
+                          children: [
+                            Text(state.pie1Type),
+                            _smallBarChartDiagram(
+                                state.y + 1, state.pie1, state.pie1Type),
+                            SizedBox(height: 10),
+                            Text(state.pie2Type),
+                            _smallBarChartDiagram(
+                                state.y + 1, state.pie2, state.pie2Type),
+                            SizedBox(height: 10),
+                            Text(state.pie3Type),
+                            _smallBarChartDiagram(
+                                state.y + 1, state.pie3, state.pie3Type),
+                          ],
+                        );
+                      } else if (state is PieChartEmpty) {
+                        return Text("No result can be shown");
+                      } else if (state is PieChartError) {
+                        return Text("${state.error}");
+                      }
+                      return Text(state.toString());
+                    }),
+                    Card(
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child:
+                            BlocBuilder<RecommendationBloc, RecommendationState>(
+                                builder: (context, state) {
+                          if (state is RecommendationEmpty) {
+                            return const Center(
+                              child: Text('No suitable recommendation '),
+                            );
+                          } else if (state is RecommendationSuccess) {
+                            return Column(
+                              children: [
+                                Text(
+                                  "Recommendation",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    // color: HexColor("#dfaf37"),
+                                  ),
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: state.garmentList.length,
+                                        itemBuilder: (context, index) {
+                                          GarmentModel m =
+                                              state.garmentList[index];
+                                          return InkWell(
                                             onTap: () {
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           ViewGarmentDetails(
-                                                              garmentID:
-                                                                  m.id!)));
+                                                              garmentID: m.id!)));
                                             },
-                                            child: ListTile(
-                                              title: Text(m.name!, style: TextStyle(fontSize: 17),),
-                                              subtitle: Text(
-                                                  "${m.colour_name} in colour, ${m.brand} brand"),
-                                              contentPadding:
-                                                  EdgeInsets.all(10),
-                                            ));
-                                      })),
-                            ],
-                          );
-                        } else if (state is RecommendationError) {
-                          return Text(state.message);
-                        } else if (state is GetRecommendationLoading) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        return Center(child: Text("Enable location for the result"));
-                      }),
-                    ),
-                  ),
-                  // barchart
-                  BlocBuilder<DisplayAnalysisBloc, DisplayAnalysisState>(
-                    builder: (context, state) {
-                      if (state is DataAndNumberBarChart) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12.0),
-                          child: Card(
-                            elevation: 0,
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 10),
-                                _buttonGroupCategory(),
-                                const SizedBox(height: 10),
-                                Text("Total number of garment by $category",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 10),
-                                _barChartDiagram(state.y, state.data),
-                                const SizedBox(height: 10),
-                                _displayDropDown(state),
+                                            child: Card(
+                                              elevation: 5,
+                                              color: HexColor(m.colour),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(15),
+                                                child: Row(
+                                                  children: [
+                                                    // Your existing column
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            m.name!,
+                                                            style: TextStyle(
+                                                              color: getTextColor(
+                                                                  m.colour),
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                              fontSize: 20,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    // New Image widget
+                                                    Image.network(
+                                                      m.garmentImageURL!, // Replace with your image URL
+                                                      fit: BoxFit.cover,
+                                                      height:
+                                                          110.0, // You can adjust as needed
+                                                      width:
+                                                          110.0, // You can adjust as needed
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        })),
                               ],
-                            ),
-                          ),
-                        );
-                      } else if (state is DataAndNumberError) {
-                        return Center(
-                          child: Text(state.message),
-                        );
-                      } else if (state is FetchingAnaDataState) {
-                        // return _displayFetchData();
-                        return Container();
-                      } else if (state is DataAndNumberEmpty) {
-                        return Card(
-                          color: HexColor("#f9e8f4"),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 15.0),
-                            child: Center(
-                              child:
-                                  Text("No insights of garment can be shown"),
-                            ),
-                          ),
-                        );
-                      }
-                      return _displayFetchData();
-                    },
-                  ),
-                  BlocBuilder<PieChartBloc, DisplayPieChartState>(
-                      builder: (context, state) {
-                    if (state is PieChartInitState) {
-                      getPieEvent(category, dropdownValue);
-                      return Container();
-                    } else if (state is FetchingPieData) {
-                      return _displayFetchData();
-                    } else if (state is PieChartDataState) {
-                      return Column(
-                        children: [
-                          Text(state.pie1Type),
-                          _smallBarChartDiagram(state.y+1,state.pie1, state.pie1Type),
-                          SizedBox(height: 10),
-                          Text(state.pie2Type),
-                          _smallBarChartDiagram(state.y+1,state.pie2, state.pie2Type),
-                          SizedBox(height: 10),
-                          Text(state.pie3Type),
-                          _smallBarChartDiagram(state.y+1,state.pie3, state.pie3Type),
-                        ],
-                      );
-                    } else if (state is PieChartEmpty) {
-                      return Text("No result can be shown");
-                    } else if (state is PieChartError) {
-                      return Text("${state.error}");
-                    }
-                    return Text(state.toString());
-                  }),
-                ]),
-              ),
-            )),
+                            );
+                          } else if (state is RecommendationError) {
+                            return Text(state.message);
+                          } else if (state is GetRecommendationLoading) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return Center(
+                              child: Text("Enable location for the result"));
+                        }),
+                      ),
+                    ),
+                  
+                  ]),
+                ),
+              )),
+        ),
       ),
     );
   }
@@ -376,7 +439,8 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _smallBarChartDiagram(double y, List<BarChartModel> data, String categoryy) {
+  Widget _smallBarChartDiagram(
+      double y, List<BarChartModel> data, String categoryy) {
     return SizedBox(
       height: 250,
       child: Padding(
@@ -407,9 +471,9 @@ class _HomeViewState extends State<HomeView> {
                   const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               leftTitles: const AxisTitles(
                   sideTitles: SideTitles(
-                    reservedSize: 30,
-                    interval: 1, // Adjust as needed
-                    showTitles: true,
+                reservedSize: 30,
+                interval: 1, // Adjust as needed
+                showTitles: true,
               )),
               rightTitles:
                   const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -527,11 +591,11 @@ class _HomeViewState extends State<HomeView> {
   Widget _displayFetchData() {
     return const Card(
         child: const Center(
-          child: Text(
-            "Fetching data...",
-            style: TextStyle(fontSize: 18),
-          ),
-        ));
+      child: Text(
+        "Fetching data...",
+        style: TextStyle(fontSize: 18),
+      ),
+    ));
   }
 
   Widget _displayGarmentNumber(int numberOfGarment) {
@@ -544,8 +608,9 @@ class _HomeViewState extends State<HomeView> {
           SizedBox(height: 10),
           Text(
             numberOfGarment.toString(),
-            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, 
-            //color:Color.fromARGB(255, 103, 24, 230), 
+            style: const TextStyle(
+              fontSize: 30, fontWeight: FontWeight.bold,
+              //color:Color.fromARGB(255, 103, 24, 230),
             ),
           ),
           const Padding(
@@ -560,14 +625,13 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  List<PieChartSectionData> getSections(List<PieChartModel> listt){
-
-    return List.generate(listt.length, (index){
+  List<PieChartSectionData> getSections(List<PieChartModel> listt) {
+    return List.generate(listt.length, (index) {
       final PieChartModel data = listt[index]; // Declare 'data' before using it
       final isTouched = index == touchedIndex;
       final double fontSize = isTouched ? 18 : 14;
       final double radius = isTouched ? 60 : 50;
-      final Color color = isTouched ? Colors.blue : data.color;    
+      final Color color = isTouched ? Colors.blue : data.color;
       return PieChartSectionData(
         color: color,
         value: data.percent,
@@ -580,134 +644,11 @@ class _HomeViewState extends State<HomeView> {
           color: getTextColor(data.color.toString()),
         ),
         showTitle: true,
-        badgeWidget: isTouched
-            ? TooltipWidget(data.totalNumber)
-            : null,
+        badgeWidget: isTouched ? TooltipWidget(data.totalNumber) : null,
         badgePositionPercentageOffset: 1.2,
       );
     });
   }
-
-  // Widget _pieChartDiagram(PieChartDataState state) {
-  //   return Column(
-  //     children: [
-  //       Center(
-  //           child: Text(
-  //         state.pie1Type,
-  //         style: TextStyle(fontWeight: FontWeight.bold),
-  //       )),
-  //       SizedBox(
-  //         height: 200,
-  //         child: PieChart(PieChartData(
-  //           borderData: FlBorderData(show: false),
-  //           sectionsSpace: 2,
-  //           centerSpaceRadius: 50,
-  //           sections: getSections(state.pie1),
-  //           pieTouchData: PieTouchData(
-           
-  //             touchCallback: (FlTouchEvent event, pieTouchResponse) {
-  //               print("touched");
-  //               setState(() {
-  //                 if (!event.isInterestedForInteractions ||
-  //                     pieTouchResponse == null ||
-  //                     pieTouchResponse.touchedSection == null) {
-  //                   touchedIndex = -1;
-  //                   return;
-  //                 }
-  //                 touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
-  //                 print("touchedIndex ${touchedIndex}");
-  //               });
-  //             },
-  //           ),
-
-  //         ),
-  //         swapAnimationDuration: Duration(milliseconds: 800),
-  //         swapAnimationCurve: Curves.easeInOut,
-  //         ),
-  //       ),
-  //       SizedBox(height: 20),
-  //       Center(
-  //           child: Text(
-  //         state.pie2Type,
-  //         style: TextStyle(fontWeight: FontWeight.bold),
-  //       )),
-  //       SizedBox(
-  //         height: 200,
-  //         child: PieChart(PieChartData(
-  //           borderData: FlBorderData(show: false),
-  //           sectionsSpace: 2,
-  //           centerSpaceRadius: 50,
-  //           sections: state.pie2
-  //               .asMap()
-  //               .map<int, PieChartSectionData>((index, data) {
-  //                 final isTouched = index == 18; // To highlight the touched section
-  //                 final double fontSize = isTouched ? 18 : 14; // Increase font size for touched section
-  //                 final double radius = isTouched ? 60 : 50; // Increase radius for touched section
-  //                 final Color color = isTouched ? Colors.blue : data.color; // Change color for touched section
-  //                 final value = PieChartSectionData(
-  //                   color: data.color,
-  //                   value: data.percent,
-  //                   title: data.name,
-  //                   radius: radius,
-  //                   titleStyle: TextStyle(
-  //                     fontSize: fontSize,
-  //                     fontWeight: FontWeight.bold,
-  //                     color: getTextColor(data.color.toString()),
-  //                   ),
-  //                   showTitle: true,
-  //                 );
-  //                 return MapEntry(index, value);
-  //               })
-  //               .values
-  //               .toList(),
-  //         ),
-  //         swapAnimationDuration: Duration(milliseconds: 800),
-  //         swapAnimationCurve: Curves.easeInOut,
-  //         ),
-  //       ),
-  //       SizedBox(height: 20),
-  //       Center(
-  //           child: Text(
-  //         state.pie3Type,
-  //         style: TextStyle(fontWeight: FontWeight.bold),
-  //       )),
-  //       SizedBox(
-  //         height: 200,
-  //         child: PieChart(PieChartData(
-  //           borderData: FlBorderData(show: false),
-  //           sectionsSpace: 2,
-  //           centerSpaceRadius: 50,
-  //           sections: state.pie3
-  //               .asMap()
-  //               .map<int, PieChartSectionData>((index, data) {
-  //                 final isTouched = index == 18; // To highlight the touched section
-  //                 final double fontSize = isTouched ? 18 : 14; // Increase font size for touched section
-  //                 final double radius = isTouched ? 60 : 50; // Increase radius for touched section
-  //                 final Color color = isTouched ? Colors.blue : data.color; // Change color for touched section
-  //                 final value = PieChartSectionData(
-  //                   color: data.color,
-  //                   value: data.percent,
-  //                   title: data.name,
-  //                   radius: radius,
-  //                   titleStyle: TextStyle(
-  //                     fontSize: fontSize,
-  //                     fontWeight: FontWeight.bold,
-  //                     color:getTextColor(data.color.toString()),
-  //                   ),
-  //                   showTitle: true,
-  //                 );
-  //                 return MapEntry(index, value);
-  //               })
-  //               .values
-  //               .toList(),
-  //         ),
-  //         swapAnimationDuration: Duration(milliseconds: 800),
-  //         swapAnimationCurve: Curves.easeInOut,
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
 
   Widget _getCurrentLocation() {
     var headingtext =
@@ -741,45 +682,56 @@ class _HomeViewState extends State<HomeView> {
       child: Card(
         color: Color.fromARGB(255, 93, 63, 184),
         child: BlocBuilder<GetWeatherBloc, GetWeatherState>(
-          builder: (context, state){
+          builder: (context, state) {
             if (state is GetWeatherSuccess) {
               return InkWell(
-                onTap: (){
-                  showDialog(context: context, 
-                  builder: (BuildContext context){
-                    return AlertDialog(
-                      title: Text(state.weather.weatherday!),
-                      content: Text("Today is ${state.weather.description}, it's feels like ${state.weather.humidityTemperature}°C",
-                      style: TextStyle(fontSize: 15)),
-                      actions: [
-                        TextButton(onPressed: ()=> Navigator.pop(context), child: Text("Alright!"))
-                      ],
-                    );
-                  });
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(state.weather.weatherday!),
+                          content: Text(
+                              "Today is ${state.weather.description}, it's feels like ${state.weather.humidityTemperature}°C",
+                              style: TextStyle(fontSize: 15)),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text("Alright!"))
+                          ],
+                        );
+                      });
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                  Center(child: Text('Now',style: TextStyle(color: Colors.white))),
-                  Center(
-                    child: Text("${state.weather.currentTemperature!.toStringAsFixed(1)}°C", 
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700, color: Colors.white),)
-                  ),
-                ],),
+                    Center(
+                        child:
+                            Text('Now', style: TextStyle(color: Colors.white))),
+                    Center(
+                        child: Text(
+                      "${state.weather.currentTemperature!.toStringAsFixed(1)}°C",
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white),
+                    )),
+                  ],
+                ),
               );
             }
-            return Container(child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(child: Text('Enable location for weather result', style: TextStyle(color: Colors.white))),
-            ),);
+            return Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                    child: Text('Enable location for weather result',
+                        style: TextStyle(color: Colors.white))),
+              ),
+            );
           },
-
         ),
-        )
-    ,);
-    
-    
-
+      ),
+    );
   }
 
   void _toMapScreen() {
@@ -874,15 +826,11 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-    Color getTextColor(String hexColor) {
-
+  Color getTextColor(String hexColor) {
     // print(hexColor);
-    // String hexValue = hexColor.split('(0x')[1].split(')')[0];
-  // Parse the hexadecimal string as an integer
-  // int colorValue = int.parse(hexValue, radix: 16);
-  // If the color value is less than the threshold, return white; otherwise, return black.
-  // return colorValue <  0xffAAAAAA ? Colors.white : Colors.black;
-  return Colors.black;
+    int colorValue = int.parse(hexColor.replaceAll('#', ''), radix: 16);
+    // If the color value is less than the threshold, return white; otherwise, return black.
+    return colorValue < 0x666666 ? Colors.white : Colors.black;
   }
 
   Widget getColourTitles(double value, TitleMeta meta) {

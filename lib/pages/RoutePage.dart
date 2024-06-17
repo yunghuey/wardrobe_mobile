@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:wardrobe_mobile/pages/auth/profileView.dart';
 import 'package:wardrobe_mobile/pages/garment/garmentListView.dart';
 import 'package:wardrobe_mobile/pages/garment/homeView.dart';
@@ -32,6 +34,8 @@ class _RoutePageState extends State<RoutePage> {
         children: _tablist,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: HexColor("#F0DEFE"),
+        selectedItemColor: Color.fromARGB(255, 93, 63, 184),
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
         onTap: (index){

@@ -63,6 +63,7 @@ class _EditGarmentViewState extends State<EditGarmentView> {
     _selectedBrand = updateGarment.brand;
     _selectedColour = updateGarment.colour_name;
     _selectedCountry = updateGarment.country;
+    print(updateGarment.brand);
     _selectedSize = updateGarment.size;
     garmentImageURL = updateGarment.garmentImageURL;
     materialImageURL = updateGarment.materialImageURL;
@@ -445,7 +446,8 @@ class _EditGarmentViewState extends State<EditGarmentView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Garment Brand:'), // Label
+          const Text('Garment Brand:'),
+           // Label
           DropdownButton<String>(
             value: _selectedBrand,
             onChanged: (String? newValue) {

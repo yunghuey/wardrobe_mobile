@@ -168,7 +168,7 @@ class _CaptureImageViewState extends State<CaptureImageView> {
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: const Center(
-          child: Text("Click the item above to submit an image.")
+          child: Text("Capture the garment label of your clothes.")
         ),
       ),
     );

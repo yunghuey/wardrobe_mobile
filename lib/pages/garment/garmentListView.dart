@@ -38,11 +38,9 @@ class _GarmentListViewState extends State<GarmentListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Garment List')),
-      body: Column(
+      body: Stack(
         children: [
-          SingleChildScrollView(
-            child: _garmentList(),
-          ),
+          _garmentList(),
         ],
       ),
       floatingActionButton: _floatingButton(),
@@ -72,7 +70,6 @@ class _GarmentListViewState extends State<GarmentListView> {
               child: ListView.builder(
                 itemCount: garmentList.length,
                 shrinkWrap: true,
-                // physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   final garment = garmentList[index];
                   return InkWell(
@@ -135,13 +132,22 @@ class _GarmentListViewState extends State<GarmentListView> {
         );
       } else if (state is ReadAllGarmentEmpty) {
         return RefreshIndicator(
-            onRefresh: refreshPage,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Center(
+          onRefresh: refreshPage,
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(28.0),
                   child: Text('Oopsie, you have no garment yet',
-                      style: TextStyle(fontSize: 20))),
-            ));
+                      style: TextStyle(fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                ),
+              ],
+            ),
+          ),
+        );
       } else {
         return Container(child: Text('empty thing'));
       }

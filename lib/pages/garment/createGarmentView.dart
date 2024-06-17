@@ -16,6 +16,7 @@ import 'package:wardrobe_mobile/model/material.dart';
 import 'package:wardrobe_mobile/pages/RoutePage.dart';
 import 'package:wardrobe_mobile/pages/garment/homeView.dart';
 import 'package:wardrobe_mobile/pages/ValueConstant.dart';
+import 'dart:math';
 
 class CreateGarmentView extends StatefulWidget {
   final GarmentModel garment;
@@ -78,7 +79,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
           final snackBar = const SnackBar(content: Text("loading"));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else if (state is CreateGarmentSuccessState) {
-          final snackBar = const SnackBar(content: Text("success"));
+          final snackBar = const SnackBar(content: Text("Successfully created garment"));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           Navigator.pushAndRemoveUntil(
             context,
@@ -203,7 +204,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
                           width: 70, // Set the width you want here
                           child: TextFormField(
                             initialValue:
-                                materials[index].percentage.toString(),
+                                min(100, materials[index].percentage).toString(),
                             keyboardType: TextInputType.number,
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.digitsOnly,
@@ -337,7 +338,18 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
             );
 
             createBloc.add(CreateButtonPressed(garment: garmentObj));
-          } else {
+          } 
+          else if (nameController.text == ''){
+            const snackBar =
+                SnackBar(content: Text('Give a name for your garment.'));
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+          else if (percentageSum != 100){
+            const snackBar =
+                SnackBar(content: Text('The material must not exceed 100%'));
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+          else {
             const snackBar =
                 SnackBar(content: Text('Please complete the form'));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
