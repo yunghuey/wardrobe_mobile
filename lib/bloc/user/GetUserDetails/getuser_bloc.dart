@@ -20,10 +20,23 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState>{
 
       on<UpdateButtonPressed>((event, emit) async {
         emit(UserProfileUpdating());
-        bool isUpdated = await repo.updateUser(event.user);
-        if (isUpdated){
+        int isUpdated = await repo.updateUser(event.user);
+        if (isUpdated == 1){
           emit(UserProfileUpdated());
-        } else{
+        } else if (isUpdated == 2){
+          emit(UserProfileErrorState(message: "Email already existed."));
+          UserModel? isFound = await repo.getUser();
+          if (isFound != null){
+            emit(UserProfileLoadedState(user: isFound));
+          }
+        } else if (isUpdated == 3){
+          emit(UserProfileErrorState(message: "Username already existed."));
+          UserModel? isFound = await repo.getUser();
+          if (isFound != null){
+            emit(UserProfileLoadedState(user: isFound));
+          }
+        }
+         else if (isUpdated == 0){
           emit(UserProfileErrorState(message: "Error in updating"));
           UserModel? isFound = await repo.getUser();
           if (isFound != null){

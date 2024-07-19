@@ -48,7 +48,7 @@ class _UserUpdateViewState extends State<UserUpdateView> {
             Navigator.pop(context, true);
           }
           else if (state is UserProfileErrorState){
-            final snackBar = SnackBar(content: Text("Unable to update profile. Please try again later."));
+            final snackBar = SnackBar(content: Text(state.message));
             ScaffoldMessenger.of(context).showSnackBar(snackBar); 
           }
         },

@@ -94,7 +94,7 @@ class UserRepository{
 
   // refresh token
   // update user
-  Future<bool> updateUser(UserModel user) async {
+  Future<int> updateUser(UserModel user) async {
     try{
       var pref = await SharedPreferences.getInstance();
       String? token = pref.getString("token");
@@ -113,15 +113,20 @@ class UserRepository{
         });
         var response = await http.put(url, headers: header, body: body);
         if(response.statusCode == 200){
-          return true;
+          return 1;
         }
-        else {
-          return false;
+        else if (json.decode(response.body)['error'][0] == 'E'){
+          // email duplicated
+          return 2;
+        }
+        else if (json.decode(response.body)['error'][0] == 'U'){
+          // username duplicated
+          return 3;
         }
       }
-      return false;
+      return 0;
     } catch (e){
-      return false;
+      return 0;
     }
   }
   // get user

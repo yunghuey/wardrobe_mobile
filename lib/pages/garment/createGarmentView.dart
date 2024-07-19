@@ -328,6 +328,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
             GarmentModel garmentObj = GarmentModel(
               brand: _selectedBrand ?? '',
               colour: colorCode!,
+              // country: ValueConstant.COUNTRY[1],
               country: _selectedCountry ?? '',
               size: _selectedSize ?? '',
               colour_name: _selectedColour ?? 'WHITE',
