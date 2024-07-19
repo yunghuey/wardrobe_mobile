@@ -1,6 +1,6 @@
 // ignore: file_names
 // ignore_for_file: use_build_context_synchronously
-
+// page to submit the garment image
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -78,10 +78,8 @@ class _CaptureImageViewState extends State<CaptureImageView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[ElevatedButton(
-          onPressed: () {
-            if (image != null){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CaptureMaterialView(garmentImage: image!,)));
-            }
+          onPressed: image != null ? () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CaptureMaterialView(garmentImage: image!,)));
             // if got image
             // if (image != null){
             //   Uint8List? imageData = await _getImageBytes(image!);
@@ -90,7 +88,7 @@ class _CaptureImageViewState extends State<CaptureImageView> {
                 // createBloc.add(SubmitImageEvent(imageBytes: base64String));
             //   }
             // }
-          },
+          }: null,
           child: const Text('Submit'),
         ),],
       ),
