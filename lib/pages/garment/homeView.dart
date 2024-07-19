@@ -212,13 +212,13 @@ class _HomeViewState extends State<HomeView> {
                         } else if (state is DataAndNumberEmpty) {
                           return Card(
                             // color: HexColor("#f9e8f4"),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 15.0),
-                              child: Center(
-                                child:
-                                    Text("No insights of garment can be shown"),
-                              ),
-                            ),
+                            // child: Padding(
+                            //   padding: EdgeInsets.symmetric(vertical: 15.0),
+                            //   child: Center(
+                            //     child:
+                            //         Text("No insights of garment can be shown"),
+                            //   ),
+                            // ),
                           );
                         }
                         return _displayFetchData();
@@ -248,12 +248,18 @@ class _HomeViewState extends State<HomeView> {
                           ],
                         );
                       } else if (state is PieChartEmpty) {
-                        return Text("No result can be shown");
+                        return Padding(
+                          padding: const EdgeInsets.all(30.0),
+                          child: Center(
+                            child: Text("Oopsie, no result can be analyzed. Add your clothes today!", style: TextStyle(fontSize: 15))
+                          ),
+                        );
                       } else if (state is PieChartError) {
                         return Text("${state.error}");
                       }
                       return Text(state.toString());
                     }),
+                    SizedBox(height: 5,),
                     Card(
                       elevation: 4,
                       child: Padding(
@@ -360,79 +366,82 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _barChartDiagram(double y, List<BarChartModel> data) {
-    return SizedBox(
-      height: 250,
-      child: Padding(
-        padding: const EdgeInsets.all(5),
-        child: BarChart(
-          BarChartData(
-            gridData: const FlGridData(show: false),
-            barTouchData: BarTouchData(
-              enabled: true,
-              touchTooltipData: BarTouchTooltipData(
-                getTooltipColor: (BarChartGroupData group) =>
-                    HexColor("#dfaf37"),
-                getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                  return BarTooltipItem(
-                    rod.toY.toStringAsFixed(0),
-                    TextStyle(
-                      color: HexColor("#572a66"),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                },
+    return Padding(
+      padding: const EdgeInsets.only(left: 10),
+      child: SizedBox(
+        height: 250,
+        child: Padding(
+          padding: const EdgeInsets.all(5),
+          child: BarChart(
+            BarChartData(
+              gridData: const FlGridData(show: false),
+              barTouchData: BarTouchData(
+                enabled: true,
+                touchTooltipData: BarTouchTooltipData(
+                  getTooltipColor: (BarChartGroupData group) =>
+                      HexColor("#dfaf37"),
+                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                    return BarTooltipItem(
+                      rod.toY.toStringAsFixed(0),
+                      TextStyle(
+                        color: HexColor("#572a66"),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
+                ),
               ),
+              borderData: FlBorderData(show: false),
+              titlesData: FlTitlesData(
+                show: true,
+                topTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                leftTitles: const AxisTitles(
+                    sideTitles: SideTitles(
+                  interval: 1, // Adjust as needed
+                  showTitles: true,
+                )),
+                rightTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                  showTitles: true,
+                  getTitlesWidget: (double value, TitleMeta meta) {
+                    switch (category) {
+                      case "brand":
+                        return getBrandTitles(value, meta);
+                      case "country":
+                        return getCountryTitles(value, meta);
+                      case "colour":
+                        return getColourTitles(value, meta);
+                      case "size":
+                        return getSizeTitles(value, meta);
+                      default:
+                        return Container(); // Return an empty container if category is unknown
+                    }
+                  },
+                  reservedSize: 130,
+                )),
+              ),
+              minY: 0,
+              maxY: y + 1,
+              barGroups: data
+                  .map((data) => BarChartGroupData(
+                        x: data.code,
+                        barRods: [
+                          BarChartRodData(
+                              toY: data.numberOfGarment.toDouble(),
+                              color: HexColor("#dfaf37"),
+                              width: 18,
+                              backDrawRodData: BackgroundBarChartRodData(
+                                show: true,
+                                toY: y + 1,
+                                color: Color.fromARGB(255, 93, 63, 184),
+                              ))
+                        ],
+                      ))
+                  .toList(),
             ),
-            borderData: FlBorderData(show: false),
-            titlesData: FlTitlesData(
-              show: true,
-              topTitles:
-                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              leftTitles: const AxisTitles(
-                  sideTitles: SideTitles(
-                interval: 1, // Adjust as needed
-                showTitles: true,
-              )),
-              rightTitles:
-                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: (double value, TitleMeta meta) {
-                  switch (category) {
-                    case "brand":
-                      return getBrandTitles(value, meta);
-                    case "country":
-                      return getCountryTitles(value, meta);
-                    case "colour":
-                      return getColourTitles(value, meta);
-                    case "size":
-                      return getSizeTitles(value, meta);
-                    default:
-                      return Container(); // Return an empty container if category is unknown
-                  }
-                },
-                reservedSize: 130,
-              )),
-            ),
-            minY: 0,
-            maxY: y + 1,
-            barGroups: data
-                .map((data) => BarChartGroupData(
-                      x: data.code,
-                      barRods: [
-                        BarChartRodData(
-                            toY: data.numberOfGarment.toDouble(),
-                            color: HexColor("#dfaf37"),
-                            width: 18,
-                            backDrawRodData: BackgroundBarChartRodData(
-                              show: true,
-                              toY: y + 1,
-                              color: Color.fromARGB(255, 93, 63, 184),
-                            ))
-                      ],
-                    ))
-                .toList(),
           ),
         ),
       ),
@@ -716,6 +725,9 @@ class _HomeViewState extends State<HomeView> {
                           fontWeight: FontWeight.w700,
                           color: Colors.white),
                     )),
+                    Center(
+                      child:
+                        Text('More', style: TextStyle(color: Colors.white, fontSize: 13,decoration: TextDecoration.underline, decorationColor: Colors.white))),
                   ],
                 ),
               );

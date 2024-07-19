@@ -190,6 +190,12 @@ class _CaptureMaterialViewState extends State<CaptureMaterialView> {
             }
           }: null,
           child: const Text('Submit'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            side: BorderSide(color: Color.fromARGB(255, 93, 63, 184), width: 2)
+          ),
         ),],
       ),
     );
