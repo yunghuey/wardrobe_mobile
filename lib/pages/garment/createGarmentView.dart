@@ -55,6 +55,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
   // for material
   late double percentageSum;
   bool materialComplete = true;
+  bool garmentComplete = false;
 
   @override
   void initState() {
@@ -126,6 +127,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
       builder: (context, state) {
         if (state is CaptureMaterialSuccess) {
           materials = state.materialList;
+          percentageSum = 100.0;
           return Column(
             children: [
               Padding(
@@ -308,7 +310,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
 
   Widget _garmentSubmit() {
     return ElevatedButton(
-        onPressed: () {
+        onPressed: garmentComplete ? () {
           // calculate material summation
           percentageSum = 0.0;
           for (final m in materials) {
@@ -362,7 +364,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
           // image
-        },
+        }:null,
         child: const Text("Create garment", style: TextStyle(color: Color.fromARGB(255, 93, 63, 184))),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
@@ -371,6 +373,22 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
           side: BorderSide(color: Color.fromARGB(255, 93, 63, 184), width: 2)
       ),
       );
+  }
+
+  // to handle the disabled and enable of button
+  void checkGarmentInfo(){
+    if (_selectedCountry != ValueConstant.COUNTRY[0] &&
+      _selectedBrand != ValueConstant.BRANDS_NAME[0] &&
+      _selectedSize != ValueConstant.SIZES[0] &&
+      _selectedColour != ValueConstant.COLOUR_NAME[0] &&
+      nameController.text != '' &&
+      percentageSum == 100  ){
+        garmentComplete = true;
+      }
+      else{
+        garmentComplete = false;
+      }
+      setState(() {});
   }
 
   Widget _garmentColorCode() {
@@ -403,6 +421,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
               setState(() {
                 _selectedSize = newValue; // Corrected the variable name
               });
+                checkGarmentInfo();
             },
             items: ValueConstant.SIZES
                 .map<DropdownMenuItem<String>>((String value) {
@@ -427,6 +446,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
               setState(() {
                 _selectedBrand = newValue; // Corrected the variable name
               });
+                checkGarmentInfo();
             },
             items: ValueConstant.BRANDS_NAME
                 .map<DropdownMenuItem<String>>((String value) {
@@ -452,6 +472,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
               setState(() {
                 _selectedCountry = newValue; // Corrected the variable name
               });
+                checkGarmentInfo();
             },
             items: ValueConstant.COUNTRY
                 .map<DropdownMenuItem<String>>((String value) {
@@ -472,6 +493,10 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
           labelText: 'Garment Name',
           hintText: 'Enter garment name',
         ),
+        onChanged: (value){
+          checkGarmentInfo();
+          setState(() {});
+        }
       ),
     );
   }
