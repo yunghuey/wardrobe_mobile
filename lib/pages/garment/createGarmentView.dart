@@ -54,6 +54,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
 
   // for material
   late double percentageSum;
+  bool materialComplete = true;
 
   @override
   void initState() {
@@ -130,7 +131,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
               Padding(
                 padding: const EdgeInsets.only(left: 70.0, right: 70.0, top: 10.0, bottom: 10.0),
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: !materialComplete ? () {
                     percentageSum = 0.0;
                     setState(() {
                       for (var m in materials) {
@@ -147,7 +148,7 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
                     if (percentageSum < 100) {
                       var newRow = MaterialModel(
                           materialName: ValueConstant.MATERIAL_NAME[0],
-                          percentage: 0.0);
+                          percentage: 100-percentageSum);
                       materials.add(newRow);
                       setState(() {});
                     } else if (percentageSum == 200) {
@@ -161,7 +162,9 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
                       // ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       null;
                     }
-                  },
+                    materialComplete =true;
+                    setState(() {});
+                  }: null,
                   child: Row(
                       children: [
                         const Icon(Icons.add),
@@ -239,6 +242,9 @@ class _CreateGarmentViewState extends State<CreateGarmentView> {
                               // ScaffoldMessenger.of(context).showSnackBar(sn);
                               null;
                             }
+                            setState(() {
+                              materialComplete = false;
+                            });
                           },
                           icon: Icon(Icons.remove_circle),
                         ),
