@@ -44,6 +44,20 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState>{
           }
         }
     });
+
+    on<UpdatePasswordEvent>((event, emit) async {
+      emit(UserProfileUpdating());
+      int status = await repo.resetPassword(event.old_password, event.new_password);
+      if (status == 1){
+        emit(PasswordUpdated());
+      }
+      else if (status == 2){
+        emit(PasswordFailed(message: "The current password is wrong. Please try again."));
+      }
+      else if (status == 0){
+        emit(PasswordFailed(message: "Error occurred in reseting password. Please try again."));
+      }
+    });
     }
 
 }

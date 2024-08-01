@@ -1,5 +1,5 @@
 class APIConstant {
-  static const String ipaddress = "http://192.168.0.19:8000"; 
+  static const String ipaddress = "http://192.168.0.6:8000"; 
   // static const String ipaddress = "http://10.131.74.148:8000";// melaka home
   //  10.131.76.224
   static var header = { "Content-Type": "application/json", };
@@ -20,6 +20,7 @@ class APIConstant {
   static String get updateUser => "${APIConstant.ipaddress}/account/update/";
   static String get refreshToken => "${APIConstant.ipaddress}/account/refreshToken/";
   static String get getOneUserURL => "${APIConstant.ipaddress}/account/get/";
+  static String get resetPasswordURL => "${APIConstant.ipaddress}/account/resetPassword/";
 
   // analysis repo
   static String get totalGarmentURL => "${APIConstant.ipaddress}/garment/getTotalGarment";

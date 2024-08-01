@@ -23,3 +23,10 @@ class UserProfileErrorState extends UserProfileState {
 class UserProfileUpdating extends UserProfileState {}
 
 class UserProfileUpdated extends UserProfileState {}
+
+class PasswordUpdated extends UserProfileState {}
+
+class PasswordFailed extends UserProfileState {
+  final message;
+  PasswordFailed({required this.message});
+}

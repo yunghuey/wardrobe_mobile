@@ -154,5 +154,34 @@ class UserRepository{
       return null;
     }
   }
+
   // reset password
+  Future<int> resetPassword(String old_password, String new_password) async{
+    try{
+      var pref = await SharedPreferences.getInstance();
+      String? token = pref.getString("token");
+      if (token!.isNotEmpty) {
+        var url = Uri.parse(APIConstant.resetPasswordURL);
+        var header = {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${token}",
+        };
+
+        var body = json.encode({
+          "old_password": old_password,
+          "new_password": new_password
+        });
+        var response = await http.put(url, headers: header, body: body);
+        if (response.statusCode == 200){
+          return 1;
+        }
+        else if (response.statusCode == 401){
+          return 2;
+        }
+      }
+      return 0;
+    }catch(e) {
+      return 0;
+    }
+  }
 }

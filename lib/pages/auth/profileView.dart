@@ -10,6 +10,7 @@ import 'package:wardrobe_mobile/bloc/user/GetUserDetails/getuser_event.dart';
 import 'package:wardrobe_mobile/bloc/user/GetUserDetails/getuser_state.dart';
 import 'package:wardrobe_mobile/model/user.dart';
 import 'package:wardrobe_mobile/pages/auth/splashScreen.dart';
+import 'package:wardrobe_mobile/pages/auth/updatePasswordView.dart';
 import 'package:wardrobe_mobile/pages/auth/userUpdateView.dart';
 
 class ProfileView extends StatefulWidget {
@@ -153,27 +154,36 @@ class _ProfileViewState extends State<ProfileView> {
             ),
           ),
           SizedBox(height: 15),
-          // Container(
-          //   margin: EdgeInsets.all(5.0),
-          //   decoration: BoxDecoration(
-          //     color: HexColor("#EEE9FA"),
-          //     borderRadius: BorderRadius.circular(15.0),
-          //     boxShadow: [
-          //       BoxShadow(
-          //         color: Colors.grey.withOpacity(0.3),
-          //         spreadRadius: 2,
-          //         blurRadius: 5,
-          //         offset: Offset(0,3),
-          //       )
-          //     ]
-          //   ),
-          //   child: ListTile(
-          //     title: Text("Privacy"),
-          //     subtitle: Text("Change your password"),
-          //     trailing: Icon(Icons.chevron_right),
-          //     ),
-          //   ),
-            // SizedBox(height: 15),
+          Container(
+            margin: EdgeInsets.all(5.0),
+            decoration: BoxDecoration(
+              color: HexColor("#F0DEFE"),
+              borderRadius: BorderRadius.circular(15.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0,3),
+                )
+              ]
+            ),
+            child: ListTile(
+              title: Text("Privacy"),
+              subtitle: Text("Change your password"),
+              trailing: Icon(Icons.chevron_right),
+              onTap: (){
+                print('clicked');
+                Navigator.push(context, MaterialPageRoute(builder: (context) => UpdatePwdView())).
+                then((result){
+                  if (result == true){
+                    refreshPage();
+                  }
+                });
+              },
+              ),
+            ),
+            SizedBox(height: 15),
             Container(
               margin: EdgeInsets.all(5.0),
               decoration: BoxDecoration(
