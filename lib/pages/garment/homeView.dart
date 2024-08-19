@@ -16,6 +16,8 @@ import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_bloc.da
 import 'package:wardrobe_mobile/bloc/garment/CreateGarment/creategarment_state.dart';
 import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_bloc.dart';
 import 'package:wardrobe_mobile/bloc/garment/DeleteGarment/deletegarment_state.dart';
+import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_bloc.dart';
+import 'package:wardrobe_mobile/bloc/garment/UpdateGarment/updategarment_state.dart';
 import 'package:wardrobe_mobile/bloc/recommendation/recommend_bloc.dart';
 import 'package:wardrobe_mobile/bloc/recommendation/recommend_event.dart';
 import 'package:wardrobe_mobile/bloc/recommendation/recommend_state.dart';
@@ -25,6 +27,7 @@ import 'package:wardrobe_mobile/bloc/weather/getWeather_state.dart';
 import 'package:wardrobe_mobile/model/barchart.dart';
 import 'package:wardrobe_mobile/model/garment.dart';
 import 'package:wardrobe_mobile/model/piechart.dart';
+import 'package:wardrobe_mobile/pages/RoutePage.dart';
 import 'package:wardrobe_mobile/pages/garment/mapView.dart';
 import 'package:wardrobe_mobile/pages/garment/viewGarmentDetails.dart';
 import 'package:wardrobe_mobile/pages/valueConstant.dart';
@@ -128,6 +131,9 @@ class _HomeViewState extends State<HomeView> {
       analysisBloc.add(GetColourAnalysisEvent());
     } else if (category == "size") {
       analysisBloc.add(GetSizeAnalysisEvent());
+    } else {
+      category = "brand";
+      analysisBloc.add(GetBrandAnalysisEvent());
     }
     // weather bloc & recommend bloc
     await _setInitialLocation();
@@ -151,6 +157,22 @@ class _HomeViewState extends State<HomeView> {
                 refreshPage();
               }
 
+          }),
+          BlocListener<UpdateGarmentBloc, UpdateGarmentState>(
+            listener: (context, state) {
+            if (state is UpdateGarmentSuccess) {
+              const snackBar = SnackBar(content: Text('Updated successfully!'));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              refreshPage();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RoutePage(),
+                  fullscreenDialog: false,
+                ),
+                (route) => false,
+              );
+              }
             })
         ],
         child: Padding(

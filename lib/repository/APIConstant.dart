@@ -1,5 +1,5 @@
 class APIConstant {
-  static const String ipaddress = "http://192.168.0.6:8000"; 
+  static const String ipaddress = "http://10.131.76.245:8000"; 
   // static const String ipaddress = "http://10.131.74.148:8000";// melaka home
   //  10.131.76.224
   static var header = { "Content-Type": "application/json", };
